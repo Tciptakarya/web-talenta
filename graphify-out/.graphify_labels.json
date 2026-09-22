@@ -1,0 +1,23 @@
+{
+  "0": "(public)/page.tsx",
+  "1": "compilerOptions",
+  "2": "prisma.ts",
+  "3": "actions.ts",
+  "4": "(dashboard)/layout.tsx",
+  "5": "dependencies",
+  "6": "schemas.ts",
+  "7": "script.js",
+  "8": "scripts",
+  "9": "devDependencies",
+  "10": "data.ts",
+  "11": "migrate-categories.ts",
+  "12": "Website Talenta Cipta Karya — v2.1 (Next.js)",
+  "13": "login/page.tsx",
+  "14": "app/layout.tsx",
+  "15": "AGENTS.md",
+  "16": "next.config.ts",
+  "17": "{ GET, POST }",
+  "18": "postcss.config.mjs",
+  "19": "galeri/page.tsx",
+  "20": "auth.ts"
+}

@@ -1,0 +1,23 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# database lokal (SQLite)
+prisma/*.db
+prisma/*.db-journal
+
+# env
+.env
+.env.local
+.env*.local*
+
+# upload lokal (fallback saat Vercel Blob belum dikonfigurasi)
+public/uploads/
+
+# artefak deploy
+deploy.zip
+
+# tooling
+graphify-out/.graphify_analysis.json

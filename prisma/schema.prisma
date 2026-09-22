@@ -1,0 +1,85 @@
+// Prisma schema — Website Talenta Cipta Karya (PRD v2.1, §5)
+// Lokal: SQLite (file:./dev.db). Produksi: ganti provider jadi "postgresql".
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Kategori kelas/program — DINAMIS, dikelola dari Admin > Kategori Kelas.
+/// Relasi: 1 Category → N Program, 1 Category → N GalleryImage.
+model Category {
+  id            Int            @id @default(autoincrement())
+  name          String
+  slug          String         @unique // otomatis dari name, unik
+  description   String? // dipakai sebagai deskripsi halaman /kelas/[slug]
+  image         String? // thumbnail opsional
+  isActive      Boolean        @default(true)
+  programs      Program[]
+  galleryImages GalleryImage[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+/// Program/kelas — judul/deskripsi bisa disunting dari /admin/program,
+/// berelasi ke Category (nullable agar data lama tidak rusak saat migrasi).
+model Program {
+  id          Int       @id @default(autoincrement())
+  judul       String
+  slug        String    @unique
+  deskripsi   String
+  urutan      Int       @default(0)
+  isActive    Boolean   @default(true)
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  gallery     GalleryImage[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+/// Foto galeri — URL menunjuk ke Vercel Blob atau /uploads (mode lokal),
+/// berelasi ke Category (query by relasi, bukan string hardcode).
+model GalleryImage {
+  id         Int       @id @default(autoincrement())
+  url        String
+  caption    String
+  alt        String?
+  urutan     Int       @default(0)
+  uploadedAt DateTime  @default(now())
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  programId  Int? // opsional: kaitkan foto ke program tertentu
+  program    Program?  @relation(fields: [programId], references: [id], onDelete: SetNull)
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  peran     String // peran/program, mis. "Alumni Pelatihan Barista"
+  pesan     String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Cadangan pesan form kontak — tetap tersimpan meski pengiriman email gagal (§8)
+model ContactMessage {
+  id          Int      @id @default(autoincrement())
+  nama        String
+  email       String
+  pesan       String
+  statusEmail String   @default("pending") // "sent" | "failed" | "skipped"
+  createdAt   DateTime @default(now())
+}
+
+/// 1 akun admin — password di-hash bcrypt
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
