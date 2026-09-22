@@ -3,9 +3,9 @@
   "1": "compilerOptions",
   "2": "prisma.ts",
   "3": "actions.ts",
-  "4": "upload/route.ts",
+  "4": "(dashboard)/layout.tsx",
   "5": "dependencies",
-  "6": "content.ts",
+  "6": "schemas.ts",
   "7": "script.js",
   "8": "scripts",
   "9": "devDependencies",
@@ -17,5 +17,7 @@
   "15": "AGENTS.md",
   "16": "next.config.ts",
   "17": "{ GET, POST }",
-  "18": "postcss.config.mjs"
+  "18": "postcss.config.mjs",
+  "19": "galeri/page.tsx",
+  "20": "auth.ts"
 }

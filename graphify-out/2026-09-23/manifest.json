@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/layout.tsx": {
-    "mtime": 1790104075.6120648,
-    "ast_hash": "159d7904e973696b81ba0e6a398476ac",
+    "mtime": 1790108941.6475213,
+    "ast_hash": "34c46c446d1a7d6759c864b2872f0c20",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/page.tsx": {
@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790091826.1062982,
-    "ast_hash": "5a1032556dd6fb07ecc3b19769ac8834",
+    "mtime": 1790109276.8180573,
+    "ast_hash": "121c66b66338104fa95c91bc65c38b48",
     "semantic_hash": ""
   },
   "components/admin/GaleriList.tsx": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "components/site/Header.tsx": {
-    "mtime": 1790091873.6561778,
-    "ast_hash": "ece32db56943b2ec1749bb40013ba06a",
+    "mtime": 1790108926.3512628,
+    "ast_hash": "3457039d6ad696ab9ccae3ef5c33ab87",
     "semantic_hash": ""
   },
   "components/site/HeroAbout.tsx": {
@@ -382,6 +382,11 @@
   "prisma/migrate-categories.ts": {
     "mtime": 1790097204.000066,
     "ast_hash": "c57960c1b920a32ce4375b84909c2adc",
+    "semantic_hash": ""
+  },
+  "components/site/ThemeToggle.tsx": {
+    "mtime": 1790108905.7551692,
+    "ast_hash": "9113afe060cc77679958acb9a7f5739f",
     "semantic_hash": ""
   }
 }
