@@ -43,7 +43,9 @@ npm run dev          # http://localhost:3000
 (idempoten, create-only) sebelum `next build` — sama persis dengan pipeline
 deploy di Hostinger.
 
-**Login admin:** `admin@talentaciptakarya.com` / `admin1234`.
+**Login admin:** `info@talentaciptakarya.com` — password = nilai
+`ADMIN_PASSWORD` di `.env` (akun dibuat saat `db:setup` pertama; ubah kapan saja
+lewat kartu **"Keamanan Akun"** di dashboard).
 Ganti password dari dashboard: `/admin` → kartu **"Keamanan Akun"**
 (`ADMIN_EMAIL`/`ADMIN_PASSWORD` hanya dipakai saat akun pertama dibuat di DB baru).
 

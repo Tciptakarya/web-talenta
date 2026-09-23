@@ -88,22 +88,29 @@ async function main() {
     }
   }
 
-  // 5. Akun admin — 1 akun (PRD §5), password di-hash bcrypt
-  const email = process.env.ADMIN_EMAIL || "admin@talentaciptakarya.com";
-  const password = process.env.ADMIN_PASSWORD || "admin1234";
-  const passwordHash = await bcrypt.hash(password, 10);
-  await prisma.adminUser.upsert({
-    where: { email },
-    update: {}, // create-only — password TIDAK direset oleh build/deploy ulang
-    create: { email, passwordHash },
-  });
+  // 5. Akun admin — hanya dibuat bila BELUM ADA (1 akun, PRD §5).
+  //    Kredensial diambil dari env saat pembuatan pertama; sesudah itu email
+  //    & password hanya diubah dari dashboard — seed TIDAK PERNAH menimpa.
+  const email = process.env.ADMIN_EMAIL || "info@talentaciptakarya.com";
+  const adaAdmin = await prisma.adminUser.findFirst();
+  if (!adaAdmin) {
+    const password = process.env.ADMIN_PASSWORD;
+    if (!password || password.length < 8) {
+      throw new Error(
+        "ADMIN_PASSWORD belum diisi di .env (min. 8 karakter) — wajib untuk membuat akun admin pertama."
+      );
+    }
+    await prisma.adminUser.create({
+      data: { email, passwordHash: await bcrypt.hash(password, 10) },
+    });
+  }
 
   console.log(`Seed selesai:
   - ${await prisma.category.count()} kategori
   - ${await prisma.program.count()} program
   - ${await prisma.testimonial.count()} testimoni
   - ${await prisma.galleryImage.count()} foto galeri
-  - admin: ${email}`);
+  - admin: ${(await prisma.adminUser.findFirst())?.email ?? "(belum ada)"}`);
 }
 
 main()

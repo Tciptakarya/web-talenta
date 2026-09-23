@@ -81,8 +81,8 @@ nilai produksi diisi lewat hPanel, bukan file).
    | `AUTH_TRUST_HOST` | `true` | Wajib di balik proxy Hostinger |
    | `NEXT_PUBLIC_SITE_URL` | `https://talentaciptakarya.com` | Canonical URL, SEO, og-image |
    | `DATABASE_URL` | `file:../../site.db` | **Penting** — database di luar folder deploy (lihat tabel arsitektur) |
-   | `ADMIN_EMAIL` | `admin@talentaciptakarya.com` | Hanya dipakai saat akun dibuat (build pertama) |
-   | `ADMIN_PASSWORD` | *(password kuat, wajib)* | Untuk login pertama — sesudah itu ganti dari dashboard |
+   | `ADMIN_EMAIL` | `info@talentaciptakarya.com` | Hanya dipakai saat akun dibuat (build pertama) |
+   | `ADMIN_PASSWORD` | *(password yang Anda catat — jangan `admin1234`)* | Untuk login pertama — sesudah itu ganti dari dashboard |
    | `RESEND_API_KEY` | *(opsional, bisa nanti)* | Kosong = pesan tetap masuk `/admin/pesan`, email dilewati |
    | `CONTACT_EMAIL_FROM` | `info@talentaciptakarya.com` | Isi setelah domain diverifikasi di Resend |
    | `CONTACT_EMAIL_TO` | `info@talentaciptakarya.com` | Tujuan notifikasi |
@@ -113,9 +113,10 @@ ter-inject ke runtime.
 
 1. Buka `https://talentaciptakarya.com` → homepage, `/kelas`, `/kelas/barista` normal.
 2. Login `https://talentaciptakarya.com/admin/login` dengan `ADMIN_EMAIL` + `ADMIN_PASSWORD`.
-3. **Segera ganti password**: dashboard `/admin` → kartu **"Keamanan Akun"**
-   → isi password lama + baru (min. 8) → Simpan. (Password env tidak akan
-   menimpa password baru ini — seed create-only.)
+3. *(Opsional)* — password sudah Anda tentukan sendiri saat setup. Ubah kapan
+   saja lewat kartu **"Keamanan Akun"** di dashboard `/admin` (isi password
+   lama + baru, min. 8 → Simpan). Seed tidak akan pernah menimpa password yang
+   sudah diganti.
 4. Cek: tambah/hapus program & kategori dari dashboard → tampil di situs publik
    **tanpa deploy ulang**.
 5. (Kalau memakai `DATABASE_URL` relatif) buka **File Manager** → folder

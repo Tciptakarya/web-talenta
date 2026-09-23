@@ -56,7 +56,7 @@ export default function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          placeholder="admin@talentaciptakarya.com"
+          placeholder="info@talentaciptakarya.com"
           className="w-full rounded-xl border-[1.5px] border-line bg-paper px-4 py-3 text-sm focus:outline-none focus:border-blue focus:ring-4 focus:ring-[rgba(78,127,240,0.15)]"
         />
       </div>
