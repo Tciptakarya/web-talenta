@@ -1,12 +1,12 @@
 // Prisma schema — Website Talenta Cipta Karya (PRD v2.1, §5)
-// Lokal: SQLite (file:./dev.db). Produksi: ganti provider jadi "postgresql".
+// Vercel/Prod: PostgreSQL (Neon/Supabase). Lokal juga bisa pakai Postgres yang sama.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
