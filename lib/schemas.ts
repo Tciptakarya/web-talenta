@@ -67,6 +67,22 @@ export const gantiPasswordSchema = z
 
 export type GantiPasswordInput = z.infer<typeof gantiPasswordSchema>;
 
+/** Lupa password — hanya email, response generik (§5). */
+export const forgotPasswordSchema = z.object({
+  email: z.email("Format email tidak valid").max(200),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(10, "Token tidak valid").max(200),
+    newPassword: z.string().min(8, "Password baru minimal 8 karakter").max(72),
+    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Konfirmasi password tidak sama dengan password baru",
+    path: ["confirmPassword"],
+  });
+
 export const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",

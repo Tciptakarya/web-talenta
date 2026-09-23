@@ -5,17 +5,17 @@
   "3": "actions.ts",
   "4": "(dashboard)/layout.tsx",
   "5": "dependencies",
-  "6": "content.ts",
+  "6": "KategoriManager.tsx",
   "7": "script.js",
-  "8": "scripts",
-  "9": "devDependencies",
+  "8": "devDependencies",
+  "9": "requestPasswordReset",
   "10": "data.ts",
+  "11": "reset-password/page.tsx",
   "12": "🚀 Panduan Publish — Hostinger Web Apps + Resend",
   "13": "login/page.tsx",
   "14": "app/layout.tsx",
   "15": "AGENTS.md",
   "16": "next.config.ts",
   "17": "{ GET, POST }",
-  "18": "postcss.config.mjs",
-  "19": "galeri/page.tsx"
+  "18": "postcss.config.mjs"
 }

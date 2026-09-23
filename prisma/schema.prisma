@@ -78,8 +78,23 @@ model ContactMessage {
 
 /// 1 akun admin — password di-hash bcrypt
 model AdminUser {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  passwordHash        String
+  createdAt           DateTime             @default(now())
+  passwordResetTokens PasswordResetToken[]
+}
+
+/// Token reset password — sekali pakai, 30 menit, simpan hash saja (§6, §7)
+model PasswordResetToken {
+  id          Int       @id @default(autoincrement())
+  adminUserId Int
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([adminUserId])
+  @@index([expiresAt])
 }

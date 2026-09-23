@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -89,6 +90,15 @@ export default function LoginForm() {
       >
         {loading ? "Memeriksa..." : "Masuk"}
       </button>
+
+      <p className="text-center text-sm">
+        <Link
+          href="/admin/forgot-password"
+          className="font-semibold text-blue hover:text-navy underline-offset-4 hover:underline"
+        >
+          Lupa Password?
+        </Link>
+      </p>
     </form>
   );
 }

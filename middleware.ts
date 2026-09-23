@@ -12,8 +12,10 @@ export default auth((req) => {
   const pathname = nextUrl.pathname;
   const isLoggedIn = Boolean(req.auth);
   const isLoginPage = pathname === "/admin/login";
+  const isPublicAuthPage =
+    pathname === "/admin/forgot-password" || pathname === "/admin/reset-password";
 
-  if (pathname.startsWith("/admin") && !isLoginPage && !isLoggedIn) {
+  if (pathname.startsWith("/admin") && !isLoginPage && !isPublicAuthPage && !isLoggedIn) {
     return NextResponse.redirect(new URL("/admin/login", nextUrl));
   }
 

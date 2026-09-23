@@ -11,8 +11,14 @@ import {
   programSchema,
   testimonialSchema,
   gantiPasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "@/lib/schemas";
 import { slugify, uniqueSlug } from "@/lib/slug";
+import { generateResetToken, hashToken } from "@/lib/passwordReset";
+import { sendPasswordResetEmail, siteUrl } from "@/lib/resend";
+import { isRateLimited } from "@/lib/rateLimit";
+import { headers } from "next/headers";
 
 export type ActionState = {
   ok: boolean;
@@ -464,6 +470,168 @@ export async function gantiPassword(
     return { ok: true, message: "Password berhasil diganti." };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
+  }
+}
+
+/* ------------------------------------ Lupa password ----------------------------------- */
+
+const GENERIC_FORGOT_MSG =
+  "Jika email tersebut terdaftar, kami telah mengirimkan link untuk mengatur ulang password.";
+
+function getClientIp(h: Headers): string {
+  const xff = h.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]!.trim();
+  return h.get("x-real-ip") || "unknown";
+}
+
+/**
+ * Request link reset — response generik untuk cegah enumerasi (§5).
+ * Rate limit: 5/IP/15m dan 3/email/jam.
+ */
+export async function requestPasswordReset(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    const h = await headers();
+    const ip = getClientIp(h);
+
+    if (isRateLimited(`forgot:ip:${ip}`, 5, 15 * 60 * 1000)) {
+      return {
+        ok: true,
+        message: GENERIC_FORGOT_MSG,
+      };
+    }
+
+    const parsed = forgotPasswordSchema.safeParse({
+      email: String(formData.get("email") ?? "").trim(),
+    });
+    if (!parsed.success) {
+      // Tetap generik — jangan bocorkan validasi email
+      return { ok: true, message: GENERIC_FORGOT_MSG };
+    }
+
+    const emailRaw = parsed.data.email.trim();
+    const emailNorm = emailRaw.toLowerCase();
+
+    if (isRateLimited(`forgot:email:${emailNorm}`, 3, 60 * 60 * 1000)) {
+      return { ok: true, message: GENERIC_FORGOT_MSG };
+    }
+
+    // Cari akun — case-insensitive (SQLite default sensitif)
+    const allUsers = await prisma.adminUser.findMany();
+    const resolved = allUsers.find((u) => u.email.toLowerCase() === emailNorm);
+    if (!resolved) {
+      return { ok: true, message: GENERIC_FORGOT_MSG };
+    }
+
+    // Hapus token kadaluarsa/terpakai lama (housekeeping ringan)
+    await prisma.passwordResetToken
+      .deleteMany({
+        where: {
+          adminUserId: resolved.id,
+          OR: [{ expiresAt: { lt: new Date() } }, { usedAt: { not: null } }],
+        },
+      })
+      .catch(() => undefined);
+
+    const { raw, hash } = generateResetToken();
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+
+    await prisma.passwordResetToken.create({
+      data: {
+        adminUserId: resolved.id,
+        tokenHash: hash,
+        expiresAt,
+      },
+    });
+
+    const resetUrl = `${siteUrl()}/admin/reset-password?token=${encodeURIComponent(raw)}`;
+    // Kirim email — kegagalan tidak dibocorkan ke user (tetap generik)
+    await sendPasswordResetEmail({ to: resolved.email, resetUrl }).catch(() => undefined);
+
+    // Log fallback bila RESEND_API_KEY belum diisi (permudah testing lokal)
+    if (!process.env.RESEND_API_KEY) {
+      console.info(`[password-reset] Link untuk ${resolved.email}: ${resetUrl}`);
+    }
+
+    return { ok: true, message: GENERIC_FORGOT_MSG };
+  } catch (err) {
+    console.error("[requestPasswordReset]", err);
+    return { ok: true, message: GENERIC_FORGOT_MSG };
+  }
+}
+
+/**
+ * Reset password via token — sekali pakai, 30 menit (§11-§14).
+ */
+export async function resetPassword(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    const parsed = resetPasswordSchema.safeParse({
+      token: String(formData.get("token") ?? ""),
+      newPassword: String(formData.get("newPassword") ?? ""),
+      confirmPassword: String(formData.get("confirmPassword") ?? ""),
+    });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+
+    const { token: raw, newPassword } = parsed.data;
+    const hash = hashToken(raw);
+
+    const record = await prisma.passwordResetToken.findUnique({
+      where: { tokenHash: hash },
+      include: { adminUser: true },
+    });
+
+    if (!record || record.usedAt || record.expiresAt.getTime() <= Date.now()) {
+      return {
+        ok: false,
+        error: "Link reset password tidak valid atau sudah kedaluwarsa.",
+      };
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await prisma.$transaction([
+      prisma.adminUser.update({
+        where: { id: record.adminUserId },
+        data: { passwordHash },
+      }),
+      prisma.passwordResetToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+
+    // Invalidate token lain yang masih aktif untuk user yang sama (opsional hardening)
+    await prisma.passwordResetToken
+      .updateMany({
+        where: {
+          adminUserId: record.adminUserId,
+          usedAt: null,
+          id: { not: record.id },
+        },
+        data: { usedAt: new Date() },
+      })
+      .catch(() => undefined);
+
+    return {
+      ok: true,
+      message: "Password berhasil diubah. Silakan login dengan password baru.",
+    };
+  } catch (err) {
+    console.error("[resetPassword]", err);
+    return {
+      ok: false,
+      error: "Link reset password tidak valid atau sudah kedaluwarsa.",
+    };
   }
 }
 
