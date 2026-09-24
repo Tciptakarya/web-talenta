@@ -1,517 +1,431 @@
 {
   ".codex/hooks.json": {
     "mtime": 1789307866.8406153,
-    "seen": 1790232965.0097425,
     "ast_hash": "f833ac6967a12d67137d354b65c1ae3b",
     "semantic_hash": "f833ac6967a12d67137d354b65c1ae3b"
   },
   "app/(public)/page.tsx": {
     "mtime": 1790104982.9969304,
-    "seen": 1790232965.0097523,
     "ast_hash": "90c14ab20b07286f2769d4540357b3e7",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/galeri/page.tsx": {
     "mtime": 1790104341.7312844,
-    "seen": 1790232965.0097542,
     "ast_hash": "5c291cd0c29c482f620e0e7c839f93ce",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/layout.tsx": {
     "mtime": 1790108941.6475213,
-    "seen": 1790232965.0097566,
     "ast_hash": "34c46c446d1a7d6759c864b2872f0c20",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/page.tsx": {
     "mtime": 1790120451.8579023,
-    "seen": 1790232965.0097578,
     "ast_hash": "e72081a90aefee5c0c04fc45b8bd87e7",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/pesan/page.tsx": {
     "mtime": 1790092159.4578462,
-    "seen": 1790232965.0097587,
     "ast_hash": "79e8515d2b561e541844228d3e00dd38",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/program/page.tsx": {
     "mtime": 1790104269.3588283,
-    "seen": 1790232965.0097597,
     "ast_hash": "4929b6a785809b7c31548d5d8a9c10d5",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/testimoni/page.tsx": {
     "mtime": 1790092129.3859172,
-    "seen": 1790232965.0097606,
     "ast_hash": "c6bdf32232c124d5d4d32993a336107f",
     "semantic_hash": ""
   },
   "app/admin/actions.ts": {
     "mtime": 1790151331.843153,
-    "seen": 1790232965.0097616,
     "ast_hash": "ea7749f91b1135821fc4c9214f995b77",
     "semantic_hash": ""
   },
   "app/admin/login/page.tsx": {
     "mtime": 1790092076.7346742,
-    "seen": 1790232965.009764,
     "ast_hash": "200f159b751b5381e7ae589ca0789cb0",
     "semantic_hash": ""
   },
   "app/api/auth/[...nextauth]/route.ts": {
     "mtime": 1790092007.7116723,
-    "seen": 1790232965.0097659,
     "ast_hash": "9f8c0bd10a4bc6be80ab25e09f6f4bd7",
     "semantic_hash": ""
   },
   "app/api/contact/route.ts": {
     "mtime": 1790092007.7096708,
-    "seen": 1790232965.0097668,
     "ast_hash": "42e68096ac62ff353307a150f1c2af5a",
     "semantic_hash": ""
   },
   "app/api/upload/route.ts": {
     "mtime": 1790104403.9465039,
-    "seen": 1790232965.0097678,
     "ast_hash": "9865b6e2fee6dc565ac1e677beb09f41",
     "semantic_hash": ""
   },
   "app/layout.tsx": {
     "mtime": 1790109276.8180573,
-    "seen": 1790232965.0097687,
     "ast_hash": "121c66b66338104fa95c91bc65c38b48",
     "semantic_hash": ""
   },
   "components/admin/GaleriList.tsx": {
     "mtime": 1790104427.7881505,
-    "seen": 1790232965.0097704,
     "ast_hash": "ecccb7116c6c5b6a47ca05bffdce3308",
     "semantic_hash": ""
   },
   "components/admin/LoginForm.tsx": {
     "mtime": 1790151339.0956123,
-    "seen": 1790232965.009773,
     "ast_hash": "bc694caf65e440a3f962c1d1f8af7b4b",
     "semantic_hash": ""
   },
   "components/admin/PesanList.tsx": {
     "mtime": 1790092159.4502423,
-    "seen": 1790232965.009774,
     "ast_hash": "e67a12adb2360f74aeb96d657519c860",
     "semantic_hash": ""
   },
   "components/admin/ProgramManager.tsx": {
     "mtime": 1790105879.518283,
-    "seen": 1790232965.009775,
     "ast_hash": "f74e34db6a3248e909c1f74cf2179dbf",
     "semantic_hash": ""
   },
   "components/admin/SignOutButton.tsx": {
     "mtime": 1790092076.7346742,
-    "seen": 1790232965.0097768,
     "ast_hash": "b51d86e6155f22297095e3ade379a1bd",
     "semantic_hash": ""
   },
   "components/admin/TestimoniManager.tsx": {
     "mtime": 1790092159.4512606,
-    "seen": 1790232965.009778,
     "ast_hash": "6c714e081aee619b55b8f9c1f0911e8e",
     "semantic_hash": ""
   },
   "components/admin/UploadForm.tsx": {
     "mtime": 1790104317.364573,
-    "seen": 1790232965.0097787,
     "ast_hash": "b0b0bab055018f348f75c6b1f44c19a9",
     "semantic_hash": ""
   },
   "components/site/Footer.tsx": {
     "mtime": 1790091950.2022667,
-    "seen": 1790232965.0097797,
     "ast_hash": "a1f751ab17bebb5e6dc65b8db0d7022b",
     "semantic_hash": ""
   },
   "components/site/GalleryGrid.tsx": {
     "mtime": 1790091950.2240605,
-    "seen": 1790232965.0097804,
     "ast_hash": "24dbf6cddb78aadc280d710f67a45413",
     "semantic_hash": ""
   },
   "components/site/Header.tsx": {
     "mtime": 1790108926.3512628,
-    "seen": 1790232965.0097816,
     "ast_hash": "3457039d6ad696ab9ccae3ef5c33ab87",
     "semantic_hash": ""
   },
   "components/site/HeroAbout.tsx": {
     "mtime": 1790091873.6561778,
-    "seen": 1790232965.0097826,
     "ast_hash": "56446f5988317e5612b932f234735be7",
     "semantic_hash": ""
   },
   "components/site/Kontak.tsx": {
     "mtime": 1790091950.2012672,
-    "seen": 1790232965.0097835,
     "ast_hash": "9a3ab0071526a7c0ea3716970f846d4a",
     "semantic_hash": ""
   },
   "components/site/Layanan.tsx": {
     "mtime": 1790104946.2592306,
-    "seen": 1790232965.0097842,
     "ast_hash": "fc7b6b4d2b8e2da78529e03682b5c02b",
     "semantic_hash": ""
   },
   "components/site/Lokasi.tsx": {
     "mtime": 1790092007.7236705,
-    "seen": 1790232965.0097852,
     "ast_hash": "6e88717416679ad077d9d0e16b735e8a",
     "semantic_hash": ""
   },
   "components/site/ProgramIcon.tsx": {
     "mtime": 1790091826.1480143,
-    "seen": 1790232965.0097861,
     "ast_hash": "bc211f4a127fccd942eb1a5014263c7c",
     "semantic_hash": ""
   },
   "components/site/Reveal.tsx": {
     "mtime": 1790091969.5122247,
-    "seen": 1790232965.009787,
     "ast_hash": "6f47004fbe057d7a3c788c8e65eed213",
     "semantic_hash": ""
   },
   "components/site/Testimoni.tsx": {
     "mtime": 1790091950.2002683,
-    "seen": 1790232965.0097885,
     "ast_hash": "03e110456bfe0a0b038f98b21fa7ba3d",
     "semantic_hash": ""
   },
   "components/site/ToTop.tsx": {
     "mtime": 1790091826.1480143,
-    "seen": 1790232965.0097902,
     "ast_hash": "40765980a2deb24b74b8c45d6b989ada",
     "semantic_hash": ""
   },
   "legacy/script.js": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.009791,
     "ast_hash": "ed881480ccfac28d731a40a07c3dd558",
     "semantic_hash": ""
   },
   "lib/auth.config.ts": {
     "mtime": 1790091538.6585772,
-    "seen": 1790232965.009792,
     "ast_hash": "a3be5bb1a14b0bbc226f963f93c43a03",
     "semantic_hash": ""
   },
   "lib/auth.ts": {
     "mtime": 1790091538.6595836,
-    "seen": 1790232965.009793,
     "ast_hash": "ab89e7b120e56632178bcd63b23bf6d7",
     "semantic_hash": ""
   },
   "lib/content.ts": {
     "mtime": 1790097312.5811162,
-    "seen": 1790232965.0097938,
     "ast_hash": "40a547803b8282e74ab35030ba38f8c7",
     "semantic_hash": ""
   },
   "lib/data.ts": {
     "mtime": 1790105433.5095732,
-    "seen": 1790232965.0097945,
     "ast_hash": "3fc9be59ec65994584d68387b0f4b685",
     "semantic_hash": ""
   },
   "lib/prisma.ts": {
     "mtime": 1790091538.6505868,
-    "seen": 1790232965.0097961,
     "ast_hash": "99b306fa22f7422124fb41568c4d9414",
     "semantic_hash": ""
   },
   "lib/resend.ts": {
     "mtime": 1790151294.190976,
-    "seen": 1790232965.0097978,
     "ast_hash": "dddbe942c925c3455770840507f85a53",
     "semantic_hash": ""
   },
   "lib/schemas.ts": {
     "mtime": 1790151298.2197368,
-    "seen": 1790232965.0097988,
     "ast_hash": "6bba4e0b8e932c55d3c6a9f114560d87",
     "semantic_hash": ""
   },
   "lib/storage.ts": {
     "mtime": 1790091538.6595836,
-    "seen": 1790232965.0098007,
     "ast_hash": "1c5d559ed3f48cb16c09eaef1a33b956",
     "semantic_hash": ""
   },
   "middleware.ts": {
     "mtime": 1790151301.6228585,
-    "seen": 1790232965.0098014,
     "ast_hash": "b9cf3d9580bbfd7b90293b209f3d75ae",
     "semantic_hash": ""
   },
   "next.config.ts": {
     "mtime": 1790091308.755456,
-    "seen": 1790232965.0098023,
     "ast_hash": "3392d2d3077acfc5721f2dd3a61be44e",
     "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1790157449.7606041,
-    "seen": 1790232965.009803,
     "ast_hash": "b68e0aabc19efbe2f85bb3c3b05800a2",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
     "mtime": 1790091308.7544575,
-    "seen": 1790232965.009804,
     "ast_hash": "0f8aa602547b154dc06be77b007c51d2",
     "semantic_hash": ""
   },
   "prisma/seed.ts": {
     "mtime": 1790147190.402716,
-    "seen": 1790232965.009806,
     "ast_hash": "482632f3a540725b8d853240e850fe7b",
     "semantic_hash": ""
   },
   "tsconfig.json": {
     "mtime": 1790157449.761603,
-    "seen": 1790232965.0098066,
     "ast_hash": "cf63588480bf4d9eae57191c31d6a15c",
     "semantic_hash": ""
   },
   "AGENTS.md": {
     "mtime": 1789307866.8087342,
-    "seen": 1790232965.0098076,
     "ast_hash": "21ceb6533048be51308e69e7b74a35cf",
     "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1790147101.445706,
-    "seen": 1790232965.0098093,
     "ast_hash": "0454d78e782c898e6588ef264027ab81",
     "semantic_hash": ""
   },
   "legacy/index.html": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.00981,
     "ast_hash": "2d2ea7dd84735ee2509b5421d27e54b7",
     "semantic_hash": ""
   },
   "app/icon.png": {
     "mtime": 1790091229.0897796,
-    "seen": 1790232965.0098107,
     "ast_hash": "273068a55acf63fd724638478c819f5c",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-01.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098116,
     "ast_hash": "5fafa54b3493a3610821fa199c830378",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-02.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098126,
     "ast_hash": "7fa95a47d2492f6bdf1156dfda0820c2",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-03.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098135,
     "ast_hash": "3a86d7ab2e0398e0496b55ad5c26b993",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-06.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098143,
     "ast_hash": "3ee632b251d3b1cc7292d7cc0b96b1b7",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-07.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098152,
     "ast_hash": "9525e42253a6f68074d00f3a1a49bd64",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-08.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098162,
     "ast_hash": "04bb88cd55ff0ae86fb0382836481d51",
     "semantic_hash": ""
   },
   "public/favicon.png": {
     "mtime": 1790091229.0897796,
-    "seen": 1790232965.0098166,
     "ast_hash": "273068a55acf63fd724638478c819f5c",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-01.jpg": {
     "mtime": 1790091229.0937834,
-    "seen": 1790232965.0098176,
     "ast_hash": "fbda2729a292605ed5ddec373c916225",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-02.jpg": {
     "mtime": 1790091229.1009748,
-    "seen": 1790232965.0098183,
     "ast_hash": "c8f1170ae89e56747537688e772d5133",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-03.jpg": {
     "mtime": 1790091229.1019735,
-    "seen": 1790232965.009819,
     "ast_hash": "a0727d2f2f8b5b5940f571c3157d4824",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-04.jpg": {
     "mtime": 1790091229.1029737,
-    "seen": 1790232965.00982,
     "ast_hash": "579235ba8a2768e53d74074a5080611d",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-05.jpg": {
     "mtime": 1790091229.1039736,
-    "seen": 1790232965.0098207,
     "ast_hash": "fd4b1e06c663c4a773be63c729915b84",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-06.jpg": {
     "mtime": 1790091229.1059732,
-    "seen": 1790232965.0098217,
     "ast_hash": "e28a71f17daa96a2bb9a29820ddd8de6",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-01.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098224,
     "ast_hash": "5fafa54b3493a3610821fa199c830378",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-02.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098233,
     "ast_hash": "7fa95a47d2492f6bdf1156dfda0820c2",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-03.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098243,
     "ast_hash": "3a86d7ab2e0398e0496b55ad5c26b993",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-06.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.009825,
     "ast_hash": "3ee632b251d3b1cc7292d7cc0b96b1b7",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-07.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.0098257,
     "ast_hash": "9525e42253a6f68074d00f3a1a49bd64",
     "semantic_hash": ""
   },
   "public/images/gallery/kelas-komputer-scratch-08.jpeg": {
     "mtime": 1788674784.0,
-    "seen": 1790232965.009827,
     "ast_hash": "04bb88cd55ff0ae86fb0382836481d51",
     "semantic_hash": ""
   },
   "public/logo.png": {
     "mtime": 1790091229.0927794,
-    "seen": 1790232965.0098276,
     "ast_hash": "273068a55acf63fd724638478c819f5c",
     "semantic_hash": ""
   },
   "app/(public)/kelas/[slug]/page.tsx": {
     "mtime": 1790107231.6081352,
-    "seen": 1790232965.0097485,
     "ast_hash": "30859807ddb22c81add3495a33b0ba8e",
     "semantic_hash": ""
   },
   "app/(public)/kelas/page.tsx": {
     "mtime": 1790104461.4619043,
-    "seen": 1790232965.0097508,
     "ast_hash": "205b104b0da383ab66f19ad73ed1f3d4",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/kategori/page.tsx": {
     "mtime": 1790104035.3717017,
-    "seen": 1790232965.0097554,
     "ast_hash": "f71187811d6250fe63bbdb3f8a1aeb95",
     "semantic_hash": ""
   },
   "components/admin/KategoriManager.tsx": {
     "mtime": 1790105855.7734053,
-    "seen": 1790232965.0097723,
     "ast_hash": "7cf85ec0085f3c24d5e922e745e82cf7",
     "semantic_hash": ""
   },
   "lib/slug.ts": {
     "mtime": 1790097029.6404727,
-    "seen": 1790232965.0098,
     "ast_hash": "cdd6a3c631bd4a536644c264fce30be3",
     "semantic_hash": ""
   },
   "prisma/migrate-categories.ts": {
     "mtime": 1790097204.000066,
-    "seen": 1790232965.0098047,
     "ast_hash": "c57960c1b920a32ce4375b84909c2adc",
     "semantic_hash": ""
   },
   "components/site/ThemeToggle.tsx": {
     "mtime": 1790108905.7551692,
-    "seen": 1790232965.0097892,
     "ast_hash": "9113afe060cc77679958acb9a7f5739f",
     "semantic_hash": ""
   },
   "components/admin/GantiPasswordForm.tsx": {
     "mtime": 1790120451.819903,
-    "seen": 1790232965.0097716,
     "ast_hash": "4fa37803c888d58ed88af2275b751961",
     "semantic_hash": ""
   },
   "DEPLOY.md": {
     "mtime": 1790147217.6790626,
-    "seen": 1790232965.0098083,
     "ast_hash": "0f26630ec77b87337c9a41bac497faa5",
     "semantic_hash": ""
   },
   "app/admin/forgot-password/page.tsx": {
     "mtime": 1790151358.7025115,
-    "seen": 1790232965.0097628,
     "ast_hash": "37f6d7dddc1904bdae3cf6d6299f8ffa",
     "semantic_hash": ""
   },
   "app/admin/reset-password/page.tsx": {
     "mtime": 1790151363.2858956,
-    "seen": 1790232965.0097651,
     "ast_hash": "48d023889aa0c47fa8aa87943a1ba44c",
     "semantic_hash": ""
   },
   "components/admin/ForgotPasswordForm.tsx": {
     "mtime": 1790151345.4939175,
-    "seen": 1790232965.0097697,
     "ast_hash": "4fc1afdff6b28a8a47b9e6332248855c",
     "semantic_hash": ""
   },
   "components/admin/ResetPasswordForm.tsx": {
     "mtime": 1790151352.6075878,
-    "seen": 1790232965.0097759,
     "ast_hash": "2d89c0f5878512b0e9227f9bd2944814",
     "semantic_hash": ""
   },
   "lib/passwordReset.ts": {
     "mtime": 1790151278.1259713,
-    "seen": 1790232965.0097954,
     "ast_hash": "82207527de2e7789f6f9aa77a8be3104",
     "semantic_hash": ""
   },
   "lib/rateLimit.ts": {
     "mtime": 1790151282.9348338,
-    "seen": 1790232965.0097969,
     "ast_hash": "208405f9e1821be310bbd1e0b4d74787",
     "semantic_hash": ""
   }
