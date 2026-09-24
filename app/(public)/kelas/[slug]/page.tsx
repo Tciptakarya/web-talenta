@@ -1,5 +1,11 @@
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getProgramsByCategory, getGalleryByCategory, getActiveCategories } from "@/lib/data";
+import {
+  getCategoryBySlug,
+  getProgramsByCategory,
+  getGalleryByCategory,
+  getActiveCategories,
+  getJadwalByCategory,
+} from "@/lib/data";
 import Link from "next/link";
 import Image from "next/image";
 import GalleryGrid from "@/components/site/GalleryGrid";
@@ -27,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
 
 function CategoryChips({ categories, currentSlug }: { categories: { slug: string; name: string }[]; currentSlug: string }) {
   return (
-    <div className="flex flex-wrap gap-2 mb-8" role="group" aria-label="Filter kategori">
+    <div className="flex flex-wrap justify-center gap-2 mb-8" role="group" aria-label="Filter kategori">
       <Link
         href="/kelas"
         className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white text-navy border border-line hover:bg-paper transition"
@@ -58,22 +64,19 @@ export default async function KelasSlugPage({ params }: Props) {
     notFound();
   }
 
-  const [programs, gallery, allCategories] = await Promise.all([
+  const [programs, gallery, allCategories, jadwalList] = await Promise.all([
     getProgramsByCategory(category.id),
     getGalleryByCategory(category.id),
     getActiveCategories(),
+    getJadwalByCategory(category.id),
   ]);
-
-  if (!category || !category.isActive) {
-    notFound();
-  }
 
   // Filter programs & gallery by category.id
   const categoryPrograms = programs.filter((p) => p.categoryId === category.id);
   const categoryGallery = gallery.filter((g) => g.categoryId === category.id);
 
   return (
-    <div className="section section-alt" id="kelas-detail">
+    <div className="section section-alt section-page" id="kelas-detail">
       <div className="wrap">
         {/* Back to index */}
         <Link
@@ -137,13 +140,61 @@ export default async function KelasSlugPage({ params }: Props) {
 
         {/* Gallery */}
         {categoryGallery.length > 0 && (
-          <section aria-labelledby="gallery-heading">
+          <section aria-labelledby="gallery-heading" className="mb-12">
             <h2 id="gallery-heading" className="font-display text-2xl font-semibold text-navy mb-6">
               Galeri {category.name}
             </h2>
             <GalleryGrid items={categoryGallery} />
           </section>
         )}
+
+        {/* Jadwal Pelatihan */}
+        {jadwalList.length > 0 && (
+          <section aria-labelledby="jadwal-heading" className="mb-12">
+            <h2 id="jadwal-heading" className="font-display text-2xl font-semibold text-navy mb-6">
+              Jadwal Pelatihan
+            </h2>
+            <div className="rounded-2xl bg-white border border-line overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-line text-xs font-bold text-navy">
+                    <th className="px-4 py-3">Program</th>
+                    <th className="px-4 py-3">Hari</th>
+                    <th className="px-4 py-3">Waktu</th>
+                    <th className="px-4 py-3">Instruktur</th>
+                    <th className="px-4 py-3">Ruangan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jadwalList.map((j) => (
+                    <tr key={j.id} className="border-b border-line last:border-0">
+                      <td className="px-4 py-3 text-sm font-bold text-navy">
+                        {j.program.judul}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold">
+                          {j.hari}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
+                        {j.jamMulai} - {j.jamAkhir} WIB
+                      </td>
+                      <td className="px-4 py-3 text-sm text-ink">
+                        {j.instruktur ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-ink">
+                        {j.ruangan ?? "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* Materi Pelatihan sengaja tidak ditampilkan di halaman publik —
+            dikelola penuh lewat dashboard admin (/admin/materi). */}
       </div>
     </div>
   );

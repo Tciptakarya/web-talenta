@@ -234,6 +234,12 @@
 
   /* ---------- Section shells ---------- */
   .section{padding:104px 0;}
+  /* Anchor di bawah header fixed — beri ruang supaya judul section tidak
+     tertimpa header yang sudah mengecil (is-scrolled). */
+  section[id], div[id]{scroll-margin-top:170px;}
+  /* Halaman sub-publik (/kelas, /kelas/[slug]): konten harus mulai di bawah
+     header fixed yang belum scroll (logo 200px + padding 20px). */
+  .section-page{padding-top:280px;}
   .section-head{max-width:640px; margin-bottom:56px;}
   .section-head h2{font-size:clamp(30px,3.6vw,44px); font-weight:600; margin-top:14px;}
   .section-alt{background:var(--paper-alt);}
@@ -518,6 +524,7 @@
     .brand img{height:130px;}
     header.is-scrolled .brand img{height:90px;}
     .hero{padding-top:200px;}
+    .section-page{padding-top:190px;}
     nav.main-nav{
       position:fixed; top:0; right:0; height:100vh; width:78%; max-width:320px;
       background:#fff; flex-direction:column; align-items:flex-start; padding:100px 32px 40px;

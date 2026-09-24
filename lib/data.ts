@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
+import { HARI_LIST } from "@/lib/schemas";
 import {
   CATEGORIES,
   GALLERY_IMAGES,
@@ -239,6 +240,176 @@ export async function getGallery(): Promise<GalleryRow[]> {
 export async function getGalleryByCategory(categoryId: number) {
   const all = await getGallery();
   return all.filter((g) => g.categoryId === categoryId);
+}
+
+/* ── Jadwal & Materi Pelatihan ────────────────────────────────── */
+
+export type JadwalRow = {
+  id: number;
+  instruktur: string | null;
+  ruangan: string | null;
+  hari: string;
+  jamMulai: string;
+  jamAkhir: string;
+  programId: number;
+  program: { id: number; judul: string; slug: string };
+};
+
+export type MateriRow = {
+  id: number;
+  judul: string;
+  tipe: string;
+  fileUrl: string | null;
+  linkUrl: string | null;
+  programId: number;
+  program: { id: number; judul: string; slug: string };
+};
+
+/** Jadwal aktif per kategori — untuk tabel jadwal di /kelas/[slug]. */
+export async function getJadwalByCategory(
+  categoryId: number
+): Promise<JadwalRow[]> {
+  return safe(async () => {
+    return await prisma.jadwalPelatihan.findMany({
+      where: { isActive: true, program: { categoryId, isActive: true } },
+      include: {
+        program: { select: { id: true, judul: true, slug: true } },
+      },
+      orderBy: [{ urutan: "asc" }, { id: "asc" }],
+    });
+  }, []);
+}
+
+/**
+ * Materi aktif per kategori.
+ * CATATAN: materi tidak lagi ditampilkan di halaman publik /kelas/[slug];
+ * helper ini disimpan untuk keperluan admin/ekspor mendatang.
+ */
+export async function getMateriByCategory(
+  categoryId: number
+): Promise<MateriRow[]> {
+  return safe(async () => {
+    return await prisma.materiPelatihan.findMany({
+      where: { isActive: true, program: { categoryId, isActive: true } },
+      include: {
+        program: { select: { id: true, judul: true, slug: true } },
+      },
+      orderBy: [{ urutan: "asc" }, { id: "asc" }],
+    });
+  }, []);
+}
+
+/* ── Jadwal Kelas Terdekat (landing page) ─────────────────────── */
+
+export type UpcomingJadwalRow = {
+  id: number;
+  instruktur: string | null;
+  ruangan: string | null;
+  hari: string;
+  jamMulai: string;
+  jamAkhir: string;
+  programId: number;
+  program: { id: number; judul: string; slug: string; categorySlug: string | null };
+  /** 0 = hari ini, 1 = besok, 7 = pekan depan (jadwal hari ini sudah lewat). */
+  offsetDays: number;
+};
+
+/** Jam & hari saat ini dalam WIB (Asia/Jakarta) — WIB = zona waktu input jadwal. */
+function wibNow(now: Date): { dayIdx: number; minutes: number } {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Jakarta",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "Mon";
+  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
+  const minute = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
+  // 0 = Senin … 6 = Minggu — sinkron dengan urutan HARI_LIST.
+  const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const idx = order.indexOf(weekday);
+  return { dayIdx: idx < 0 ? 0 : idx, minutes: (hour % 24) * 60 + (minute % 60) };
+}
+
+function hhmmToMinutes(hhmm: string): number {
+  const [h, m] = hhmm.split(":").map(Number);
+  return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
+}
+
+/**
+ * Jadwal aktif paling dekat untuk section landing "Jadwal Kelas Terdekat".
+ * Diurutkan berdasarkan occurrence berikutnya (zona Asia/Jakarta): jadwal hari
+ * ini yang sudah selesai digeser ke pekan depan; yang sedang berlangsung tetap
+ * hari ini. Maksimal `limit` baris.
+ */
+export async function getUpcomingJadwal(
+  limit = 8
+): Promise<UpcomingJadwalRow[]> {
+  const rows = await safe(async () => {
+    return await prisma.jadwalPelatihan.findMany({
+      where: { isActive: true, program: { isActive: true } },
+      include: {
+        program: {
+          select: {
+            id: true,
+            judul: true,
+            slug: true,
+            urutan: true,
+            category: { select: { slug: true, isActive: true } },
+          },
+        },
+      },
+    });
+  }, [] as (JadwalRow & {
+    program: {
+      id: number;
+      judul: string;
+      slug: string;
+      urutan: number;
+      category: { slug: string; isActive: boolean } | null;
+    };
+  })[]);
+
+  const { dayIdx, minutes } = wibNow(new Date());
+
+  return rows
+    // Sembunyikan program non-aktif kategori (kategori null tetap tampil → link /kelas).
+    .filter((j) => !j.program.category || j.program.category.isActive)
+    .map((j) => {
+      const target = HARI_LIST.indexOf(
+        j.hari as (typeof HARI_LIST)[number]
+      );
+      let offsetDays = 99; // hari tidak dikenal → urutkan paling akhir
+      if (target >= 0) {
+        offsetDays = (target - dayIdx + 7) % 7;
+        // Sudah lewat hari ini → tampil sebagai jadwal pekan depan.
+        if (offsetDays === 0 && minutes >= hhmmToMinutes(j.jamAkhir)) {
+          offsetDays = 7;
+        }
+      }
+      return {
+        id: j.id,
+        instruktur: j.instruktur,
+        ruangan: j.ruangan,
+        hari: j.hari,
+        jamMulai: j.jamMulai,
+        jamAkhir: j.jamAkhir,
+        programId: j.programId,
+        program: {
+          id: j.program.id,
+          judul: j.program.judul,
+          slug: j.program.slug,
+          categorySlug: j.program.category?.slug ?? null,
+        },
+        offsetDays,
+        _sort: offsetDays * 1440 + hhmmToMinutes(j.jamMulai),
+        _tie: j.program.urutan * 10000 + j.id,
+      };
+    })
+    .sort((a, b) => a._sort - b._sort || a._tie - b._tie)
+    .slice(0, Math.max(0, limit))
+    .map(({ _sort: _s, _tie: _t, ...row }) => row);
 }
 
 /**

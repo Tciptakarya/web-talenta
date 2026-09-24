@@ -5,11 +5,15 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { removeImage } from "@/lib/storage";
+import { removeImage, storeImage } from "@/lib/storage";
 import {
   categorySchema,
   programSchema,
   testimonialSchema,
+  jadwalSchema,
+  materiSchema,
+  ALLOWED_MATERI_TYPES,
+  MAX_MATERI_BYTES,
   gantiPasswordSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -633,6 +637,212 @@ export async function resetPassword(
       error: "Link reset password tidak valid atau sudah kedaluwarsa.",
     };
   }
+}
+
+/* ------------------------------- Jadwal Pelatihan ------------------------------ */
+
+export async function createJadwal(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const parsed = jadwalSchema.safeParse({
+      programId: formData.get("programId"),
+      instruktur: formData.get("instruktur") ?? "",
+      ruangan: formData.get("ruangan") ?? "",
+      hari: formData.get("hari"),
+      jamMulai: formData.get("jamMulai"),
+      jamAkhir: formData.get("jamAkhir"),
+      urutan: formData.get("urutan") || 0,
+      isActive: formData.get("isActive") === "on",
+    });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+    const { instruktur, ruangan, ...data } = parsed.data;
+    await prisma.jadwalPelatihan.create({
+      data: { ...data, instruktur: instruktur || null, ruangan: ruangan || null },
+    });
+    refresh();
+    return { ok: true, message: "Jadwal pelatihan ditambahkan." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function updateJadwal(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const parsed = jadwalSchema
+      .extend({ id: z.coerce.number().int().positive() })
+      .safeParse({
+        id: formData.get("id"),
+        programId: formData.get("programId"),
+        instruktur: formData.get("instruktur") ?? "",
+        ruangan: formData.get("ruangan") ?? "",
+        hari: formData.get("hari"),
+        jamMulai: formData.get("jamMulai"),
+        jamAkhir: formData.get("jamAkhir"),
+        urutan: formData.get("urutan") || 0,
+        isActive: formData.get("isActive") === "on",
+      });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+    const { id, instruktur, ruangan, ...data } = parsed.data;
+    await prisma.jadwalPelatihan.update({
+      where: { id },
+      data: { ...data, instruktur: instruktur || null, ruangan: ruangan || null },
+    });
+    refresh();
+    return { ok: true, message: "Jadwal pelatihan diperbarui." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** Dipakai langsung sebagai form action (pola deleteTestimonial). */
+export async function deleteJadwal(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+  await prisma.jadwalPelatihan.delete({ where: { id } }).catch(() => undefined);
+  refresh();
+}
+
+/* ------------------------------- Materi Pelatihan ----------------------------- */
+
+/** Validasi & simpan file materi dari form. Return null bila tidak ada file. */
+async function materiFileFromFormData(formData: FormData): Promise<string | null> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) return null;
+  if (!(ALLOWED_MATERI_TYPES as readonly string[]).includes(file.type)) {
+    throw new Error(
+      "Tipe file tidak didukung. Gunakan PDF, Word, PowerPoint, JPG/PNG, atau MP4."
+    );
+  }
+  if (file.size > MAX_MATERI_BYTES) {
+    throw new Error(
+      `Ukuran file maksimal ${Math.round(MAX_MATERI_BYTES / 1024 / 1024)}MB. Untuk file lebih besar, gunakan Link URL (GDrive/YouTube).`
+    );
+  }
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return storeImage(buffer, `materi-${Date.now()}-${safeName}`);
+}
+
+export async function createMateri(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const parsed = materiSchema.safeParse({
+      programId: formData.get("programId"),
+      judul: formData.get("judul"),
+      tipe: formData.get("tipe"),
+      fileUrl: "",
+      linkUrl: formData.get("linkUrl") ?? "",
+      urutan: formData.get("urutan") || 0,
+      isActive: formData.get("isActive") === "on",
+    });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+    const fileUrl = await materiFileFromFormData(formData);
+    if (!fileUrl && !parsed.data.linkUrl) {
+      return {
+        ok: false,
+        error: "Upload file materi atau isi Link URL — salah satu wajib diisi.",
+      };
+    }
+    const { linkUrl, fileUrl: _ignored, ...data } = parsed.data;
+    await prisma.materiPelatihan.create({
+      data: { ...data, linkUrl: linkUrl || null, fileUrl },
+    });
+    refresh();
+    return { ok: true, message: "Materi pelatihan ditambahkan." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function updateMateri(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const parsed = materiSchema
+      .extend({ id: z.coerce.number().int().positive() })
+      .safeParse({
+        id: formData.get("id"),
+        programId: formData.get("programId"),
+        judul: formData.get("judul"),
+        tipe: formData.get("tipe"),
+        fileUrl: formData.get("fileUrl") ?? "",
+        linkUrl: formData.get("linkUrl") ?? "",
+        urutan: formData.get("urutan") || 0,
+        isActive: formData.get("isActive") === "on",
+      });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+    const { id, linkUrl, ...data } = parsed.data;
+    const existing = await prisma.materiPelatihan.findUnique({ where: { id } });
+    if (!existing) {
+      return { ok: false, error: "Materi tidak ditemukan." };
+    }
+    const newFileUrl = await materiFileFromFormData(formData);
+    const fileUrl = newFileUrl ?? existing.fileUrl;
+    if (!fileUrl && !linkUrl) {
+      return {
+        ok: false,
+        error: "Upload file materi atau isi Link URL — salah satu wajib diisi.",
+      };
+    }
+    await prisma.materiPelatihan.update({
+      where: { id },
+      data: { ...data, linkUrl: linkUrl || null, fileUrl },
+    });
+    // File diganti → hapus file lama setelah update berhasil
+    if (newFileUrl && existing.fileUrl && existing.fileUrl !== newFileUrl) {
+      await removeImage(existing.fileUrl);
+    }
+    refresh();
+    return { ok: true, message: "Materi pelatihan diperbarui." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** Dipakai langsung sebagai form action — hapus record + file storage-nya. */
+export async function deleteMateri(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+  const existing = await prisma.materiPelatihan
+    .findUnique({ where: { id } })
+    .catch(() => null);
+  await prisma.materiPelatihan.delete({ where: { id } }).catch(() => undefined);
+  if (existing?.fileUrl) await removeImage(existing.fileUrl);
+  refresh();
 }
 
 /* ------------------------------------ Wrapper untuk form action langsung ----------------------------------- */

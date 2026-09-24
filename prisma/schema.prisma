@@ -37,6 +37,8 @@ model Program {
   categoryId  Int?
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   gallery     GalleryImage[]
+  jadwal      JadwalPelatihan[]
+  materi      MateriPelatihan[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -97,4 +99,41 @@ model PasswordResetToken {
 
   @@index([adminUserId])
   @@index([expiresAt])
+}
+
+/// Jadwal pelatihan — 1 Program → N jadwal (slot hari/jam berbeda).
+/// Ditampilkan di Admin > Jadwal Pelatihan & halaman publik /kelas/[slug].
+model JadwalPelatihan {
+  id         Int      @id @default(autoincrement())
+  programId  Int
+  program    Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  instruktur String? // teks bebas, mis. "Budi Santoso"
+  ruangan    String? // teks bebas, mis. "Ruangan Praktek"
+  hari       String // "Senin".."Minggu" (divalidasi Zod, bukan enum agar fleksibel)
+  jamMulai   String // "08:00" (HH:MM)
+  jamAkhir   String // "10:00" (HH:MM)
+  urutan     Int     @default(0)
+  isActive   Boolean @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([programId])
+}
+
+/// Materi pelatihan — file terupload (Blob//uploads) ATAU link eksternal (wajib salah satu).
+/// Tipe: "VIDEO" | "MODUL CETAK" | "PDF" | "SLIDE" (divalidasi Zod).
+model MateriPelatihan {
+  id        Int      @id @default(autoincrement())
+  programId Int
+  program   Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  judul     String
+  tipe      String
+  fileUrl   String? // hasil upload via storeImage (Vercel Blob / public/uploads)
+  linkUrl   String? // URL eksternal (YouTube, GDrive, dll.)
+  urutan    Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([programId])
 }

@@ -91,3 +91,73 @@ export const ALLOWED_IMAGE_TYPES = [
 ] as const;
 
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB sebelum kompresi
+
+/* ------------------------------ Jadwal Pelatihan ------------------------------ */
+
+export const HARI_LIST = [
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+  "Minggu",
+] as const;
+
+const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/** Jadwal pelatihan — relasi Program → N jadwal, jam pakai format HH:MM. */
+export const jadwalSchema = z
+  .object({
+    programId: z.coerce.number().int().positive("Program wajib dipilih"),
+    instruktur: z.string().trim().max(80).optional().or(z.literal("")),
+    ruangan: z.string().trim().max(80).optional().or(z.literal("")),
+    hari: z.enum(HARI_LIST, "Hari wajib dipilih"),
+    jamMulai: z.string().regex(timeRegex, "Format jam mulai tidak valid (HH:MM)"),
+    jamAkhir: z.string().regex(timeRegex, "Format jam selesai tidak valid (HH:MM)"),
+    urutan: z.coerce.number().int().min(0).max(999).default(0),
+    isActive: z.boolean(),
+  })
+  .refine((d) => d.jamAkhir > d.jamMulai, {
+    message: "Jam selesai harus setelah jam mulai",
+    path: ["jamAkhir"],
+  });
+
+export type JadwalInput = z.infer<typeof jadwalSchema>;
+
+/* ------------------------------ Materi Pelatihan ------------------------------ */
+
+export const MATERI_TIPE_LIST = [
+  "VIDEO",
+  "MODUL CETAK",
+  "PDF",
+  "SLIDE",
+] as const;
+
+export const ALLOWED_MATERI_TYPES = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "application/vnd.ms-powerpoint", // .ppt
+  "application/msword", // .doc
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "video/mp4",
+] as const;
+
+export const MAX_MATERI_BYTES = 10 * 1024 * 1024; // 10MB (di Vercel body limit ~4.5MB → pakai link utk file besar)
+
+/** Materi pelatihan — fileUrl/linkUrl dicek di action (wajib salah satu). */
+export const materiSchema = z.object({
+  programId: z.coerce.number().int().positive("Program wajib dipilih"),
+  judul: z.string().trim().min(3, "Judul materi minimal 3 karakter").max(150),
+  tipe: z.enum(MATERI_TIPE_LIST, "Tipe materi wajib dipilih"),
+  fileUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  linkUrl: z
+    .union([z.url("Format URL materi tidak valid"), z.literal("")]),
+  urutan: z.coerce.number().int().min(0).max(999).default(0),
+  isActive: z.boolean(),
+});
+
+export type MateriInput = z.infer<typeof materiSchema>;

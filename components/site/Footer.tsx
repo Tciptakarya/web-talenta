@@ -1,12 +1,14 @@
 import Image from "next/image";
 
+// Anchor memakai path absolut (/#about) supaya berfungsi juga dari
+// halaman di luar beranda (mis. /kelas).
 const NAV_LINKS = [
-  { href: "#about", label: "Tentang Kami" },
-  { href: "#visimisi", label: "Visi & Misi" },
-  { href: "#layanan", label: "Layanan" },
-  { href: "#galeri", label: "Galeri" },
-  { href: "#lokasi", label: "Lokasi" },
-  { href: "#testimoni", label: "Testimoni" },
+  { href: "/#about", label: "Tentang Kami" },
+  { href: "/#visimisi", label: "Visi & Misi" },
+  { href: "/#layanan", label: "Layanan" },
+  { href: "/#galeri", label: "Galeri" },
+  { href: "/#lokasi", label: "Lokasi" },
+  { href: "/#testimoni", label: "Testimoni" },
 ];
 
 export default function Footer() {

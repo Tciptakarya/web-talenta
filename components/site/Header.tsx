@@ -4,13 +4,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/site/ThemeToggle";
 
+// Anchor memakai path absolut (/#about) supaya tetap berfungsi dari
+// halaman lain di luar beranda (mis. dari /kelas).
 const NAV_LINKS = [
-  { href: "#about", label: "Tentang Kami" },
-  { href: "#visimisi", label: "Visi & Misi" },
-  { href: "#layanan", label: "Layanan" },
-  { href: "#galeri", label: "Galeri" },
-  { href: "#lokasi", label: "Lokasi" },
-  { href: "#testimoni", label: "Testimoni" },
+  { href: "/#about", label: "Tentang Kami" },
+  { href: "/#visimisi", label: "Visi & Misi" },
+  { href: "/#layanan", label: "Layanan" },
+  { href: "/#galeri-lainnya", label: "Galeri" },
+  { href: "/#lokasi", label: "Lokasi" },
+  { href: "/#testimoni", label: "Testimoni" },
 ];
 
 /** Header v1: state scroll, menu mobile, tombol close di dalam nav. */
@@ -37,7 +39,7 @@ export default function Header() {
   return (
     <header id="siteHeader" className={scrolled ? "is-scrolled" : undefined}>
       <div className="wrap">
-        <a href="#top" className="brand">
+        <a href="/#top" className="brand">
           <Image
             src="/logo.png"
             alt="Talenta Cipta Karya"
@@ -63,7 +65,7 @@ export default function Header() {
         </nav>
         <div className="nav-cta">
           <ThemeToggle />
-          <a href="#kontak" className="btn btn-ghost">
+          <a href="/#kontak" className="btn btn-ghost">
             Hubungi Kami
           </a>
           <button

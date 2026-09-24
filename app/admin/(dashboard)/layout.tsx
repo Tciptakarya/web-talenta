@@ -13,6 +13,8 @@ const NAV = [
   { href: "/admin/galeri", label: "Galeri" },
   { href: "/admin/testimoni", label: "Testimoni" },
   { href: "/admin/program", label: "Program" },
+  { href: "/admin/jadwal", label: "Jadwal Pelatihan" },
+  { href: "/admin/materi", label: "Materi Pelatihan" },
   { href: "/admin/kategori", label: "Kategori Kelas" },
   { href: "/admin/pesan", label: "Pesan Masuk" },
 ];
