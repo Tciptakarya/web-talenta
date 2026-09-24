@@ -51,7 +51,7 @@ export default async function KelasIndexPage() {
           ← Kembali ke beranda
         </Link>
 
-        <div className="section-head text-center mb-12">
+        <div className="section-head text-center mb-12 mx-auto">
           <span className="kicker">Program Kelas</span>
           <h2>Pilih kategori untuk melihat program pelatihan</h2>
         </div>
