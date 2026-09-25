@@ -37,6 +37,8 @@ export type GalleryRow = {
   urutan: number;
   categoryId: number | null;
   category: CategoryRow | null;
+  /** Program opsional — dipakai filter galeri publik (mis. "semua foto Barista"). */
+  program: { id: number; judul: string; slug: string } | null;
 };
 
 export type TestimonialRow = {
@@ -219,7 +221,10 @@ export async function getGallery(): Promise<GalleryRow[]> {
     async () => {
       const rows = await prisma.galleryImage.findMany({
         orderBy: [{ urutan: "asc" }, { uploadedAt: "desc" }],
-        include: { category: true },
+        include: {
+          category: true,
+          program: { select: { id: true, judul: true, slug: true } },
+        },
       });
       if (rows.length > 0) return rows;
       return GALLERY_IMAGES.map((g, i) => ({
@@ -230,6 +235,7 @@ export async function getGallery(): Promise<GalleryRow[]> {
         url: g.url,
         categoryId: fallbackCategory(g.kategoriSlug)?.id ?? null,
         category: fallbackCategory(g.kategoriSlug),
+        program: null,
       }));
     },
     GALLERY_IMAGES.map((g, i) => ({
@@ -240,6 +246,7 @@ export async function getGallery(): Promise<GalleryRow[]> {
       url: g.url,
       categoryId: fallbackCategory(g.kategoriSlug)?.id ?? null,
       category: fallbackCategory(g.kategoriSlug),
+      program: null,
     }))
   );
 }

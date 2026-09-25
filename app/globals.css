@@ -375,6 +375,16 @@
     background:rgba(255,255,255,.94); color:var(--navy); cursor:pointer; font-size:30px; line-height:1;
   }
   .lightbox-close:hover{background:var(--gold);}
+  /* Navigasi antar foto di lightbox (←/→ juga bekerja dari keyboard) */
+  .lightbox-nav{
+    position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border:0;
+    border-radius:50%; background:rgba(255,255,255,.92); color:var(--navy); cursor:pointer;
+    font-size:28px; line-height:1; display:grid; place-items:center;
+  }
+  .lightbox-nav:hover{background:var(--gold);}
+  .lightbox-nav--prev{left:10px;}
+  .lightbox-nav--next{right:10px;}
+  .lightbox-counter{color:var(--gold-dim); font-weight:600;}
 
   /* ---------- Lokasi (redesigned) ---------- */
   .lokasi-dark{
