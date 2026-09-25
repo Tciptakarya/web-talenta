@@ -20,15 +20,24 @@ export const categorySchema = z.object({
 
 export type CategoryInput = z.infer<typeof categorySchema>;
 
-/** Upload galeri — kategori sekarang relasi Category (bukan string bebas). */
-export const uploadSchema = z.object({
+/**
+ * Meta foto galeri — dipakai upload (/api/upload) DAN edit inline dashboard.
+ * Kategori wajib; program opsional (harus satu kategori — dicek di server)
+ * supaya halaman publik bisa memfilter "semua foto Barista" bila diperlukan.
+ */
+export const gallerySchema = z.object({
   categoryId: z.coerce
     .number()
     .int()
     .positive("Kategori wajib dipilih"),
+  programId: z
+    .union([z.coerce.number().int().positive(), z.literal("")])
+    .optional(),
   caption: z.string().trim().min(2, "Caption minimal 2 karakter").max(200),
   alt: z.string().trim().max(300).optional().or(z.literal("")),
 });
+
+export type GalleryInput = z.infer<typeof gallerySchema>;
 
 /** Program/kelas — nama, deskripsi, relasi kategori, dan status aktif. */
 export const programSchema = z.object({

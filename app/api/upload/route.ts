@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { storeImage } from "@/lib/storage";
+import { removeImage, storeImage } from "@/lib/storage";
 import {
   ALLOWED_IMAGE_TYPES,
   MAX_IMAGE_BYTES,
-  uploadSchema,
+  gallerySchema,
 } from "@/lib/schemas";
 
 export const runtime = "nodejs";
@@ -63,8 +63,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const meta = uploadSchema.safeParse({
+  const meta = gallerySchema.safeParse({
     categoryId: form.get("categoryId"),
+    programId: form.get("programId") ?? "",
     caption: form.get("caption") ?? "",
     alt: form.get("alt") ?? "",
   });
@@ -86,6 +87,32 @@ export async function POST(req: Request) {
     );
   }
 
+  // Program opsional — bila diisi, wajib bagian dari kategori yang dipilih.
+  const programIdValue =
+    typeof meta.data.programId === "number" ? meta.data.programId : null;
+  if (programIdValue !== null) {
+    const program = await prisma.program.findUnique({
+      where: { id: programIdValue },
+      select: { categoryId: true, judul: true },
+    });
+    if (!program) {
+      return NextResponse.json(
+        { ok: false, error: "Program tidak ditemukan." },
+        { status: 400 }
+      );
+    }
+    if (program.categoryId !== meta.data.categoryId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `Program "${program.judul}" bukan bagian dari kategori ${category.name}.`,
+        },
+        { status: 400 }
+      );
+    }
+  }
+
+  let url: string | null = null;
   try {
     const input = Buffer.from(await file.arrayBuffer());
 
@@ -96,22 +123,34 @@ export async function POST(req: Request) {
       .webp({ quality: 82 })
       .toBuffer();
 
-    const filename = `galeri-${Date.now()}.webp`;
-    const url = await storeImage(processed, filename);
+    // Suffix acak: beberapa file bisa diunggah bersamaan (multi-upload) sehingga
+    // Date.now() saja bisa bertabrakan di mode penyimpanan lokal.
+    const filename = `galeri-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.webp`;
+    url = await storeImage(processed, filename);
+
+    // Urutan = tertinggi + 1 (bukan count()+1 yang bisa duplikat setelah hapus).
+    const tertinggi = await prisma.galleryImage.aggregate({
+      _max: { urutan: true },
+    });
 
     const created = await prisma.galleryImage.create({
       data: {
         url,
         categoryId: meta.data.categoryId,
+        programId: programIdValue,
         caption: meta.data.caption,
         alt: meta.data.alt || null,
-        urutan: (await prisma.galleryImage.count()) + 1,
+        urutan: (tertinggi._max.urutan ?? 0) + 1,
       },
     });
 
     return NextResponse.json({ ok: true, image: created });
   } catch (err) {
     console.error("[upload] gagal:", err);
+    // Jangan tinggalkan file yatim di storage bila penyimpanan metadata gagal.
+    if (url) await removeImage(url);
     return NextResponse.json(
       { ok: false, error: "Upload gagal. Coba lagi dengan foto lain." },
       { status: 500 }

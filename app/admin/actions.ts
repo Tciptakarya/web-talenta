@@ -10,6 +10,7 @@ import {
   categorySchema,
   programSchema,
   testimonialSchema,
+  gallerySchema,
   jadwalSchema,
   hariDariTanggal,
   materiSchema,
@@ -415,6 +416,103 @@ export async function deleteGalleryImage(formData: FormData) {
   if (!image) return;
   await removeImage(image.url); // hapus dari Blob / folder uploads
   await prisma.galleryImage.delete({ where: { id } }).catch(() => undefined);
+  refresh();
+}
+
+/**
+ * Edit metadata foto tanpa hapus + upload ulang (caption/alt/kategori/program).
+ * Dipakai form inline di /admin/galeri (pola useActionState seperti updateJadwal).
+ */
+export async function updateGalleryImage(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const id = Number(formData.get("id"));
+    if (!Number.isFinite(id) || id <= 0) {
+      return { ok: false, error: "Foto tidak valid." };
+    }
+
+    const parsed = gallerySchema.safeParse({
+      categoryId: formData.get("categoryId"),
+      programId: formData.get("programId") ?? "",
+      caption: formData.get("caption") ?? "",
+      alt: formData.get("alt") ?? "",
+    });
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
+      };
+    }
+
+    const { categoryId, caption, alt } = parsed.data;
+    const programId =
+      typeof parsed.data.programId === "number" ? parsed.data.programId : null;
+
+    // Program opsional: bila diisi, wajib bagian dari kategori yang dipilih.
+    if (programId !== null) {
+      const program = await prisma.program.findUnique({
+        where: { id: programId },
+        select: { categoryId: true, judul: true },
+      });
+      if (!program) return { ok: false, error: "Program tidak ditemukan." };
+      if (program.categoryId !== categoryId) {
+        return {
+          ok: false,
+          error: `Program "${program.judul}" bukan bagian dari kategori yang dipilih.`,
+        };
+      }
+    }
+
+    await prisma.galleryImage.update({
+      where: { id },
+      data: { categoryId, programId, caption, alt: alt || null },
+    });
+
+    refresh();
+    return { ok: true, message: "Foto diperbarui." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/**
+ * Geser foto naik/turun dalam urutan tampil. Publik mengurutkan `urutan` asc
+ * (lib/data.ts: getGallery), jadi perubahan langsung terlihat di website.
+ * Setelah ditukar, SEMUA baris dinomori ulang 1..n — sekaligus merapikan
+ * `urutan` duplikat yang mungkin tersisa dari upload lama (count()+1).
+ */
+export async function moveGalleryImage(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const arah = String(formData.get("arah") ?? "");
+  if (!Number.isFinite(id) || !["up", "down"].includes(arah)) return;
+
+  const semua = await prisma.galleryImage.findMany({
+    orderBy: [{ urutan: "asc" }, { uploadedAt: "desc" }, { id: "asc" }],
+    select: { id: true },
+  });
+  const index = semua.findIndex((g) => g.id === id);
+  if (index < 0) return;
+
+  const target = arah === "up" ? index - 1 : index + 1;
+  if (target < 0 || target >= semua.length) return;
+
+  const urutanBaru = [...semua];
+  const [dipindah] = urutanBaru.splice(index, 1);
+  if (!dipindah) return;
+  urutanBaru.splice(target, 0, dipindah);
+
+  await prisma.$transaction(
+    urutanBaru.map((g, i) =>
+      prisma.galleryImage.update({
+        where: { id: g.id },
+        data: { urutan: i + 1 },
+      })
+    )
+  );
   refresh();
 }
 
