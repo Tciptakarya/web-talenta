@@ -8,15 +8,13 @@
   "6": "content.ts",
   "7": "script.js",
   "8": "package.json",
-  "9": "requestPasswordReset",
+  "9": "pendaftaran/route.ts",
   "10": "data.ts",
   "11": "JadwalManager.tsx",
   "12": "🚀 Panduan Publish — Hostinger Web Apps + Resend",
   "13": "MateriManager.tsx",
   "14": "(public)/layout.tsx",
   "15": "AGENTS.md",
-  "16": "schemas.ts",
   "17": "{ GET, POST }",
-  "18": "postcss.config.mjs",
-  "19": "reset-password/page.tsx"
+  "18": "postcss.config.mjs"
 }

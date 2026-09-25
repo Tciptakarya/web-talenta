@@ -1,17 +1,17 @@
 # Graph Report - tciptakarya-main  (2026-09-25)
 
 ## Corpus Check
-- 71 files · ~150,555 words
+- 76 files · ~155,659 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 446 nodes · 805 edges · 20 communities (17 shown, 3 thin omitted)
+- 477 nodes · 896 edges · 18 communities (15 shown, 3 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2ee58442`
+- Built from commit: `af975b79`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,28 +25,26 @@
 - content.ts
 - script.js
 - package.json
-- requestPasswordReset
+- pendaftaran/route.ts
 - data.ts
 - JadwalManager.tsx
 - 🚀 Panduan Publish — Hostinger Web Apps + Resend
 - MateriManager.tsx
 - (public)/layout.tsx
 - AGENTS.md
-- schemas.ts
 - { GET, POST }
-- reset-password/page.tsx
 
 ## God Nodes (most connected - your core abstractions)
-1. `next` - 23 edges
-2. `requireAdmin()` - 20 edges
-3. `refresh()` - 18 edges
-4. `react` - 18 edges
-5. `compilerOptions` - 16 edges
-6. `prisma` - 16 edges
+1. `next` - 24 edges
+2. `requireAdmin()` - 22 edges
+3. `refresh()` - 20 edges
+4. `react` - 19 edges
+5. `prisma` - 18 edges
+6. `compilerOptions` - 16 edges
 7. `safe()` - 12 edges
-8. `🚀 Panduan Publish — Hostinger Web Apps + Resend` - 11 edges
-9. `getActiveCategories()` - 9 edges
-10. `ActionState` - 9 edges
+8. `ymdWib()` - 11 edges
+9. `🚀 Panduan Publish — Hostinger Web Apps + Resend` - 11 edges
+10. `KelasSlugPage()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `JadwalEditRow()` --indirect_call--> `updateJadwal()`  [INFERRED]
@@ -55,19 +53,19 @@
   components/admin/MateriManager.tsx → app/admin/actions.ts
 - `JadwalPage()` --calls--> `ymdWib()`  [EXTRACTED]
   app/admin/(dashboard)/jadwal/page.tsx → lib/data.ts
-- `JadwalManager()` --indirect_call--> `createJadwal()`  [INFERRED]
-  components/admin/JadwalManager.tsx → app/admin/actions.ts
-- `MateriManager()` --indirect_call--> `createMateri()`  [INFERRED]
-  components/admin/MateriManager.tsx → app/admin/actions.ts
+- `EditRow()` --indirect_call--> `updateTestimonial()`  [INFERRED]
+  components/admin/TestimoniManager.tsx → app/admin/actions.ts
+- `CategoryRow()` --indirect_call--> `updateCategory()`  [INFERRED]
+  components/admin/KategoriManager.tsx → app/admin/actions.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (20 total, 3 thin omitted)
+## Communities (18 total, 3 thin omitted)
 
 ### Community 0 - "(public)/page.tsx"
-Cohesion: 0.10
-Nodes (26): dynamic, GalleryGrid(), GalleryItem, LightboxState, About(), Hero(), VisiMisi(), DayBadge() (+18 more)
+Cohesion: 0.12
+Nodes (20): dynamic, GalleryGrid(), GalleryItem, LightboxState, About(), Hero(), VisiMisi(), Kontak() (+12 more)
 
 ### Community 1 - "compilerOptions"
 Cohesion: 0.11
@@ -75,23 +73,23 @@ Nodes (18): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModu
 
 ### Community 2 - "prisma.ts"
 Cohesion: 0.08
-Nodes (17): dynamic, metadata, CARDS, dynamic, dynamic, metadata, dynamic, metadata (+9 more)
+Nodes (18): gantiPassword(), dynamic, metadata, CARDS, dynamic, dynamic, metadata, dynamic (+10 more)
 
 ### Community 3 - "actions.ts"
-Cohesion: 0.10
-Nodes (45): ActionState, categorySlugData(), createCategory(), createJadwal(), createMateri(), createProgram(), createTestimonial(), deleteCategory() (+37 more)
+Cohesion: 0.06
+Nodes (65): ActionState, categorySlugData(), createCategory(), createJadwal(), createMateri(), createProgram(), createTestimonial(), deleteCategory() (+57 more)
 
 ### Community 4 - "auth.ts"
-Cohesion: 0.13
-Nodes (16): AdminLayout(), dynamic, NAV, POST(), SignOutButton(), auth, authConfig, credentialsSchema (+8 more)
+Cohesion: 0.09
+Nodes (26): AdminLayout(), dynamic, NAV, POST(), runtime, SignOutButton(), auth, authConfig (+18 more)
 
 ### Community 5 - "next"
-Cohesion: 0.09
-Nodes (14): dynamic, metadata, metadata, app_globals, fraunces, jakarta, metadata, AdminGalleryItem (+6 more)
+Cohesion: 0.07
+Nodes (21): resetPassword(), dynamic, metadata, metadata, metadata, ResetPasswordPage(), app_globals, fraunces (+13 more)
 
 ### Community 6 - "content.ts"
-Cohesion: 0.12
-Nodes (17): CATEGORIES, DefaultCategory, DefaultGalleryImage, DefaultProgram, DefaultTestimonial, GALLERY_IMAGES, PROGRAMS, TESTIMONIALS (+9 more)
+Cohesion: 0.11
+Nodes (18): CATEGORIES, DefaultCategory, DefaultGalleryImage, DefaultProgram, DefaultTestimonial, GALLERY_IMAGES, PROGRAMS, TESTIMONIALS (+10 more)
 
 ### Community 7 - "script.js"
 Cohesion: 0.11
@@ -101,13 +99,13 @@ Nodes (16): form, header, lightbox, lightboxCaption, lightboxClose, lightboxImag
 Cohesion: 0.04
 Nodes (45): allowScripts, esbuild@0.28.2, prisma@6.19.3, @prisma/client@6.19.3, @prisma/engines@6.19.3, dependencies, bcryptjs, next (+37 more)
 
-### Community 9 - "requestPasswordReset"
-Cohesion: 0.13
-Nodes (13): getClientIp(), requestPasswordReset(), metadata, POST(), ForgotPasswordForm(), buckets, isRateLimited(), EmailStatus (+5 more)
+### Community 9 - "pendaftaran/route.ts"
+Cohesion: 0.12
+Nodes (16): getClientIp(), requestPasswordReset(), metadata, POST(), POST(), ForgotPasswordForm(), buckets, isRateLimited() (+8 more)
 
 ### Community 10 - "data.ts"
-Cohesion: 0.09
-Nodes (42): dynamic, KelasIndexPage(), metadata, formatTanggalYmd(), generateMetadata(), KelasSlugPage(), Props, HomePage() (+34 more)
+Cohesion: 0.06
+Nodes (58): dynamic, metadata, PendaftaranPage(), dynamic, KelasIndexPage(), metadata, generateMetadata(), KelasSlugPage() (+50 more)
 
 ### Community 11 - "JadwalManager.tsx"
 Cohesion: 0.15
@@ -125,33 +123,25 @@ Nodes (8): dynamic, metadata, AdminMateri, MateriEditRow(), MateriManager(), Pro
 Cohesion: 0.21
 Nodes (7): Footer(), NAV_LINKS, Header(), NAV_LINKS, ThemeToggle(), toggle(), ToTop()
 
-### Community 16 - "schemas.ts"
-Cohesion: 0.10
-Nodes (21): runtime, ALLOWED_IMAGE_TYPES, ALLOWED_MATERI_TYPES, CategoryInput, categorySchema, ContactInput, forgotPasswordSchema, GantiPasswordInput (+13 more)
-
-### Community 19 - "reset-password/page.tsx"
-Cohesion: 0.26
-Nodes (7): resetPassword(), metadata, ResetPasswordPage(), ResetPasswordForm(), generateResetToken(), hashToken(), ref_node_crypto
-
 ## Knowledge Gaps
-- **174 isolated node(s):** `Props`, `CategoryRow`, `ProgramRow`, `GalleryRow`, `JadwalRow` (+169 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 212 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **183 isolated node(s):** `Props`, `dynamic`, `metadata`, `dynamic`, `Props` (+178 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 223 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `next` connect `next` to `(public)/page.tsx`, `prisma.ts`, `actions.ts`, `auth.ts`, `package.json`, `requestPasswordReset`, `data.ts`, `(public)/layout.tsx`, `schemas.ts`, `reset-password/page.tsx`?**
-  _High betweenness centrality (0.185) - this node is a cross-community bridge._
-- **Why does `react` connect `(public)/page.tsx` to `actions.ts`, `next`, `package.json`, `requestPasswordReset`, `JadwalManager.tsx`, `MateriManager.tsx`, `(public)/layout.tsx`, `reset-password/page.tsx`?**
-  _High betweenness centrality (0.105) - this node is a cross-community bridge._
-- **Why does `prisma` connect `prisma.ts` to `actions.ts`, `auth.ts`, `next`, `requestPasswordReset`, `data.ts`, `JadwalManager.tsx`, `MateriManager.tsx`, `schemas.ts`, `reset-password/page.tsx`?**
-  _High betweenness centrality (0.058) - this node is a cross-community bridge._
-- **What connects `Props`, `CategoryRow`, `ProgramRow` to the rest of the system?**
-  _174 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `next` connect `next` to `(public)/page.tsx`, `prisma.ts`, `actions.ts`, `auth.ts`, `package.json`, `pendaftaran/route.ts`, `data.ts`, `(public)/layout.tsx`?**
+  _High betweenness centrality (0.183) - this node is a cross-community bridge._
+- **Why does `react` connect `(public)/page.tsx` to `prisma.ts`, `actions.ts`, `next`, `package.json`, `pendaftaran/route.ts`, `data.ts`, `JadwalManager.tsx`, `MateriManager.tsx`, `(public)/layout.tsx`?**
+  _High betweenness centrality (0.102) - this node is a cross-community bridge._
+- **Why does `prisma` connect `prisma.ts` to `actions.ts`, `auth.ts`, `next`, `pendaftaran/route.ts`, `data.ts`, `JadwalManager.tsx`, `MateriManager.tsx`?**
+  _High betweenness centrality (0.057) - this node is a cross-community bridge._
+- **What connects `Props`, `dynamic`, `metadata` to the rest of the system?**
+  _183 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `(public)/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.09815078236130868 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12043010752688173 - nodes in this community are weakly interconnected._
 - **Should `compilerOptions` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `prisma.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08374384236453201 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08172043010752689 - nodes in this community are weakly interconnected._
