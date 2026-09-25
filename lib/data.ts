@@ -204,6 +204,14 @@ export async function getProgramsByCategory(
   return all.filter((p) => p.categoryId === categoryId);
 }
 
+/** Cari program (aktif) berdasarkan slug — halaman /program/[slug]. */
+export async function getProgramBySlug(
+  slug: string
+): Promise<ProgramRow | null> {
+  const all = await getPrograms();
+  return all.find((p) => p.slug === slug) ?? null;
+}
+
 /* ── Galeri ────────────────────────────────────────────────────── */
 
 export async function getGallery(): Promise<GalleryRow[]> {
@@ -306,6 +314,32 @@ export async function getJadwalByCategory(
   const rows = await safe(async () => {
     return await prisma.jadwalPelatihan.findMany({
       where: { isActive: true, program: { categoryId, isActive: true } },
+      include: {
+        program: { select: { id: true, judul: true, slug: true } },
+      },
+      orderBy: [{ urutan: "asc" }, { id: "asc" }],
+    });
+  }, []);
+  return rows.map((j) => ({
+    id: j.id,
+    instruktur: j.instruktur,
+    ruangan: j.ruangan,
+    hari: j.hari,
+    tanggal: j.tanggal ? ymdWib(j.tanggal) : null,
+    jamMulai: j.jamMulai,
+    jamAkhir: j.jamAkhir,
+    programId: j.programId,
+    program: j.program,
+  }));
+}
+
+/** Jadwal aktif per program — untuk tabel jadwal di /program/[slug]. */
+export async function getJadwalByProgram(
+  programId: number
+): Promise<JadwalRow[]> {
+  const rows = await safe(async () => {
+    return await prisma.jadwalPelatihan.findMany({
+      where: { isActive: true, programId, program: { isActive: true } },
       include: {
         program: { select: { id: true, judul: true, slug: true } },
       },
