@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Jadwal Pelatihan — Admin" };
 
 export default async function JadwalPage() {
-  const [jadwalRaw, programs] = await Promise.all([
+  const [jadwalRaw, programs, categories] = await Promise.all([
     prisma.jadwalPelatihan
       .findMany({
         include: { program: { select: { id: true, judul: true } } },
@@ -15,8 +15,15 @@ export default async function JadwalPage() {
       .catch(() => []),
     prisma.program
       .findMany({
-        select: { id: true, judul: true },
+        select: { id: true, judul: true, categoryId: true },
         orderBy: { judul: "asc" },
+      })
+      .catch(() => []),
+    // Semua kategori (tanpa filter aktif) — label grouping dropdown Program.
+    prisma.category
+      .findMany({
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
       })
       .catch(() => []),
   ]);
@@ -48,7 +55,7 @@ export default async function JadwalPage() {
           Jadwal yang aktif tampil di halaman publik /kelas.
         </p>
       </div>
-      <JadwalManager jadwal={jadwal} programs={programs} />
+      <JadwalManager jadwal={jadwal} programs={programs} categories={categories} />
     </div>
   );
 }

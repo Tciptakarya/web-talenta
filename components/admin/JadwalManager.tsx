@@ -9,7 +9,14 @@ import {
 } from "@/app/admin/actions";
 import { HARI_LIST } from "@/lib/schemas";
 
-export type ProgramOption = { id: number; judul: string };
+export type ProgramOption = {
+  id: number;
+  judul: string;
+  categoryId: number | null;
+};
+
+/** Ringkas kategori untuk mengelompokkan dropdown Program. */
+export type ProgramCategoryOption = { id: number; name: string };
 
 export type AdminJadwal = {
   id: number;
@@ -58,13 +65,27 @@ function labelJadwal(j: Pick<AdminJadwal, "hari" | "tanggal">): string {
 
 function ProgramSelect({
   programs,
+  categories,
   defaultValue,
   id,
 }: {
   programs: ProgramOption[];
+  categories: ProgramCategoryOption[];
   defaultValue?: number;
   id: string;
 }) {
+  // Kelompokkan program per kategori (label optgroup = nama kategori) supaya
+  // daftar program di form jadwal selalu sesuai dengan kategori yang ada.
+  const terpakai = new Set<number>();
+  const grouped = categories
+    .map((c) => {
+      const items = programs.filter((p) => p.categoryId === c.id);
+      items.forEach((p) => terpakai.add(p.id));
+      return { name: c.name, items };
+    })
+    .filter((g) => g.items.length > 0);
+  const lain = programs.filter((p) => !terpakai.has(p.id));
+
   return (
     <div>
       <label htmlFor={id} className={labelCls}>
@@ -78,11 +99,24 @@ function ProgramSelect({
         className={inputCls}
       >
         <option value="">— Pilih Program —</option>
-        {programs.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.judul}
-          </option>
+        {grouped.map((g) => (
+          <optgroup key={g.name} label={g.name}>
+            {g.items.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.judul}
+              </option>
+            ))}
+          </optgroup>
         ))}
+        {lain.length > 0 && (
+          <optgroup label="Lainnya (tanpa kategori)">
+            {lain.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.judul}
+              </option>
+            ))}
+          </optgroup>
+        )}
       </select>
     </div>
   );
@@ -148,10 +182,12 @@ function TanggalInput({
 function JadwalEditRow({
   jadwal,
   programs,
+  categories,
   onDone,
 }: {
   jadwal: AdminJadwal;
   programs: ProgramOption[];
+  categories: ProgramCategoryOption[];
   onDone: () => void;
 }) {
   const [state, action, pending] = useActionState<ActionState | undefined, FormData>(
@@ -169,6 +205,7 @@ function JadwalEditRow({
             <ProgramSelect
               id={`edit-program-${jadwal.id}`}
               programs={programs}
+              categories={categories}
               defaultValue={jadwal.programId}
             />
             <div>
@@ -292,10 +329,12 @@ function JadwalRow({
   jadwal,
   index,
   programs,
+  categories,
 }: {
   jadwal: AdminJadwal;
   index: number;
   programs: ProgramOption[];
+  categories: ProgramCategoryOption[];
 }) {
   const [editing, setEditing] = useState(false);
 
@@ -362,6 +401,7 @@ function JadwalRow({
         <JadwalEditRow
           jadwal={jadwal}
           programs={programs}
+          categories={categories}
           onDone={() => setEditing(false)}
         />
       )}
@@ -372,9 +412,11 @@ function JadwalRow({
 export default function JadwalManager({
   jadwal,
   programs,
+  categories,
 }: {
   jadwal: AdminJadwal[];
   programs: ProgramOption[];
+  categories: ProgramCategoryOption[];
 }) {
   const [createState, createAction, createPending] = useActionState<
     ActionState | undefined,
@@ -396,7 +438,11 @@ export default function JadwalManager({
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ProgramSelect id="new-program" programs={programs} />
+          <ProgramSelect
+            id="new-program"
+            programs={programs}
+            categories={categories}
+          />
           <div>
             <label htmlFor="new-instruktur" className={labelCls}>
               Instruktur
@@ -508,7 +554,13 @@ export default function JadwalManager({
               </tr>
             ) : (
               jadwal.map((j, i) => (
-                <JadwalRow key={j.id} jadwal={j} index={i + 1} programs={programs} />
+                <JadwalRow
+                  key={j.id}
+                  jadwal={j}
+                  index={i + 1}
+                  programs={programs}
+                  categories={categories}
+                />
               ))
             )}
           </tbody>
