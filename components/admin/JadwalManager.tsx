@@ -17,6 +17,7 @@ export type AdminJadwal = {
   instruktur: string | null;
   ruangan: string | null;
   hari: string;
+  tanggal: string | null; // "YYYY-MM-DD" — null = jadwal mingguan lama
   jamMulai: string;
   jamAkhir: string;
   urutan: number;
@@ -27,6 +28,33 @@ export type AdminJadwal = {
 const inputCls =
   "w-full rounded-xl border-[1.5px] border-line bg-paper px-3 py-2 text-sm focus:outline-none focus:border-blue";
 const labelCls = "block text-xs font-bold text-navy mb-1.5";
+
+/** "YYYY-MM-DD" → "30 Sep 2026"; parsing manual agar tak bergeser zona waktu. */
+function formatTanggalYmd(ymd: string): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const namaBulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  const bln = namaBulan[(m ?? 1) - 1] ?? "";
+  return `${d} ${bln} ${y}`.trim();
+}
+
+/** "Senin, 30 Sep 2026"; jadwal lama tanpa tanggal tetap "Setiap Senin". */
+function labelJadwal(j: Pick<AdminJadwal, "hari" | "tanggal">): string {
+  if (j.tanggal) return `${j.hari}, ${formatTanggalYmd(j.tanggal)}`;
+  return `Setiap ${j.hari}`;
+}
 
 function ProgramSelect({
   programs,
@@ -90,6 +118,33 @@ function HariSelect({
   );
 }
 
+/** Input tanggal kalender jadwal satu kali — nama hari diturunkan otomatis di server. */
+function TanggalInput({
+  defaultValue,
+  id,
+  required,
+}: {
+  defaultValue?: string;
+  id: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className={labelCls}>
+        Tanggal
+      </label>
+      <input
+        id={id}
+        name="tanggal"
+        type="date"
+        required={required}
+        defaultValue={defaultValue ?? ""}
+        className={inputCls}
+      />
+    </div>
+  );
+}
+
 function JadwalEditRow({
   jadwal,
   programs,
@@ -143,6 +198,20 @@ function JadwalEditRow({
               />
             </div>
             <HariSelect id={`edit-hari-${jadwal.id}`} defaultValue={jadwal.hari} />
+            {jadwal.tanggal ? (
+              <TanggalInput
+                id={`edit-tanggal-${jadwal.id}`}
+                defaultValue={jadwal.tanggal}
+              />
+            ) : (
+              <div>
+                <span className={labelCls}>Tanggal</span>
+                <p className="rounded-xl border-[1.5px] border-dashed border-line bg-paper px-3 py-2 text-sm text-mist">
+                  Jadwal mingguan lama — tambah tanggal di form baru bila ingin
+                  menjadikannya jadwal satu kali.
+                </p>
+              </div>
+            )}
             <div>
               <label htmlFor={`edit-jamMulai-${jadwal.id}`} className={labelCls}>
                 Jam Mulai
@@ -251,8 +320,8 @@ function JadwalRow({
           )}
         </td>
         <td className="px-4 py-3">
-          <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold">
-            {jadwal.hari}
+          <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
+            {labelJadwal(jadwal)}
           </span>
         </td>
         <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
@@ -275,7 +344,7 @@ function JadwalRow({
                 onClick={(e) => {
                   if (
                     !confirm(
-                      `Hapus jadwal "${jadwal.program.judul}" ${jadwal.hari} ${jadwal.jamMulai}-${jadwal.jamAkhir}?`
+                      `Hapus jadwal "${jadwal.program.judul}" ${labelJadwal(jadwal)} ${jadwal.jamMulai}-${jadwal.jamAkhir}?`
                     )
                   )
                     e.preventDefault();
@@ -425,7 +494,7 @@ export default function JadwalManager({
               <th className="px-4 py-3">Program</th>
               <th className="px-4 py-3">Instruktur</th>
               <th className="px-4 py-3">Ruangan</th>
-              <th className="px-4 py-3">Hari</th>
+              <th className="px-4 py-3">Hari / Tanggal</th>
               <th className="px-4 py-3">Waktu</th>
               <th className="px-4 py-3">Aksi</th>
             </tr>

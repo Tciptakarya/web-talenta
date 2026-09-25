@@ -104,7 +104,46 @@ export const HARI_LIST = [
   "Minggu",
 ] as const;
 
+/** "2026-09-30" → nama hari Indonesia ("Senin".."Minggu", sinkron dengan HARI_LIST). */
+export function hariDariTanggal(tanggalYmd: string): (typeof HARI_LIST)[number] {
+  const [y, m, d] = tanggalYmd.split("-").map(Number);
+  // Hari kalender dihitung langsung dari tanggal (zona UTC) — konversi ke zona
+  // mana pun tidak boleh menggeser nama hari.
+  const utc = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  const hari = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "UTC",
+    weekday: "long",
+  }).format(utc);
+  const nama = hari.charAt(0).toUpperCase() + hari.slice(1);
+  if ((HARI_LIST as readonly string[]).includes(nama)) {
+    return nama as (typeof HARI_LIST)[number];
+  }
+  throw new Error(`Tanggal tidak menghasilkan hari yang dikenal: ${tanggalYmd}`);
+}
+
 const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const tanggalRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/** Tanggal kalender nyata "YYYY-MM-DD" (cek kabisat & rentang bulan). */
+export const tanggalSchema = z
+  .string()
+  .regex(tanggalRegex, "Format tanggal tidak valid (YYYY-MM-DD)")
+  .refine(
+    (v) => {
+      const m = tanggalRegex.exec(v);
+      if (!m) return false;
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      if (mo < 1 || mo > 12 || d < 1 || d > 31) return false;
+      const dt = new Date(Date.UTC(y, mo - 1, d));
+      return (
+        dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d
+      );
+    },
+    { message: "Tanggal tidak valid (periksa hari/bulan/tahun)" }
+  );
 
 /** Jadwal pelatihan — relasi Program → N jadwal, jam pakai format HH:MM. */
 export const jadwalSchema = z
@@ -112,11 +151,27 @@ export const jadwalSchema = z
     programId: z.coerce.number().int().positive("Program wajib dipilih"),
     instruktur: z.string().trim().max(80).optional().or(z.literal("")),
     ruangan: z.string().trim().max(80).optional().or(z.literal("")),
-    hari: z.enum(HARI_LIST, "Hari wajib dipilih"),
+    hari: z
+      .enum(HARI_LIST, "Hari wajib dipilih")
+      .optional()
+      .or(z.literal("")),
+    tanggal: tanggalSchema.optional().or(z.literal("")),
     jamMulai: z.string().regex(timeRegex, "Format jam mulai tidak valid (HH:MM)"),
     jamAkhir: z.string().regex(timeRegex, "Format jam selesai tidak valid (HH:MM)"),
     urutan: z.coerce.number().int().min(0).max(999).default(0),
     isActive: z.boolean(),
+  })
+  .superRefine((d, ctx) => {
+    // Wajib salah satu: tanggal (jadwal satu kali) ATAU hari (jadwal mingguan lama).
+    // Bila tanggal diisi, `hari` TIDAK dicek di sini — server selalu menurunkan
+    // nama hari dari tanggal, jadi cross-check hanya memblokir edit yang sah.
+    if (!d.tanggal && !d.hari) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["tanggal"],
+        message: "Tanggal wajib diisi",
+      });
+    }
   })
   .refine((d) => d.jamAkhir > d.jamMulai, {
     message: "Jam selesai harus setelah jam mulai",

@@ -109,7 +109,8 @@ model JadwalPelatihan {
   program    Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
   instruktur String? // teks bebas, mis. "Budi Santoso"
   ruangan    String? // teks bebas, mis. "Ruangan Praktek"
-  hari       String // "Senin".."Minggu" (divalidasi Zod, bukan enum agar fleksibel)
+  hari       String // diturunkan otomatis dari `tanggal` (zona Asia/Jakarta); jadwal lama tanpa tanggal tetap memakai nilai lama
+  tanggal    DateTime? // jadwal satu kali: tanggal+jam disimpan di tengah malam WIB; kosong = jadwal mingguan lama
   jamMulai   String // "08:00" (HH:MM)
   jamAkhir   String // "10:00" (HH:MM)
   urutan     Int     @default(0)
@@ -118,6 +119,7 @@ model JadwalPelatihan {
   updatedAt  DateTime @updatedAt
 
   @@index([programId])
+  @@index([tanggal])
 }
 
 /// Materi pelatihan — file terupload (Blob//uploads) ATAU link eksternal (wajib salah satu).

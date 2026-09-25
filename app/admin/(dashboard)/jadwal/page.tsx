@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import JadwalManager from "@/components/admin/JadwalManager";
+import { ymdWib } from "@/lib/data";
+import JadwalManager, { type AdminJadwal } from "@/components/admin/JadwalManager";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Jadwal Pelatihan — Admin" };
 
 export default async function JadwalPage() {
-  const [jadwal, programs] = await Promise.all([
+  const [jadwalRaw, programs] = await Promise.all([
     prisma.jadwalPelatihan
       .findMany({
         include: { program: { select: { id: true, judul: true } } },
@@ -19,6 +20,22 @@ export default async function JadwalPage() {
       })
       .catch(() => []),
   ]);
+
+  // Prisma mengembalikan tanggal sebagai Date — konversi ke "YYYY-MM-DD" (WIB)
+  // agar cocok dengan tipa AdminJadwal & defaultValue input type="date".
+  const jadwal: AdminJadwal[] = jadwalRaw.map((j) => ({
+    id: j.id,
+    programId: j.programId,
+    instruktur: j.instruktur,
+    ruangan: j.ruangan,
+    hari: j.hari,
+    tanggal: j.tanggal ? ymdWib(j.tanggal) : null,
+    jamMulai: j.jamMulai,
+    jamAkhir: j.jamAkhir,
+    urutan: j.urutan,
+    isActive: j.isActive,
+    program: j.program,
+  }));
 
   return (
     <div className="space-y-6">

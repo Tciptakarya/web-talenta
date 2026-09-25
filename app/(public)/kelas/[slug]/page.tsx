@@ -14,6 +14,26 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+/** "2026-09-30" → "30 Sep 2026"; parsing manual agar tidak bergeser zona. */
+function formatTanggalYmd(ymd: string): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const namaBulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  return `${d} ${namaBulan[(m ?? 1) - 1] ?? ""} ${y}`.trim();
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
@@ -159,7 +179,7 @@ export default async function KelasSlugPage({ params }: Props) {
                 <thead>
                   <tr className="border-b border-line text-xs font-bold text-navy">
                     <th className="px-4 py-3">Program</th>
-                    <th className="px-4 py-3">Hari</th>
+                    <th className="px-4 py-3">Hari / Tanggal</th>
                     <th className="px-4 py-3">Waktu</th>
                     <th className="px-4 py-3">Instruktur</th>
                     <th className="px-4 py-3">Ruangan</th>
@@ -172,8 +192,10 @@ export default async function KelasSlugPage({ params }: Props) {
                         {j.program.judul}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold">
-                          {j.hari}
+                        <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
+                          {j.tanggal
+                            ? `${j.hari}, ${formatTanggalYmd(j.tanggal)}`
+                            : `Setiap ${j.hari}`}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">

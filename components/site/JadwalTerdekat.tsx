@@ -10,6 +10,13 @@ function waUrl(message: string): string {
 }
 
 function DayBadge({ row }: { row: UpcomingJadwalRow }) {
+  if (row.tanggal) {
+    return (
+      <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
+        {formatTanggalSingkat(row.tanggal)}
+      </span>
+    );
+  }
   if (row.offsetDays === 0) {
     return (
       <span className="inline-block rounded-full bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
@@ -26,9 +33,39 @@ function DayBadge({ row }: { row: UpcomingJadwalRow }) {
   }
   return (
     <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
-      {row.hari}
+      Setiap {row.hari}
     </span>
   );
+}
+
+/** "2026-09-30" → "Senin, 30 Sep 2026" — parsing manual agar stabil di semua zona. */
+function formatTanggalSingkat(ymd: string): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const namaHari = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const namaBulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  const dt = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  const hari = namaHari[dt.getUTCDay()] ?? "";
+  const bln = namaBulan[(m ?? 1) - 1] ?? "";
+  return `${hari}, ${d} ${bln} ${y}`;
+}
+
+/** Label ringkas untuk pesan WhatsApp & badge: tanggal eksak bila ada. */
+function labelJadwalPublik(j: Pick<UpcomingJadwalRow, "hari" | "tanggal">): string {
+  if (j.tanggal) return formatTanggalSingkat(j.tanggal);
+  return `Setiap ${j.hari}`;
 }
 
 /**
@@ -73,7 +110,7 @@ export default function JadwalTerdekat({
                   ? `/kelas/${j.program.categorySlug}`
                   : "/kelas";
                 const tanyaUrl = waUrl(
-                  `Halo Talenta Cipta Karya, saya ingin bertanya tentang kelas ${j.program.judul} (${j.hari}, ${j.jamMulai}-${j.jamAkhir} WIB). Apakah jadwal ini masih tersedia dan bagaimana cara mendaftarnya?`
+                  `Halo Talenta Cipta Karya, saya ingin bertanya tentang kelas ${j.program.judul} (${labelJadwalPublik(j)}, ${j.jamMulai}-${j.jamAkhir} WIB). Apakah jadwal ini masih tersedia dan bagaimana cara mendaftarnya?`
                 );
                 return (
                   <tr key={j.id} className="border-b border-line last:border-0">

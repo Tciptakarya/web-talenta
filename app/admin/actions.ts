@@ -11,6 +11,7 @@ import {
   programSchema,
   testimonialSchema,
   jadwalSchema,
+  hariDariTanggal,
   materiSchema,
   ALLOWED_MATERI_TYPES,
   MAX_MATERI_BYTES,
@@ -647,11 +648,13 @@ export async function createJadwal(
 ): Promise<ActionState> {
   try {
     await requireAdmin();
+    const tanggalRaw = String(formData.get("tanggal") ?? "").trim();
     const parsed = jadwalSchema.safeParse({
       programId: formData.get("programId"),
       instruktur: formData.get("instruktur") ?? "",
       ruangan: formData.get("ruangan") ?? "",
-      hari: formData.get("hari"),
+      hari: formData.get("hari") ?? "",
+      tanggal: tanggalRaw,
       jamMulai: formData.get("jamMulai"),
       jamAkhir: formData.get("jamAkhir"),
       urutan: formData.get("urutan") || 0,
@@ -663,9 +666,23 @@ export async function createJadwal(
         error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
       };
     }
-    const { instruktur, ruangan, ...data } = parsed.data;
+    if (!parsed.data.tanggal) {
+      return { ok: false, error: "Tanggal wajib diisi." };
+    }
+    const { instruktur, ruangan, tanggal, ...data } = parsed.data;
+    // Nama hari selalu diturunkan di server dari tanggal (zona Asia/Jakarta).
+    const hari = hariDariTanggal(tanggal);
+    // Simpan sebagai tengah malam WIB: 00:00 WIB = 17:00 UTC sehari sebelumnya.
+    const [ty, tm, td] = tanggal.split("-").map(Number);
+    const tanggalValue = new Date(Date.UTC(ty, tm - 1, td, -7, 0, 0));
     await prisma.jadwalPelatihan.create({
-      data: { ...data, instruktur: instruktur || null, ruangan: ruangan || null },
+      data: {
+        ...data,
+        hari,
+        tanggal: tanggalValue,
+        instruktur: instruktur || null,
+        ruangan: ruangan || null,
+      },
     });
     refresh();
     return { ok: true, message: "Jadwal pelatihan ditambahkan." };
@@ -687,7 +704,8 @@ export async function updateJadwal(
         programId: formData.get("programId"),
         instruktur: formData.get("instruktur") ?? "",
         ruangan: formData.get("ruangan") ?? "",
-        hari: formData.get("hari"),
+        hari: formData.get("hari") ?? "",
+        tanggal: String(formData.get("tanggal") ?? "").trim(),
         jamMulai: formData.get("jamMulai"),
         jamAkhir: formData.get("jamAkhir"),
         urutan: formData.get("urutan") || 0,
@@ -699,10 +717,25 @@ export async function updateJadwal(
         error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
       };
     }
-    const { id, instruktur, ruangan, ...data } = parsed.data;
+    const { id, instruktur, ruangan, tanggal, hari, ...data } = parsed.data;
+    const updateData: Record<string, unknown> = {
+      ...data,
+      instruktur: instruktur || null,
+      ruangan: ruangan || null,
+    };
+    if (tanggal) {
+      // Tanggal tersedia → nama hari selalu diturunkan ulang di server.
+      updateData.hari = hariDariTanggal(tanggal);
+      const [ty, tm, td] = tanggal.split("-").map(Number);
+      updateData.tanggal = new Date(Date.UTC(ty, tm - 1, td, -7, 0, 0));
+    } else if (hari) {
+      // Baris lama tanpa tanggal: pertahankan pola mingguan dengan hari manual.
+      updateData.hari = hari;
+      updateData.tanggal = null;
+    }
     await prisma.jadwalPelatihan.update({
       where: { id },
-      data: { ...data, instruktur: instruktur || null, ruangan: ruangan || null },
+      data: updateData,
     });
     refresh();
     return { ok: true, message: "Jadwal pelatihan diperbarui." };

@@ -249,11 +249,45 @@ export type JadwalRow = {
   instruktur: string | null;
   ruangan: string | null;
   hari: string;
+  /** "YYYY-MM-DD" — null = jadwal mingguan lama. */
+  tanggal: string | null;
   jamMulai: string;
   jamAkhir: string;
   programId: number;
   program: { id: number; judul: string; slug: string };
 };
+
+/** Date → "YYYY-MM-DD" di zona Asia/Jakarta (tanpa geser zona). */
+export function ymdWib(d: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(d);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+/** Menit sejak tengah malam WIB — untuk membandingkan tanggal+jam satu kali. */
+function wibStampMinutes(d: Date): number {
+  const ymd = ymdWib(d);
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Jakarta",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(d);
+  const h = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
+  const m = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
+  const dayNum = Number(ymd.replace(/-/g, ""));
+  return dayNum * 1440 + (h % 24) * 60 + (m % 60);
+}
+
+/** "YYYY-MM-DD" + "HH:MM" → menit absolut (urutan kronologis antar tanggal). */
+function tanggalJamMinutes(ymd: string, hhmm: string): number {
+  return Number(ymd.replace(/-/g, "")) * 1440 + hhmmToMinutes(hhmm);
+}
 
 export type MateriRow = {
   id: number;
@@ -269,7 +303,7 @@ export type MateriRow = {
 export async function getJadwalByCategory(
   categoryId: number
 ): Promise<JadwalRow[]> {
-  return safe(async () => {
+  const rows = await safe(async () => {
     return await prisma.jadwalPelatihan.findMany({
       where: { isActive: true, program: { categoryId, isActive: true } },
       include: {
@@ -278,6 +312,17 @@ export async function getJadwalByCategory(
       orderBy: [{ urutan: "asc" }, { id: "asc" }],
     });
   }, []);
+  return rows.map((j) => ({
+    id: j.id,
+    instruktur: j.instruktur,
+    ruangan: j.ruangan,
+    hari: j.hari,
+    tanggal: j.tanggal ? ymdWib(j.tanggal) : null,
+    jamMulai: j.jamMulai,
+    jamAkhir: j.jamAkhir,
+    programId: j.programId,
+    program: j.program,
+  }));
 }
 
 /**
@@ -306,6 +351,8 @@ export type UpcomingJadwalRow = {
   instruktur: string | null;
   ruangan: string | null;
   hari: string;
+  /** "YYYY-MM-DD" — null = jadwal mingguan lama. */
+  tanggal: string | null;
   jamMulai: string;
   jamAkhir: string;
   programId: number;
@@ -337,6 +384,18 @@ function hhmmToMinutes(hhmm: string): number {
   return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
 }
 
+/** Baris mentah dari Prisma — `tanggal` masih Date, dikonversi ke YMD di pemanggil. */
+type RawUpcomingJadwal = Omit<JadwalRow, "tanggal"> & {
+  tanggal: Date | null;
+  program: {
+    id: number;
+    judul: string;
+    slug: string;
+    urutan: number;
+    category: { slug: string; isActive: boolean } | null;
+  };
+};
+
 /**
  * Jadwal aktif paling dekat untuk section landing "Jadwal Kelas Terdekat".
  * Diurutkan berdasarkan occurrence berikutnya (zona Asia/Jakarta): jadwal hari
@@ -346,7 +405,7 @@ function hhmmToMinutes(hhmm: string): number {
 export async function getUpcomingJadwal(
   limit = 8
 ): Promise<UpcomingJadwalRow[]> {
-  const rows = await safe(async () => {
+  const rows = await safe<RawUpcomingJadwal[]>(async () => {
     return await prisma.jadwalPelatihan.findMany({
       where: { isActive: true, program: { isActive: true } },
       include: {
@@ -361,22 +420,49 @@ export async function getUpcomingJadwal(
         },
       },
     });
-  }, [] as (JadwalRow & {
-    program: {
-      id: number;
-      judul: string;
-      slug: string;
-      urutan: number;
-      category: { slug: string; isActive: boolean } | null;
-    };
-  })[]);
+  }, []);
 
   const { dayIdx, minutes } = wibNow(new Date());
+  const nowStamp = wibStampMinutes(new Date());
 
   return rows
     // Sembunyikan program non-aktif kategori (kategori null tetap tampil → link /kelas).
     .filter((j) => !j.program.category || j.program.category.isActive)
     .map((j) => {
+      const tanggal = j.tanggal ? ymdWib(j.tanggal) : null;
+      // Jadwal satu kali yang sudah selesai → disembunyikan dari publik
+      // (tetap tersimpan & bisa dikelola di dashboard admin).
+      if (tanggal && tanggalJamMinutes(tanggal, j.jamAkhir) <= nowStamp) {
+        return null;
+      }
+      if (tanggal) {
+        const offsetDays = Math.max(
+          0,
+          Math.round(
+            (tanggalJamMinutes(tanggal, j.jamMulai) - nowStamp) / 1440
+          )
+        );
+        return {
+          id: j.id,
+          instruktur: j.instruktur,
+          ruangan: j.ruangan,
+          hari: j.hari,
+          tanggal,
+          jamMulai: j.jamMulai,
+          jamAkhir: j.jamAkhir,
+          programId: j.programId,
+          program: {
+            id: j.program.id,
+            judul: j.program.judul,
+            slug: j.program.slug,
+            categorySlug: j.program.category?.slug ?? null,
+          },
+          offsetDays,
+          _sort: tanggalJamMinutes(tanggal, j.jamMulai),
+          _tie: j.program.urutan * 10000 + j.id,
+        };
+      }
+      // Jadwal mingguan lama (tanpa tanggal) — pola berulang seperti sebelumnya.
       const target = HARI_LIST.indexOf(
         j.hari as (typeof HARI_LIST)[number]
       );
@@ -393,6 +479,7 @@ export async function getUpcomingJadwal(
         instruktur: j.instruktur,
         ruangan: j.ruangan,
         hari: j.hari,
+        tanggal: null as string | null,
         jamMulai: j.jamMulai,
         jamAkhir: j.jamAkhir,
         programId: j.programId,
@@ -407,6 +494,7 @@ export async function getUpcomingJadwal(
         _tie: j.program.urutan * 10000 + j.id,
       };
     })
+    .filter((r): r is NonNullable<typeof r> => r !== null)
     .sort((a, b) => a._sort - b._sort || a._tie - b._tie)
     .slice(0, Math.max(0, limit))
     .map(({ _sort: _s, _tie: _t, ...row }) => row);
