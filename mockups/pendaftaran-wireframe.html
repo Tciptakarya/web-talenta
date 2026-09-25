@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Fitur Pendaftaran Jadwal Pelatihan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16214A;--blue:#2C4A9E;--gold:#D8A23D;--gold-dim:#f0d9a8;
+  --paper:#F5F7FC;--ink:#1C2333;--mist:#7C8AA8;--line:#E1E6F2;
+  --green:#15803D;--green-bg:#DCFCE7;--amber:#B45309;--amber-bg:#FEF3C7;
+  --red:#B91C1C;--red-bg:#FEE2E2;--blue-bg:#DBEAFE;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E9EDF7;color:var(--ink);
+  font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;padding-bottom:64px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.page-head{text-align:center;padding:48px 0 6px}
+.kicker{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:10px;justify-content:center}
+.kicker::before,.kicker::after{content:"";width:26px;height:2px;background:var(--gold)}
+h1.page-title{font-size:30px;color:var(--navy);margin:14px 0 8px;letter-spacing:-.01em}
+.page-head p{color:var(--mist);max-width:660px;margin:0 auto;font-size:15px;line-height:1.6}
+.flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 0}
+.flow span{background:#fff;border:1px solid var(--line);border-radius:999px;
+  padding:7px 14px;font-size:12.5px;font-weight:700;color:var(--navy)}
+.flow span.arr{border:0;background:transparent;color:var(--gold);padding:7px 0;font-weight:800}
+.screen{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 20px 50px -25px rgba(22,33,74,.35);margin:38px 0}
+.screen-bar{background:var(--navy);color:#fff;padding:11px 18px;font-size:13px;font-weight:700;
+  display:flex;justify-content:space-between;align-items:center;gap:12px}
+.screen-bar .url{background:rgba(255,255,255,.12);border-radius:8px;padding:4px 12px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:500;font-size:12.5px}
+.screen-body{padding:28px}
+.back{font-size:13.5px;font-weight:600;color:var(--blue);text-decoration:none}
+.crumb{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.hero-mini h2{font-size:32px;margin:0 0 8px;color:var(--navy);letter-spacing:-.01em}
+.hero-mini p{margin:0 0 6px;color:var(--mist);font-size:15px;max-width:640px;line-height:1.6}
+h3.sec{font-size:21px;color:var(--navy);margin:26px 0 14px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;font-weight:800;color:var(--navy);
+  text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;border-bottom:2px solid var(--line)}
+.tbl td{padding:13px 12px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .right{text-align:right}
+.date-badge{display:inline-block;background:var(--blue-bg);color:var(--blue);
+  border:1px solid #BFDBFE;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill{display:inline-block;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;white-space:nowrap}
+.pill.green{background:var(--green-bg);color:var(--green)}
+.pill.amber{background:var(--amber-bg);color:var(--amber)}
+.pill.red{background:var(--red-bg);color:var(--red)}
+.pill.blue{background:var(--blue-bg);color:var(--blue)}
+.pill.grey{background:#EEF1F7;color:var(--mist)}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:999px;border:0;
+  font:inherit;font-size:13.5px;font-weight:700;padding:9px 18px;cursor:pointer}
+.btn.gold{background:var(--gold);color:var(--navy);box-shadow:0 10px 22px -12px rgba(216,162,61,.8)}
+.btn.navy{background:var(--navy);color:#fff}
+.btn.off{background:#EEF1F7;color:var(--mist);cursor:not-allowed}
+.btn.sm{padding:7px 14px;font-size:12.5px}
+.btn.outline{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+.btn.full{width:100%;justify-content:center;padding:13px 18px;font-size:15px}
+.hint{font-size:13.5px;color:var(--mist);margin:14px 0 0}
+.hint a{color:var(--blue);font-weight:700}
+.note{border:1.5px dashed var(--blue);background:#EFF4FF;color:#25386E;border-radius:12px;
+  padding:13px 16px;font-size:13.5px;line-height:1.6;margin-top:18px}
+.note code{background:#fff;border:1px solid #C7D6FF;border-radius:5px;padding:1px 6px;font-size:12.5px}
+.note strong{color:var(--blue)}
+</style>
+</head>
+<body>
+<header class="page-head wrap">
+  <div class="kicker">Wireframe · Diskusi Fitur</div>
+  <h1 class="page-title">Pendaftaran di Bagian Jadwal Pelatihan</h1>
+  <p>Empat layar di bawah ini memakai token desain situs yang sebenarnya (navy/gold/kicker/kartu border-line) supaya mudah dibayangkan bentuk akhirnya. File ini murni mockup — tidak diimpor oleh aplikasi.</p>
+  <div class="flow">
+    <span>1 · Lihat jadwal</span><span class="arr">→</span>
+    <span>2 · Klik Daftar</span><span class="arr">→</span>
+    <span>3 · Isi form</span><span class="arr">→</span>
+    <span>4 · Konfirmasi</span><span class="arr">→</span>
+    <span>5 · Admin proses</span>
+  </div>
+</header>
+<main class="wrap">
+<section class="screen">
+  <div class="screen-bar">
+    <span>1 · Halaman publik — detail program (sudah ada, ditambah kolom aksi)</span>
+    <span class="url">/program/bosiet</span>
+  </div>
+  <div class="screen-body">
+    <a class="back" href="#">← Kembali ke Keselamatan Maritim</a>
+    <div class="hero-mini" style="margin-top:18px">
+      <span class="crumb">Keselamatan Maritim</span>
+      <h2>BOSIET</h2>
+      <p>Pelatihan keselamatan dasar untuk personil offshore — teori, praktik, dan sertifikat.</p>
+    </div>
+
+    <h3 class="sec">Jadwal Pelatihan</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Hari / Tanggal</th><th>Waktu</th><th>Instruktur</th><th>Ruangan</th><th>Kuota</th>
+          <th class="right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="date-badge">Rabu, 30 Sep 2026</span></td>
+          <td>08:00 - 16:00 WIB</td>
+          <td>Budi Santoso</td>
+          <td>Ruang Praktek 1</td>
+          <td><span class="pill amber">Sisa 3 kursi</span></td>
+          <td class="right"><button class="btn gold sm">Daftar →</button></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">Rabu, 7 Okt 2026</span></td>
+          <td>08:00 - 16:00 WIB</td>
+          <td>Budi Santoso</td>
+          <td>Ruang Praktek 1</td>
+          <td><span class="pill green">Tersedia</span></td>
+          <td class="right"><button class="btn gold sm">Daftar →</button></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">Minggu, 11 Okt 2026</span></td>
+          <td>09:00 - 15:00 WIB</td>
+          <td>Sari Wulandari</td>
+          <td>Ruang Teori</td>
+          <td><span class="pill red">Penuh</span></td>
+          <td class="right"><button class="btn off sm">Penuh</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="hint">
+      Kuota tiap batch terbatas — amankan kursimu sekarang.
+      Belum yakin? <a href="#">Tanya dulu via WhatsApp</a>
+    </p>
+
+    <div class="note">
+      <strong>Aturan tampilan:</strong> kolom <em>Kuota</em> hanya muncul bila minimal satu jadwal
+      punya nilai <code>kuota</code>. Badge dihitung dari <code>kuota − jumlah pendaftar aktif</code>
+      → <code>Tersedia</code> &gt;50%, <code>Sisa N kursi</code> ≤50%, <code>Penuh</code> = 0 (tombol mati,
+      form tidak bisa dibuka). Jadwal tanpa kuota → tanpa badge, tombol <em>Daftar</em> tetap aktif.
+      Tombol WhatsApp lama tetap dipertahankan sebagai jalur alternatif (PRD §12).
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <div class="screen-bar">
+    <span>2 · Form pendaftaran — modal di halaman yang sama (tanpa pindah halaman)</span>
+    <span class="url">label: "Daftar BOSIET"</span>
+  </div>
+  <div class="screen-body" style="background:rgba(22,33,74,.55);padding:34px">
+    <div style="background:#fff;border-radius:18px;max-width:520px;margin:0 auto;padding:26px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <h3 style="margin:0 0 4px;font-size:20px;color:var(--navy)">Formulir Pendaftaran</h3>
+          <p style="margin:0;font-size:13.5px;color:var(--mist)">
+            BOSIET · Rabu, 30 Sep 2026 · 08:00–16:00 WIB · Ruang Praktek 1
+          </p>
+        </div>
+        <span style="font-size:22px;color:var(--mist);line-height:1">×</span>
+      </div>
+
+      <div style="margin-top:20px;display:grid;gap:14px">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:800;color:var(--navy);margin-bottom:6px">
+            Nama lengkap <span style="color:var(--red)">*</span>
+          </label>
+          <div style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--mist)">
+            Mis. Rani Putri
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:800;color:var(--navy);margin-bottom:6px">
+            Nomor WhatsApp <span style="color:var(--red)">*</span>
+          </label>
+          <div style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--mist)">
+            08xxxxxxxxxx
+          </div>
+          <p style="margin:6px 0 0;font-size:12px;color:var(--mist)">Dipakai admin untuk konfirmasi kursi.</p>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:800;color:var(--navy);margin-bottom:6px">
+            Email <span style="font-weight:600;color:var(--mist)">(opsional)</span>
+          </label>
+          <div style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--mist)">
+            nama@email.com
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:800;color:var(--navy);margin-bottom:6px">
+            Catatan <span style="font-weight:600;color:var(--mist)">(opsional)</span>
+          </label>
+          <div style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--mist);min-height:64px">
+            Mis. butuh info biaya &amp; syarat pendaftaran
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:16px;font-size:12.5px;padding:10px 14px">
+        <strong>Anti-spam:</strong> honeypot field tersembunyi + rate limit per IP — tidak terlihat pengguna.
+      </div>
+
+      <button class="btn navy full" style="margin-top:18px">Kirim Pendaftaran</button>
+      <p style="margin:12px 0 0;font-size:13px;color:var(--mist);text-align:center">
+        Belum siap daftar? <a href="#" style="color:var(--blue);font-weight:700">Tanya dulu via WhatsApp →</a>
+      </p>
+      <p style="margin:10px 0 0;font-size:11.5px;color:var(--mist);text-align:center;line-height:1.5">
+        Data hanya digunakan untuk keperluan pendaftaran pelatihan.
+      </p>
+    </div>
+
+    <div class="note" style="background:#fff;border-color:var(--gold);color:#7A5A16">
+      <strong style="color:#7A5A16">Kenapa modal, bukan halaman terpisah?</strong>
+      Pengunjung tidak kehilangan konteks jadwal; lebih sedikit klik; tetap bisa di-deep-link lewat
+      <code>?daftar=jadwalId</code> bila ingin dibagikan via WhatsApp.
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <div class="screen-bar">
+    <span>3 · Setelah kirim — panel konfirmasi (di dalam modal)</span>
+    <span class="url">state: sukses</span>
+  </div>
+  <div class="screen-body" style="text-align:center;padding:40px 28px">
+    <div style="width:62px;height:62px;border-radius:50%;background:var(--green-bg);color:var(--green);
+      display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px">✓</div>
+    <h3 style="margin:0 0 8px;font-size:22px;color:var(--navy)">Pendaftaran Anda diterima!</h3>
+    <p style="margin:0 auto;max-width:460px;color:var(--mist);font-size:14.5px;line-height:1.65">
+      Terima kasih, <strong style="color:var(--ink)">Rani</strong>. Kami mencatat pendaftaran Anda untuk
+      <strong style="color:var(--ink)">BOSIET — Rabu, 30 Sep 2026, 08:00–16:00 WIB</strong>.
+      Admin akan menghubungi Anda via WhatsApp dalam 1×24 jam untuk konfirmasi kursi dan biaya.
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap">
+      <button class="btn gold">Lanjut chat di WhatsApp</button>
+      <button class="btn outline">Kembali ke program</button>
+    </div>
+    <div class="note" style="text-align:left;max-width:560px;margin:22px auto 0">
+      <strong>Jejak sistem:</strong> baris <code>Pendaftaran</code> tersimpan dengan status
+      <code>baru</code>; email notifikasi dikirim ke <code>info@talentaciptakarya.com</code>
+      memakai <code>lib/resend.ts</code> yang sudah ada. Bila email gagal, data tetap tersimpan
+      dan tampil di <code>/admin/pendaftaran</code> — pola reliabilitas sama seperti
+      <code>ContactMessage</code> (PRD §8).
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <div class="screen-bar">
+    <span>4 · Dashboard admin — daftar pendaftar per jadwal</span>
+    <span class="url">/admin/pendaftaran</span>
+  </div>
+  <div class="screen-body">
+    <h3 style="margin:0 0 4px;font-size:22px;color:var(--navy)">Pendaftaran</h3>
+    <p style="margin:0 0 20px;font-size:13.5px;color:var(--mist)">
+      Semua pendaftar dari halaman publik — konfirmasi lewat WhatsApp lalu ubah statusnya di sini.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px">
+      <div style="border:1px solid var(--line);border-radius:14px;padding:16px">
+        <div style="font-size:12px;font-weight:800;color:var(--mist);text-transform:uppercase">Baru</div>
+        <div style="font-size:26px;font-weight:800;color:var(--navy);margin-top:4px">3</div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:14px;padding:16px">
+        <div style="font-size:12px;font-weight:800;color:var(--mist);text-transform:uppercase">Dikonfirmasi</div>
+        <div style="font-size:26px;font-weight:800;color:var(--navy);margin-top:4px">12</div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:14px;padding:16px">
+        <div style="font-size:12px;font-weight:800;color:var(--mist);text-transform:uppercase">Bulan ini</div>
+        <div style="font-size:26px;font-weight:800;color:var(--navy);margin-top:4px">15</div>
+      </div>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Nama</th><th>WhatsApp</th><th>Program / Jadwal</th><th>Didaftarkan</th><th>Status</th>
+          <th class="right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--navy)">Rani Putri</td>
+          <td>0812-3456-7890</td>
+          <td>BOSIET · 30 Sep 2026</td>
+          <td>Hari ini, 14:02</td>
+          <td><span class="pill amber">Baru</span></td>
+          <td class="right" style="white-space:nowrap">
+            <button class="btn outline sm">Chat WA</button>
+            <button class="btn navy sm">Konfirmasi</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--navy)">Andi Kurniawan</td>
+          <td>0813-2222-1111</td>
+          <td>Barista · 28 Sep 2026</td>
+          <td>Kemarin, 09:30</td>
+          <td><span class="pill blue">Dikonfirmasi</span></td>
+          <td class="right" style="white-space:nowrap">
+            <button class="btn outline sm">Chat WA</button>
+            <button class="btn outline sm">Selesai</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--navy)">Dewi Lestari</td>
+          <td>0857-8888-7777</td>
+          <td>K3 Umum · 5 Okt 2026</td>
+          <td>22 Sep 2026</td>
+          <td><span class="pill grey">Ditolak</span></td>
+          <td class="right"><button class="btn outline sm">Chat WA</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>Alur kerja admin:</strong> pesan/masukan tetap tersimpan di DB seperti
+      <code>/admin/pesan</code> — status <code>baru → dikonfirmasi → selesai/ditolak</code> diubah lewat
+      server action (pola sama dengan <code>app/admin/actions.ts</code>). Filter per program/jadwal,
+      kolom pencarian nama/WA, dan tombol <em>Ekspor CSV</em> opsional di tahap lanjutan.
+      Kartu "Pendaftar Baru" bisa ditambahkan ke grid dashboard <code>/admin</code>.
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <div class="screen-bar">
+    <span>Lampiran · Rincian perubahan yang dibutuhkan</span>
+    <span class="url">scope</span>
+  </div>
+  <div class="screen-body">
+    <table class="tbl">
+      <thead>
+        <tr><th>File / entitas</th><th>Perubahan</th><th>Ukuran</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>prisma/schema.prisma</code></td>
+          <td>Tambah model <code>Pendaftaran</code> + relasi ke <code>JadwalPelatihan</code>; tambah
+            <code>kuota Int?</code> pada <code>JadwalPelatihan</code></td>
+          <td>Sedang</td>
+        </tr>
+        <tr>
+          <td><code>lib/schemas.ts</code> + <code>app/api/pendaftaran/route.ts</code></td>
+          <td>Validasi Zod (nama, WA, email opsional, honeypot) → simpan DB → email via
+            <code>lib/resend.ts</code></td>
+          <td>Sedang</td>
+        </tr>
+        <tr>
+          <td><code>components/site/FormPendaftaran.tsx</code></td>
+          <td>Modal client component (state idle/loading/sukses/error)</td>
+          <td>Sedang</td>
+        </tr>
+        <tr>
+          <td><code>program/[slug]/page.tsx</code> &amp; <code>kelas/[slug]/page.tsx</code></td>
+          <td>Kolom Kuota + Aksi, tombol membuka modal, mengirim data program/jadwal</td>
+          <td>Kecil</td>
+        </tr>
+        <tr>
+          <td><code>components/site/JadwalTerdekat.tsx</code></td>
+          <td>Baris aksi: tombol <em>Daftar</em> (form) sambil tetap menyediakan tautan WA</td>
+          <td>Kecil</td>
+        </tr>
+        <tr>
+          <td><code>app/admin/(dashboard)/pendaftaran/page.tsx</code> + <code>components/admin/PendaftaranList.tsx</code></td>
+          <td>Tabel pendaftar, statistik, ubah status via server action, tautan follow-up WA</td>
+          <td>Sedang</td>
+        </tr>
+        <tr>
+          <td><code>app/admin/actions.ts</code> + <code>app/admin/(dashboard)/page.tsx</code></td>
+          <td>Server action <code>updateStatusPendaftaran</code> / <code>deletePendaftaran</code> +
+            kartu "Pendaftar Baru"</td>
+          <td>Kecil</td>
+        </tr>
+        <tr>
+          <td><code>components/admin/JadwalManager.tsx</code></td>
+          <td>Field <code>kuota</code> pada form tambah/edit jadwal</td>
+          <td>Kecil</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>Yang sengaja tidak dibuat:</strong> pembayaran online, akun/login siswa, dan absensi —
+      di luar kebutuhan LPK tahap ini. Migrasi DB ikut ter-<code>db push</code> otomatis pada
+      <code>npm run build</code> (pipeline deploy yang sudah ada), jadi produksi tidak perlu langkah manual.
+    </div>
+  </div>
+</section>
+</main>
+</body>
+</html>
