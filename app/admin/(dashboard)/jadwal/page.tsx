@@ -35,6 +35,7 @@ export default async function JadwalPage() {
     programId: j.programId,
     instruktur: j.instruktur,
     ruangan: j.ruangan,
+    kuota: j.kuota,
     hari: j.hari,
     tanggal: j.tanggal ? ymdWib(j.tanggal) : null,
     jamMulai: j.jamMulai,

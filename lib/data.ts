@@ -263,7 +263,56 @@ export type JadwalRow = {
   jamAkhir: string;
   programId: number;
   program: { id: number; judul: string; slug: string };
+  /** Kapasitas kursi per batch; null = tanpa batas kuota (badge tidak tampil). */
+  kuota: number | null;
+  /** Jumlah pendaftar yang memakai kursi (semua status kecuali "ditolak"). */
+  terdaftar: number;
 };
+
+/** Field minimum untuk menghitung sisa kursi (JadwalRow & UpcomingJadwalRow). */
+export type KuotaAware = { kuota: number | null; terdaftar: number };
+
+export type SisaKursi = {
+  sisa: number;
+  /** true = kursi habis → tombol Daftar dinonaktifkan. */
+  penuh: boolean;
+  /** true = sisa ≤ separuh kuota → badge kuning "Sisa N kursi". */
+  terbatas: boolean;
+};
+
+/**
+ * Ringkasan sisa kursi untuk tabel jadwal publik.
+ * null = jadwal tanpa kuota → kolom kuota disembunyikan, tombol daftar tetap aktif.
+ */
+export function sisaKursi(j: KuotaAware): SisaKursi | null {
+  if (j.kuota === null || j.kuota === undefined) return null;
+  const sisa = Math.max(0, j.kuota - j.terdaftar);
+  return {
+    sisa,
+    penuh: sisa === 0,
+    terbatas: sisa > 0 && sisa <= Math.max(1, Math.ceil(j.kuota / 2)),
+  };
+}
+
+/** "2026-09-30" → "30 Sep 2026"; parsing manual agar tidak bergeser zona waktu. */
+export function formatTanggalYmd(ymd: string): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const namaBulan = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
+  return `${d} ${namaBulan[(m ?? 1) - 1] ?? ""} ${y}`.trim();
+}
 
 /** Date → "YYYY-MM-DD" di zona Asia/Jakarta (tanpa geser zona). */
 export function ymdWib(d: Date): string {
@@ -316,6 +365,11 @@ export async function getJadwalByCategory(
       where: { isActive: true, program: { categoryId, isActive: true } },
       include: {
         program: { select: { id: true, judul: true, slug: true } },
+        // Kuota terpakai = pendaftar yang belum ditolak (baru/dikonfirmasi/selesai).
+        pendaftaran: {
+          where: { status: { not: "ditolak" } },
+          select: { id: true },
+        },
       },
       orderBy: [{ urutan: "asc" }, { id: "asc" }],
     });
@@ -330,6 +384,8 @@ export async function getJadwalByCategory(
     jamAkhir: j.jamAkhir,
     programId: j.programId,
     program: j.program,
+    kuota: j.kuota,
+    terdaftar: j.pendaftaran.length,
   }));
 }
 
@@ -342,6 +398,11 @@ export async function getJadwalByProgram(
       where: { isActive: true, programId, program: { isActive: true } },
       include: {
         program: { select: { id: true, judul: true, slug: true } },
+        // Kuota terpakai = pendaftar yang belum ditolak (baru/dikonfirmasi/selesai).
+        pendaftaran: {
+          where: { status: { not: "ditolak" } },
+          select: { id: true },
+        },
       },
       orderBy: [{ urutan: "asc" }, { id: "asc" }],
     });
@@ -356,6 +417,8 @@ export async function getJadwalByProgram(
     jamAkhir: j.jamAkhir,
     programId: j.programId,
     program: j.program,
+    kuota: j.kuota,
+    terdaftar: j.pendaftaran.length,
   }));
 }
 
@@ -391,6 +454,10 @@ export type UpcomingJadwalRow = {
   jamAkhir: string;
   programId: number;
   program: { id: number; judul: string; slug: string; categorySlug: string | null };
+  /** Kapasitas kursi; null = tanpa batas kuota. */
+  kuota: number | null;
+  /** Pendaftar yang memakai kursi (semua status kecuali "ditolak"). */
+  terdaftar: number;
   /** 0 = hari ini, 1 = besok, 7 = pekan depan (jadwal hari ini sudah lewat). */
   offsetDays: number;
 };
@@ -419,8 +486,10 @@ function hhmmToMinutes(hhmm: string): number {
 }
 
 /** Baris mentah dari Prisma — `tanggal` masih Date, dikonversi ke YMD di pemanggil. */
-type RawUpcomingJadwal = Omit<JadwalRow, "tanggal"> & {
+type RawUpcomingJadwal = Omit<JadwalRow, "tanggal" | "terdaftar"> & {
   tanggal: Date | null;
+  /** Relasi pendaftaran — hanya id, dipakai menghitung kursi terpakai. */
+  pendaftaran: { id: number }[];
   program: {
     id: number;
     judul: string;
@@ -451,6 +520,11 @@ export async function getUpcomingJadwal(
             urutan: true,
             category: { select: { slug: true, isActive: true } },
           },
+        },
+        // Kuota terpakai = pendaftar yang belum ditolak (baru/dikonfirmasi/selesai).
+        pendaftaran: {
+          where: { status: { not: "ditolak" } },
+          select: { id: true },
         },
       },
     });
@@ -491,6 +565,8 @@ export async function getUpcomingJadwal(
             slug: j.program.slug,
             categorySlug: j.program.category?.slug ?? null,
           },
+          kuota: j.kuota,
+          terdaftar: j.pendaftaran.length,
           offsetDays,
           _sort: tanggalJamMinutes(tanggal, j.jamMulai),
           _tie: j.program.urutan * 10000 + j.id,
@@ -523,6 +599,8 @@ export async function getUpcomingJadwal(
           slug: j.program.slug,
           categorySlug: j.program.category?.slug ?? null,
         },
+        kuota: j.kuota,
+        terdaftar: j.pendaftaran.length,
         offsetDays,
         _sort: offsetDays * 1440 + hhmmToMinutes(j.jamMulai),
         _tie: j.program.urutan * 10000 + j.id,

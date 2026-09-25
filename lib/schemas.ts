@@ -151,6 +151,17 @@ export const jadwalSchema = z
     programId: z.coerce.number().int().positive("Program wajib dipilih"),
     instruktur: z.string().trim().max(80).optional().or(z.literal("")),
     ruangan: z.string().trim().max(80).optional().or(z.literal("")),
+    // Kuota kursi per batch; "" (kosong) = tanpa batas kuota → disimpan null.
+    kuota: z
+      .union([
+        z.coerce
+          .number()
+          .int()
+          .min(1, "Kuota minimal 1 kursi")
+          .max(999, "Kuota maksimal 999 kursi"),
+        z.literal(""),
+      ])
+      .optional(),
     hari: z
       .enum(HARI_LIST, "Hari wajib dipilih")
       .optional()
@@ -216,3 +227,42 @@ export const materiSchema = z.object({
 });
 
 export type MateriInput = z.infer<typeof materiSchema>;
+
+/* -------------------------------- Pendaftaran -------------------------------- */
+
+/** Status pendaftaran — satu sumber kebenaran untuk API publik & dashboard admin. */
+export const PENDAFTARAN_STATUS_LIST = [
+  "baru",
+  "dikonfirmasi",
+  "selesai",
+  "ditolak",
+] as const;
+
+export type PendaftaranStatus = (typeof PENDAFTARAN_STATUS_LIST)[number];
+
+/**
+ * Form pendaftaran publik (POST /api/pendaftaran).
+ * `website` = honeypot (input tersembunyi): wajib kosong — bot biasanya mengisinya,
+ * sehingga request-nya ditolak tanpa menyimpan data.
+ */
+export const pendaftaranSchema = z.object({
+  jadwalId: z.coerce.number().int().positive("Jadwal tidak valid"),
+  nama: z.string().trim().min(2, "Nama minimal 2 karakter").max(120),
+  wa: z
+    .string()
+    .trim()
+    .min(9, "Nomor WhatsApp minimal 9 digit")
+    .max(20, "Nomor WhatsApp maksimal 20 karakter")
+    .regex(/^[0-9+()\-\s]+$/, "Nomor WhatsApp hanya boleh berisi angka"),
+  email: z.union([z.email("Format email tidak valid"), z.literal("")]).optional(),
+  catatan: z.string().trim().max(500).optional().or(z.literal("")),
+  website: z.literal("").optional(), // honeypot — wajib kosong
+});
+
+export type PendaftaranInput = z.infer<typeof pendaftaranSchema>;
+
+/** Ubah status pendaftaran dari dashboard admin (/admin/pendaftaran). */
+export const pendaftaranStatusSchema = z.enum(
+  PENDAFTARAN_STATUS_LIST,
+  "Status pendaftaran tidak valid"
+);

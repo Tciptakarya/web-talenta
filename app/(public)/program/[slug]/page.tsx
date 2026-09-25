@@ -1,34 +1,27 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
+  formatTanggalYmd,
   getProgramBySlug,
   getJadwalByProgram,
   getProgramsByCategory,
+  sisaKursi,
 } from "@/lib/data";
+import FormPendaftaran from "@/components/site/FormPendaftaran";
+import KuotaBadge from "@/components/site/KuotaBadge";
+
+/** Nomor WhatsApp resmi — konsisten dengan Footer/Kontak (0811-9700-322). */
+const WA_NUMBER = "628119700322";
+
+function waUrl(message: string): string {
+  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+}
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-/** "2026-09-30" → "30 Sep 2026"; parsing manual agar tidak bergeser zona. */
-function formatTanggalYmd(ymd: string): string {
-  const [y, m, d] = ymd.split("-").map(Number);
-  const namaBulan = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-  return `${d} ${namaBulan[(m ?? 1) - 1] ?? ""} ${y}`.trim();
-}
+// formatTanggalYmd dipakai bersama dari "@/lib/data" (hindari duplikasi).
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -63,6 +56,8 @@ export default async function ProgramSlugPage({ params }: Props) {
       : Promise.resolve([]),
   ]);
   const relatedPrograms = siblingPrograms.filter((p) => p.id !== program.id);
+  // Kolom kuota hanya tampil bila minimal satu jadwal punya batas kapasitas.
+  const adaKuota = jadwalList.some((j) => j.kuota !== null);
 
   return (
     <div className="section section-alt section-page" id="program-detail">
@@ -105,7 +100,8 @@ export default async function ProgramSlugPage({ params }: Props) {
             Jadwal Pelatihan
           </h2>
           {jadwalList.length > 0 ? (
-            <div className="rounded-2xl bg-white border border-line overflow-x-auto">
+            <>
+              <div className="rounded-2xl bg-white border border-line overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-line text-xs font-bold text-navy">
@@ -113,32 +109,78 @@ export default async function ProgramSlugPage({ params }: Props) {
                     <th className="px-4 py-3">Waktu</th>
                     <th className="px-4 py-3">Instruktur</th>
                     <th className="px-4 py-3">Ruangan</th>
+                    {adaKuota && <th className="px-4 py-3">Kuota</th>}
+                    <th className="px-4 py-3 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {jadwalList.map((j) => (
-                    <tr key={j.id} className="border-b border-line last:border-0">
-                      <td className="px-4 py-3">
-                        <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
-                          {j.tanggal
-                            ? `${j.hari}, ${formatTanggalYmd(j.tanggal)}`
-                            : `Setiap ${j.hari}`}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
-                        {j.jamMulai} - {j.jamAkhir} WIB
-                      </td>
-                      <td className="px-4 py-3 text-sm text-ink">
-                        {j.instruktur ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-ink">
-                        {j.ruangan ?? "—"}
-                      </td>
-                    </tr>
-                  ))}
+                  {jadwalList.map((j) => {
+                    const kursi = sisaKursi(j);
+                    const jadwalLabel = j.tanggal
+                      ? `${j.hari}, ${formatTanggalYmd(j.tanggal)}`
+                      : `Setiap ${j.hari}`;
+                    const jamLabel = `${j.jamMulai} - ${j.jamAkhir} WIB`;
+                    return (
+                      <tr key={j.id} className="border-b border-line last:border-0">
+                        <td className="px-4 py-3">
+                          <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
+                            {jadwalLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
+                          {jamLabel}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-ink">
+                          {j.instruktur ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-ink">
+                          {j.ruangan ?? "—"}
+                        </td>
+                        {adaKuota && (
+                          <td className="px-4 py-3">
+                            {kursi ? (
+                              <KuotaBadge kursi={kursi} />
+                            ) : (
+                              <span className="text-sm text-mist">—</span>
+                            )}
+                          </td>
+                        )}
+                        <td className="px-4 py-3 text-right">
+                          <FormPendaftaran
+                            target={{
+                              jadwalId: j.id,
+                              programJudul: program.judul,
+                              jadwalLabel,
+                              jamLabel,
+                              ruangan: j.ruangan,
+                              waUrl: waUrl(
+                                `Halo Talenta Cipta Karya, saya ingin bertanya tentang kelas ${program.judul} (${jadwalLabel}, ${jamLabel}). Apakah jadwal ini masih tersedia dan bagaimana cara mendaftarnya?`
+                              ),
+                            }}
+                            disabled={kursi?.penuh ?? false}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-            </div>
+              </div>
+              <p className="mt-3 text-sm text-mist">
+                Kuota tiap batch terbatas — amankan kursimu sekarang. Belum
+                yakin?{" "}
+                <a
+                  href={waUrl(
+                    `Halo Talenta Cipta Karya, saya ingin bertanya tentang program ${program.judul}.`
+                  )}
+                  target="_blank"
+                  rel="noopener"
+                  className="font-semibold text-blue hover:underline"
+                >
+                  Tanya via WhatsApp
+                </a>
+              </p>
+            </>
           ) : (
             <p className="text-mist">
               Belum ada jadwal untuk program ini — hubungi kami untuk jadwal

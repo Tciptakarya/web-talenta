@@ -13,6 +13,7 @@ import {
   jadwalSchema,
   hariDariTanggal,
   materiSchema,
+  pendaftaranStatusSchema,
   ALLOWED_MATERI_TYPES,
   MAX_MATERI_BYTES,
   gantiPasswordSchema,
@@ -653,6 +654,7 @@ export async function createJadwal(
       programId: formData.get("programId"),
       instruktur: formData.get("instruktur") ?? "",
       ruangan: formData.get("ruangan") ?? "",
+      kuota: String(formData.get("kuota") ?? "").trim(),
       hari: formData.get("hari") ?? "",
       tanggal: tanggalRaw,
       jamMulai: formData.get("jamMulai"),
@@ -669,7 +671,7 @@ export async function createJadwal(
     if (!parsed.data.tanggal) {
       return { ok: false, error: "Tanggal wajib diisi." };
     }
-    const { instruktur, ruangan, tanggal, ...data } = parsed.data;
+    const { instruktur, ruangan, tanggal, kuota, ...data } = parsed.data;
     // Nama hari selalu diturunkan di server dari tanggal (zona Asia/Jakarta).
     const hari = hariDariTanggal(tanggal);
     // Simpan sebagai tengah malam WIB: 00:00 WIB = 17:00 UTC sehari sebelumnya.
@@ -682,6 +684,8 @@ export async function createJadwal(
         tanggal: tanggalValue,
         instruktur: instruktur || null,
         ruangan: ruangan || null,
+        // Kuota kosong ("") = tanpa batas → null (badge kuota tidak tampil).
+        kuota: typeof kuota === "number" ? kuota : null,
       },
     });
     refresh();
@@ -704,6 +708,7 @@ export async function updateJadwal(
         programId: formData.get("programId"),
         instruktur: formData.get("instruktur") ?? "",
         ruangan: formData.get("ruangan") ?? "",
+        kuota: String(formData.get("kuota") ?? "").trim(),
         hari: formData.get("hari") ?? "",
         tanggal: String(formData.get("tanggal") ?? "").trim(),
         jamMulai: formData.get("jamMulai"),
@@ -717,11 +722,13 @@ export async function updateJadwal(
         error: parsed.error.issues[0]?.message ?? "Data tidak valid.",
       };
     }
-    const { id, instruktur, ruangan, tanggal, hari, ...data } = parsed.data;
+    const { id, instruktur, ruangan, tanggal, hari, kuota, ...data } = parsed.data;
     const updateData: Record<string, unknown> = {
       ...data,
       instruktur: instruktur || null,
       ruangan: ruangan || null,
+      // Kuota kosong ("") = tanpa batas → null (badge kuota tidak tampil).
+      kuota: typeof kuota === "number" ? kuota : null,
     };
     if (tanggal) {
       // Tanggal tersedia → nama hari selalu diturunkan ulang di server.
@@ -880,6 +887,30 @@ export async function deleteMateri(formData: FormData) {
 
 /* ------------------------------------ Wrapper untuk form action langsung ----------------------------------- */
 /* Wrapper yang return void agar bisa dipakai langsung di form action */
+
+
+/* --------------------------------- Pendaftaran -------------------------------- */
+
+/** Ubah status pendaftaran: baru → dikonfirmasi → selesai / ditolak. */
+export async function updateStatusPendaftaran(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const parsed = pendaftaranStatusSchema.safeParse(formData.get("status"));
+  if (!Number.isFinite(id) || !parsed.success) return;
+  await prisma.pendaftaran
+    .update({ where: { id }, data: { status: parsed.data } })
+    .catch(() => undefined);
+  refresh();
+}
+
+/** Hapus pendaftaran (data uji / pendaftar yang membatalkan). */
+export async function deletePendaftaran(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+  await prisma.pendaftaran.delete({ where: { id } }).catch(() => undefined);
+  refresh();
+}
 
 export async function deleteCategoryAction(formData: FormData) {
   await deleteCategory(undefined, formData);

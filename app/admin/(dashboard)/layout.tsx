@@ -14,6 +14,7 @@ const NAV = [
   { href: "/admin/testimoni", label: "Testimoni" },
   { href: "/admin/program", label: "Program" },
   { href: "/admin/jadwal", label: "Jadwal Pelatihan" },
+  { href: "/admin/pendaftaran", label: "Pendaftaran" },
   { href: "/admin/materi", label: "Materi Pelatihan" },
   { href: "/admin/kategori", label: "Kategori Kelas" },
   { href: "/admin/pesan", label: "Pesan Masuk" },
@@ -27,9 +28,10 @@ export default async function AdminLayout({
   const session = await auth();
   if (!session) redirect("/admin/login");
 
-  const [pesanCount, fotoCount] = await Promise.all([
+  const [pesanCount, fotoCount, pendaftaranBaru] = await Promise.all([
     prisma.contactMessage.count().catch(() => 0),
     prisma.galleryImage.count().catch(() => 0),
+    prisma.pendaftaran.count({ where: { status: "baru" } }).catch(() => 0),
   ]);
 
   return (
@@ -54,6 +56,11 @@ export default async function AdminLayout({
               )}
               {n.href === "/admin/galeri" && (
                 <span className="ml-2 text-xs text-[#8B98BE]">{fotoCount}</span>
+              )}
+              {n.href === "/admin/pendaftaran" && pendaftaranBaru > 0 && (
+                <span className="ml-2 inline-block rounded-full bg-gold text-navy text-xs font-bold px-2 py-0.5">
+                  {pendaftaranBaru}
+                </span>
               )}
             </Link>
           ))}

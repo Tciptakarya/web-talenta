@@ -16,6 +16,8 @@ Router, TypeScript, Tailwind) + backend ringan di codebase yang sama (API Routes
 | Notifikasi email tiap pesan masuk | ✅ `lib/resend.ts` → info@talentaciptakarya.com |
 | WhatsApp tetap sebagai opsi di samping form | ✅ tombol di section Kontak tidak dihapus |
 | Inbox pesan cadangan | ✅ `/admin/pesan` |
+| Pendaftaran dari tabel jadwal publik | ✅ tombol **Daftar** → `POST /api/pendaftaran` → `Pendaftaran` → `/admin/pendaftaran` |
+| Kuota batch & badge sisa kursi | ✅ `JadwalPelatihan.kuota` → badge *Tersedia / Sisa N kursi / Penuh* + tombol nonaktif saat penuh |
 | Upload dikompres otomatis (`sharp`) | ✅ resize max 1600px → WebP q82 |
 | Gambar via `next/image` | ✅ |
 | Aksesibilitas v1 (aria, keyboard, reduced-motion) | ✅ |
@@ -30,6 +32,16 @@ Dilengkapi dua fase pengembangan lanjutan:
 - **Fase 3 — Dark/light mode**: tombol toggle (moon/sun) di header publik &
   sidebar/mobile bar admin, preferensi disimpan di `localStorage("theme")`,
   anti-flash via script inline di `app/layout.tsx`; mode terang tidak berubah.
+- **Fase 4 — Pendaftaran pelatihan**: tombol **Daftar** pada setiap baris tabel
+  jadwal publik (`/program/[slug]`, `/kelas/[slug]`, section *Jadwal Kelas
+  Terdekat*) membuka modal form (nama, WhatsApp, email & catatan opsional) →
+  `POST /api/pendaftaran` (validasi Zod + honeypot + rate limit) → tabel
+  `Pendaftaran` → notifikasi email Resend. Admin memproses di
+  `/admin/pendaftaran` (status `baru → dikonfirmasi → selesai/ditolak`, follow-up
+  WhatsApp satu klik). Field `kuota` pada jadwal memunculkan badge
+  *Tersedia / Sisa N kursi / Penuh* dan menonaktifkan tombol saat kursi habis.
+  Data tetap tersimpan bila email gagal (§8). Desain disepakati lewat
+  `mockups/pendaftaran-wireframe.html`.
 
 ## Menjalankan lokal
 
@@ -83,27 +95,35 @@ menjalankan db push + seed otomatis → login `/admin` → **ganti password**.
 app/
 ├── (public)/page.tsx        → halaman utama (section v1, data dari DB)
 ├── (public)/kelas/          → /kelas (filter kategori) + /kelas/[slug]
+├── (public)/program/        → /program/[slug] (detail program + tombol Daftar)
 ├── admin/
 │   ├── login/               → login admin
-│   └── (dashboard)/         → /admin, /galeri, /testimoni, /program, /kategori, /pesan
+│   └── (dashboard)/         → /admin, /galeri, /testimoni, /program, /kategori,
+│                              /jadwal, /pendaftaran, /materi, /pesan
 ├── api/
 │   ├── auth/[...nextauth]/  → NextAuth
 │   ├── contact/             → validasi Zod → DB → Resend
+│   ├── pendaftaran/         → form pendaftaran jadwal → DB → Resend
 │   └── upload/              → sharp → Blob/local → DB
 ├── globals.css              → desain v1 + token Tailwind (visual tidak berubah)
 components/
-├── site/                    → port komponen v1 (Header, Hero, Layanan, Galeri, …) + ThemeToggle
-└── admin/                   → komponen dashboard (termasuk GantiPasswordForm)
+├── site/                    → port komponen v1 (Header, Hero, Layanan, Galeri, …) +
+│                              ThemeToggle, FormPendaftaran, KuotaBadge
+└── admin/                   → komponen dashboard (termasuk GantiPasswordForm,
+                               PendaftaranList)
 lib/
 ├── auth.ts / auth.config.ts → NextAuth v5 (credentials + JWT)
-├── data.ts                  → query DB dengan fallback konten v1
+├── data.ts                  → query DB dengan fallback konten v1 (+ sisaKursi)
 ├── resend.ts                → notifikasi email
 ├── storage.ts               → Vercel Blob / fallback public/uploads
 ├── schemas.ts               → validasi Zod
 ├── slug.ts                  → auto-slug unik (kategori/program)
 └── content.ts               → data statis v1 (seed + fallback)
+mockups/                     → wireframe HTML untuk diskusi desain (bukan bagian app)
 prisma/
-├── schema.prisma            → Category, Program, GalleryImage, Testimonial, ContactMessage, AdminUser
+├── schema.prisma            → Category, Program, GalleryImage, Testimonial,
+│                              ContactMessage, JadwalPelatihan, Pendaftaran,
+│                              MateriPelatihan, AdminUser
 └── seed.ts
 middleware.ts                → proteksi /admin/*
 legacy/                      → website statis v1 (index.html, styles.css, script.js, CNAME)

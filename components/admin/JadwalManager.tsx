@@ -23,6 +23,8 @@ export type AdminJadwal = {
   programId: number;
   instruktur: string | null;
   ruangan: string | null;
+  /** Kapasitas kursi per batch; null = tanpa batas kuota. */
+  kuota: number | null;
   hari: string;
   tanggal: string | null; // "YYYY-MM-DD" — null = jadwal mingguan lama
   jamMulai: string;
@@ -197,7 +199,7 @@ function JadwalEditRow({
 
   return (
     <tr>
-      <td colSpan={7} className="bg-paper px-4 py-4">
+      <td colSpan={8} className="bg-paper px-4 py-4">
         <form action={action} className="space-y-3">
           <input type="hidden" name="id" value={jadwal.id} />
 
@@ -231,6 +233,21 @@ function JadwalEditRow({
                 defaultValue={jadwal.ruangan ?? ""}
                 maxLength={80}
                 placeholder="Nama ruangan (opsional)"
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor={`edit-kuota-${jadwal.id}`} className={labelCls}>
+                Kuota Kursi
+              </label>
+              <input
+                id={`edit-kuota-${jadwal.id}`}
+                name="kuota"
+                type="number"
+                min={1}
+                max={999}
+                defaultValue={jadwal.kuota ?? ""}
+                placeholder="Kosongkan bila tanpa batas"
                 className={inputCls}
               />
             </div>
@@ -358,6 +375,9 @@ function JadwalRow({
             <span className="text-sm text-mist">—</span>
           )}
         </td>
+        <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
+          {jadwal.kuota !== null ? `${jadwal.kuota} kursi` : "—"}
+        </td>
         <td className="px-4 py-3">
           <span className="inline-block rounded-full bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-400/30 px-3 py-1 text-xs font-bold whitespace-nowrap">
             {labelJadwal(jadwal)}
@@ -467,6 +487,24 @@ export default function JadwalManager({
               className={inputCls}
             />
           </div>
+          <div>
+            <label htmlFor="new-kuota" className={labelCls}>
+              Kuota Kursi
+            </label>
+            <input
+              id="new-kuota"
+              name="kuota"
+              type="number"
+              min={1}
+              max={999}
+              placeholder="Kosongkan bila tanpa batas"
+              className={inputCls}
+            />
+            <p className="mt-1 text-xs text-mist">
+              Diisi → badge sisa kursi tampil & tombol Daftar nonaktif otomatis
+              saat penuh.
+            </p>
+          </div>
           <TanggalInput id="new-tanggal" required />
           <div>
             <label htmlFor="new-jamMulai" className={labelCls}>
@@ -540,6 +578,7 @@ export default function JadwalManager({
               <th className="px-4 py-3">Program</th>
               <th className="px-4 py-3">Instruktur</th>
               <th className="px-4 py-3">Ruangan</th>
+              <th className="px-4 py-3">Kuota</th>
               <th className="px-4 py-3">Hari / Tanggal</th>
               <th className="px-4 py-3">Waktu</th>
               <th className="px-4 py-3">Aksi</th>
@@ -548,7 +587,7 @@ export default function JadwalManager({
           <tbody>
             {jadwal.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-sm text-mist text-center">
+                <td colSpan={8} className="px-4 py-6 text-sm text-mist text-center">
                   Belum ada jadwal pelatihan. Tambahkan lewat form di atas.
                 </td>
               </tr>

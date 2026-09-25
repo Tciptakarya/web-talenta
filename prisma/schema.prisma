@@ -107,8 +107,10 @@ model JadwalPelatihan {
   id         Int      @id @default(autoincrement())
   programId  Int
   program    Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  pendaftaran Pendaftaran[]
   instruktur String? // teks bebas, mis. "Budi Santoso"
   ruangan    String? // teks bebas, mis. "Ruangan Praktek"
+  kuota      Int? // kapasitas kursi per batch; null = tanpa batas (badge kuota tidak tampil di publik)
   hari       String // diturunkan otomatis dari `tanggal` (zona Asia/Jakarta); jadwal lama tanpa tanggal tetap memakai nilai lama
   tanggal    DateTime? // jadwal satu kali: tanggal+jam disimpan di tengah malam WIB; kosong = jadwal mingguan lama
   jamMulai   String // "08:00" (HH:MM)
@@ -120,6 +122,26 @@ model JadwalPelatihan {
 
   @@index([programId])
   @@index([tanggal])
+}
+
+/// Pendaftaran pelatihan — 1 JadwalPelatihan → N pendaftar (form publik /api/pendaftaran).
+/// Kuota dihitung dari baris yang BUKAN "ditolak"; diproses admin di /admin/pendaftaran.
+/// Data tetap tersimpan bila notifikasi email gagal (pola ContactMessage, PRD §8).
+model Pendaftaran {
+  id          Int             @id @default(autoincrement())
+  jadwalId    Int
+  jadwal      JadwalPelatihan @relation(fields: [jadwalId], references: [id], onDelete: Cascade)
+  nama        String
+  wa          String // nomor WhatsApp pendaftar (dipakai admin untuk konfirmasi)
+  email       String? // opsional
+  catatan     String? // opsional — pertanyaan/permintaan khusus
+  status      String          @default("baru") // "baru" | "dikonfirmasi" | "selesai" | "ditolak"
+  statusEmail String          @default("pending") // "sent" | "failed" | "skipped"
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([jadwalId])
+  @@index([status])
 }
 
 /// Materi pelatihan — file terupload (Blob//uploads) ATAU link eksternal (wajib salah satu).

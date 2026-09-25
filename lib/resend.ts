@@ -133,4 +133,72 @@ export async function sendPasswordResetEmail(input: {
   }
 }
 
+/**
+ * Kirim notifikasi email untuk setiap pendaftaran pelatihan baru.
+ * Dipanggil SETELAH baris Pendaftaran tersimpan — pola reliabilitas sama dengan
+ * ContactMessage (§8): gagal kirim → status "failed", data tetap di dashboard.
+ */
+export async function sendPendaftaranNotification(input: {
+  nama: string;
+  wa: string;
+  email: string | null;
+  catatan: string | null;
+  programJudul: string;
+  jadwalLabel: string;
+  jamLabel: string;
+  ruangan: string | null;
+}): Promise<EmailStatus> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn(
+      "[resend] RESEND_API_KEY belum diisi — notifikasi pendaftaran dilewati, data tetap tersimpan di database."
+    );
+    return "skipped";
+  }
+
+  const to = process.env.CONTACT_EMAIL_TO || "info@talentaciptakarya.com";
+  const from = process.env.CONTACT_EMAIL_FROM || "onboarding@resend.dev";
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      ...(input.email ? { replyTo: input.email } : {}),
+      subject: `Pendaftaran baru: ${input.nama} — ${input.programJudul}`,
+      text: [
+        "Halo tim Talenta Cipta Karya,",
+        "",
+        "Ada pendaftaran baru dari website:",
+        "",
+        `Nama       : ${input.nama}`,
+        `WhatsApp   : ${input.wa}`,
+        `Email      : ${input.email || "-"}`,
+        "",
+        `Program    : ${input.programJudul}`,
+        `Jadwal     : ${input.jadwalLabel}`,
+        `Waktu      : ${input.jamLabel}`,
+        `Ruangan    : ${input.ruangan || "-"}`,
+        "",
+        "Catatan pendaftar:",
+        input.catatan || "-",
+        "",
+        "Tindak lanjut: konfirmasi kursi via WhatsApp, lalu ubah statusnya di",
+        `${siteUrl()}/admin/pendaftaran`,
+        "",
+        "— Notifikasi otomatis dari talentaciptakarya.com",
+      ].join("\n"),
+    });
+
+    if (error) {
+      console.error("[resend] pendaftaran email gagal:", error);
+      return "failed";
+    }
+    return "sent";
+  } catch (err) {
+    console.error("[resend] pendaftaran email exception:", err);
+    return "failed";
+  }
+}
+
 export { siteUrl };

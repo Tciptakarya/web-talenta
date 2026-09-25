@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Reveal from "@/components/site/Reveal";
+import FormPendaftaran from "@/components/site/FormPendaftaran";
+import KuotaBadge from "@/components/site/KuotaBadge";
+import { sisaKursi } from "@/lib/data";
 import type { UpcomingJadwalRow } from "@/lib/data";
 
 /** Nomor WhatsApp resmi — konsisten dengan Footer/Kontak (0811-9700-322). */
@@ -80,6 +83,9 @@ export default function JadwalTerdekat({
 }) {
   if (items.length === 0) return null;
 
+  // Kolom kuota hanya tampil bila minimal satu jadwal punya batas kapasitas.
+  const adaKuota = items.some((j) => j.kuota !== null);
+
   return (
     <section className="section" id="jadwal-terdekat">
       <div className="wrap">
@@ -87,8 +93,9 @@ export default function JadwalTerdekat({
           <span className="kicker">Jadwal Kelas Terdekat</span>
           <h2>Kelas berikutnya sudah menunggu jadwalmu</h2>
           <p className="mt-3 text-mist">
-            Lihat jadwal pelatihan yang akan datang, lalu amankan kursimu lewat
-            WhatsApp — kuota tiap batch terbatas.
+            Lihat jadwal pelatihan yang akan datang, lalu klik <strong>Daftar</strong>{" "}
+            pada baris yang kamu pilih — kuota tiap batch terbatas. Masih ada
+            pertanyaan? Hubungi kami lewat WhatsApp.
           </p>
         </Reveal>
 
@@ -101,6 +108,9 @@ export default function JadwalTerdekat({
                 <th className="px-4 py-3">Waktu</th>
                 <th className="px-4 py-3 hidden md:table-cell">Instruktur</th>
                 <th className="px-4 py-3 hidden md:table-cell">Ruangan</th>
+                {adaKuota && (
+                  <th className="px-4 py-3 hidden sm:table-cell">Kuota</th>
+                )}
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
@@ -112,6 +122,7 @@ export default function JadwalTerdekat({
                 const tanyaUrl = waUrl(
                   `Halo Talenta Cipta Karya, saya ingin bertanya tentang kelas ${j.program.judul} (${labelJadwalPublik(j)}, ${j.jamMulai}-${j.jamAkhir} WIB). Apakah jadwal ini masih tersedia dan bagaimana cara mendaftarnya?`
                 );
+                const kursi = sisaKursi(j);
                 return (
                   <tr key={j.id} className="border-b border-line last:border-0">
                     <td className="px-4 py-3 text-sm font-bold text-navy">
@@ -129,21 +140,43 @@ export default function JadwalTerdekat({
                     <td className="px-4 py-3 text-sm text-ink hidden md:table-cell">
                       {j.ruangan ?? "—"}
                     </td>
+                    {adaKuota && (
+                      <td className="px-4 py-3 hidden sm:table-cell">
+                        {kursi ? (
+                          <KuotaBadge kursi={kursi} />
+                        ) : (
+                          <span className="text-sm text-mist">—</span>
+                        )}
+                      </td>
+                    )}
                     <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <Link
-                        href={detailHref}
-                        className="text-sm font-bold text-gold hover:underline mr-3"
-                      >
-                        Detail
-                      </Link>
-                      <a
-                        href={tanyaUrl}
-                        target="_blank"
-                        rel="noopener"
-                        className="text-sm font-bold text-navy hover:text-gold hover:underline"
-                      >
-                        Tanya WA
-                      </a>
+                      <div className="flex flex-wrap items-center justify-end gap-3">
+                        <Link
+                          href={detailHref}
+                          className="text-sm font-bold text-gold hover:underline"
+                        >
+                          Detail
+                        </Link>
+                        <FormPendaftaran
+                          target={{
+                            jadwalId: j.id,
+                            programJudul: j.program.judul,
+                            jadwalLabel: labelJadwalPublik(j),
+                            jamLabel: `${j.jamMulai} - ${j.jamAkhir} WIB`,
+                            ruangan: j.ruangan,
+                            waUrl: tanyaUrl,
+                          }}
+                          disabled={kursi?.penuh ?? false}
+                        />
+                        <a
+                          href={tanyaUrl}
+                          target="_blank"
+                          rel="noopener"
+                          className="text-sm font-bold text-navy hover:text-gold hover:underline"
+                        >
+                          Tanya WA
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 );
