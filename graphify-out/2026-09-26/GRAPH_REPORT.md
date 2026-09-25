@@ -1,17 +1,17 @@
-# Graph Report - tciptakarya-main  (2026-09-26)
+# Graph Report - tciptakarya-main  (2026-09-25)
 
 ## Corpus Check
-- 76 files · ~158,125 words
+- 76 files · ~158,076 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 489 nodes · 927 edges · 19 communities (16 shown, 3 thin omitted)
+- 489 nodes · 926 edges · 19 communities (16 shown, 3 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 15 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7973d8a7`
+- Built from commit: `256c2dc4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -98,7 +98,7 @@ Nodes (16): form, header, lightbox, lightboxCaption, lightboxClose, lightboxImag
 
 ### Community 8 - "package.json"
 Cohesion: 0.04
-Nodes (44): allowScripts, esbuild@0.28.2, prisma@6.19.3, @prisma/client@6.19.3, @prisma/engines@6.19.3, dependencies, bcryptjs, next (+36 more)
+Nodes (45): allowScripts, esbuild@0.28.2, prisma@6.19.3, @prisma/client@6.19.3, @prisma/engines@6.19.3, dependencies, bcryptjs, next (+37 more)
 
 ### Community 9 - "pendaftaran/route.ts"
 Cohesion: 0.15
@@ -106,7 +106,7 @@ Nodes (13): getClientIp(), requestPasswordReset(), metadata, POST(), ForgotPassw
 
 ### Community 10 - "data.ts"
 Cohesion: 0.06
-Nodes (59): dynamic, metadata, PendaftaranPage(), dynamic, KelasIndexPage(), metadata, generateMetadata(), KelasSlugPage() (+51 more)
+Nodes (58): dynamic, metadata, PendaftaranPage(), dynamic, KelasIndexPage(), metadata, generateMetadata(), KelasSlugPage() (+50 more)
 
 ### Community 11 - "JadwalManager.tsx"
 Cohesion: 0.15
@@ -129,21 +129,21 @@ Cohesion: 0.14
 Nodes (13): dynamic, metadata, AdminGalleryItem, AdminGalleryProgram, GaleriCard(), GaleriList(), Antrean, AntreanStatus (+5 more)
 
 ## Knowledge Gaps
-- **184 isolated node(s):** `Props`, `dynamic`, `metadata`, `dynamic`, `Props` (+179 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 226 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **185 isolated node(s):** `Props`, `dynamic`, `metadata`, `dynamic`, `Props` (+180 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 227 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `next` connect `next` to `(public)/page.tsx`, `prisma.ts`, `actions.ts`, `reset-password/page.tsx`, `package.json`, `pendaftaran/route.ts`, `data.ts`, `schemas.ts`, `GaleriList.tsx`?**
-  _High betweenness centrality (0.183) - this node is a cross-community bridge._
+  _High betweenness centrality (0.184) - this node is a cross-community bridge._
 - **Why does `react` connect `(public)/page.tsx` to `actions.ts`, `next`, `reset-password/page.tsx`, `package.json`, `pendaftaran/route.ts`, `data.ts`, `JadwalManager.tsx`, `MateriManager.tsx`, `GaleriList.tsx`?**
-  _High betweenness centrality (0.107) - this node is a cross-community bridge._
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
 - **Why does `prisma` connect `prisma.ts` to `actions.ts`, `next`, `reset-password/page.tsx`, `pendaftaran/route.ts`, `data.ts`, `JadwalManager.tsx`, `MateriManager.tsx`, `schemas.ts`, `GaleriList.tsx`?**
   _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **What connects `Props`, `dynamic`, `metadata` to the rest of the system?**
-  _184 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _185 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `(public)/page.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.12043010752688173 - nodes in this community are weakly interconnected._
 - **Should `compilerOptions` be split into smaller, more focused modules?**

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 /** Data jadwal yang dibutuhkan modal pendaftaran (dikirim dari server component). */
 export type PendaftaranTarget = {
@@ -42,6 +43,9 @@ export default function FormPendaftaran({
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<State>({ type: "idle" });
   const [namaDepan, setNamaDepan] = useState("");
+  // Portal hanya dirender di client (setelah mount) agar aman saat SSR.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   function close() {
     setOpen(false);
@@ -128,14 +132,18 @@ export default function FormPendaftaran({
       <button type="button" onClick={() => setOpen(true)} className={btnCls}>
         Daftar →
       </button>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(22,33,74,0.55)] p-4 sm:items-center"
-          role="presentation"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) close();
-          }}
-        >
+      {/* Portal ke <body>: ancestor .reveal memakai transform, yang membuat
+          position: fixed menjadi relatif terhadapnya (modal menimpa tabel). */}
+      {open &&
+        mounted &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(22,33,74,0.55)] p-4 sm:items-center"
+            role="presentation"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) close();
+            }}
+          >
           <div
             role="dialog"
             aria-modal="true"
@@ -306,8 +314,9 @@ export default function FormPendaftaran({
               </form>
             )}
           </div>
-        </div>
-      )}
+        </div>,
+            document.body
+          )}
 
     </>
   );

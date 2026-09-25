@@ -1,0 +1,85 @@
+{
+  "communities": {
+    "0": [
+      "script",
+      "script_closelightbox",
+      "script_closemenu",
+      "script_form",
+      "script_header",
+      "script_lightbox",
+      "script_lightboxcaption",
+      "script_lightboxclose",
+      "script_lightboximage",
+      "script_mainnav",
+      "script_menuicon",
+      "script_menutoggle",
+      "script_mobileclose",
+      "script_revealels",
+      "script_scrollleft",
+      "script_scrollright",
+      "script_servicegrid",
+      "script_status",
+      "script_totop"
+    ]
+  },
+  "cohesion": {
+    "0": 0.10526315789473684
+  },
+  "gods": [
+    {
+      "id": "script_header",
+      "label": "header",
+      "degree": 1
+    },
+    {
+      "id": "script_totop",
+      "label": "toTop",
+      "degree": 1
+    },
+    {
+      "id": "script_menutoggle",
+      "label": "menuToggle",
+      "degree": 1
+    },
+    {
+      "id": "script_mainnav",
+      "label": "mainNav",
+      "degree": 1
+    },
+    {
+      "id": "script_menuicon",
+      "label": "menuIcon",
+      "degree": 1
+    },
+    {
+      "id": "script_mobileclose",
+      "label": "mobileClose",
+      "degree": 1
+    },
+    {
+      "id": "script_servicegrid",
+      "label": "serviceGrid",
+      "degree": 1
+    },
+    {
+      "id": "script_scrollleft",
+      "label": "scrollLeft",
+      "degree": 1
+    },
+    {
+      "id": "script_scrollright",
+      "label": "scrollRight",
+      "degree": 1
+    },
+    {
+      "id": "script_revealels",
+      "label": "revealEls",
+      "degree": 1
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
