@@ -105,7 +105,7 @@
       "file_type": "code",
       "norm_label": "upcomingjadwalrow",
       "source_file": "lib/data.ts",
-      "source_location": "L349"
+      "source_location": "L383"
     },
     {
       "id": "app_public_kelas_slug_page_props",
@@ -119,6 +119,19 @@
       "norm_label": "props",
       "source_file": "app/(public)/kelas/[slug]/page.tsx",
       "source_location": "L13"
+    },
+    {
+      "id": "app_public_program_slug_page_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L9"
     },
     {
       "id": "lib_data_categoryrow",
@@ -157,7 +170,7 @@
       "file_type": "code",
       "norm_label": "jadwalrow",
       "source_file": "lib/data.ts",
-      "source_location": "L247"
+      "source_location": "L255"
     },
     {
       "id": "lib_data_materirow",
@@ -170,7 +183,7 @@
       "file_type": "code",
       "norm_label": "materirow",
       "source_file": "lib/data.ts",
-      "source_location": "L292"
+      "source_location": "L300"
     },
     {
       "id": "lib_data_programrow",
@@ -196,7 +209,7 @@
       "file_type": "code",
       "norm_label": "rawupcomingjadwal",
       "source_file": "lib/data.ts",
-      "source_location": "L388"
+      "source_location": "L422"
     },
     {
       "id": "components_admin_jadwalmanager_adminjadwal",
@@ -209,7 +222,20 @@
       "file_type": "code",
       "norm_label": "adminjadwal",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L14"
+      "source_location": "L21"
+    },
+    {
+      "id": "components_admin_jadwalmanager_programcategoryoption",
+      "label": "ProgramCategoryOption",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "JadwalManager.tsx",
+      "file_type": "code",
+      "norm_label": "programcategoryoption",
+      "source_file": "components/admin/JadwalManager.tsx",
+      "source_location": "L19"
     },
     {
       "id": "components_admin_jadwalmanager_programoption",
@@ -225,17 +251,95 @@
       "source_location": "L12"
     },
     {
-      "id": "components_admin_galerilist_admingalleryitem",
-      "label": "AdminGalleryItem",
+      "id": "components_admin_materimanager_adminmateri",
+      "label": "AdminMateri",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
       "file_type": "code",
-      "norm_label": "admingalleryitem",
-      "source_file": "components/admin/GaleriList.tsx",
-      "source_location": "L6"
+      "norm_label": "adminmateri",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "components_admin_materimanager_programoption",
+      "label": "ProgramOption",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "programoption",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "lib_schemas_categoryinput",
+      "label": "CategoryInput",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "categoryinput",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "lib_schemas_contactinput",
+      "label": "ContactInput",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "contactinput",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "lib_schemas_gantipasswordinput",
+      "label": "GantiPasswordInput",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "gantipasswordinput",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L68"
+    },
+    {
+      "id": "lib_schemas_jadwalinput",
+      "label": "JadwalInput",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "jadwalinput",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L181"
+    },
+    {
+      "id": "lib_schemas_materiinput",
+      "label": "MateriInput",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "materiinput",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L218"
     },
     {
       "id": "components_admin_pesanlist_adminmessage",
@@ -277,32 +381,6 @@
       "source_location": "L11"
     },
     {
-      "id": "components_admin_materimanager_adminmateri",
-      "label": "AdminMateri",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "adminmateri",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "components_admin_materimanager_programoption",
-      "label": "ProgramOption",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "programoption",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L12"
-    },
-    {
       "id": "components_admin_programmanager_admincategory",
       "label": "AdminCategory",
       "_callable": true,
@@ -342,69 +420,17 @@
       "source_location": "L11"
     },
     {
-      "id": "lib_schemas_categoryinput",
-      "label": "CategoryInput",
+      "id": "components_admin_galerilist_admingalleryitem",
+      "label": "AdminGalleryItem",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
+      "community": 5,
+      "community_name": "next",
       "file_type": "code",
-      "norm_label": "categoryinput",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "lib_schemas_contactinput",
-      "label": "ContactInput",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "contactinput",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "lib_schemas_gantipasswordinput",
-      "label": "GantiPasswordInput",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "gantipasswordinput",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L68"
-    },
-    {
-      "id": "lib_schemas_jadwalinput",
-      "label": "JadwalInput",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "jadwalinput",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L181"
-    },
-    {
-      "id": "lib_schemas_materiinput",
-      "label": "MateriInput",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materiinput",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L218"
+      "norm_label": "admingalleryitem",
+      "source_file": "components/admin/GaleriList.tsx",
+      "source_location": "L6"
     },
     {
       "id": "components_admin_uploadform_uploadformprops",
@@ -773,6 +799,42 @@
       "source_location": "L20"
     },
     {
+      "id": "app_public_program_slug_page_formattanggalymd",
+      "label": "formatTanggalYmd()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "formattanggalymd()",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "app_public_program_slug_page_generatemetadata",
+      "label": "generateMetadata()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "generatemetadata()",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L33"
+    },
+    {
+      "id": "app_public_program_slug_page_programslugpage",
+      "label": "ProgramSlugPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "programslugpage()",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L52"
+    },
+    {
       "id": "lib_data_fallbackcategory",
       "label": "fallbackCategory()",
       "_callable": true,
@@ -854,7 +916,7 @@
       "file_type": "code",
       "norm_label": "getgallery()",
       "source_file": "lib/data.ts",
-      "source_location": "L209"
+      "source_location": "L217"
     },
     {
       "id": "lib_data_getgallerybycategory",
@@ -866,7 +928,7 @@
       "file_type": "code",
       "norm_label": "getgallerybycategory()",
       "source_file": "lib/data.ts",
-      "source_location": "L240"
+      "source_location": "L248"
     },
     {
       "id": "lib_data_getgallerygroups",
@@ -878,7 +940,7 @@
       "file_type": "code",
       "norm_label": "getgallerygroups()",
       "source_file": "lib/data.ts",
-      "source_location": "L507"
+      "source_location": "L541"
     },
     {
       "id": "lib_data_getjadwalbycategory",
@@ -890,7 +952,19 @@
       "file_type": "code",
       "norm_label": "getjadwalbycategory()",
       "source_file": "lib/data.ts",
-      "source_location": "L303"
+      "source_location": "L311"
+    },
+    {
+      "id": "lib_data_getjadwalbyprogram",
+      "label": "getJadwalByProgram()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "getjadwalbyprogram()",
+      "source_file": "lib/data.ts",
+      "source_location": "L337"
     },
     {
       "id": "lib_data_getmateribycategory",
@@ -902,7 +976,19 @@
       "file_type": "code",
       "norm_label": "getmateribycategory()",
       "source_file": "lib/data.ts",
-      "source_location": "L333"
+      "source_location": "L367"
+    },
+    {
+      "id": "lib_data_getprogrambyslug",
+      "label": "getProgramBySlug()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "getprogrambyslug()",
+      "source_file": "lib/data.ts",
+      "source_location": "L208"
     },
     {
       "id": "lib_data_getprograms",
@@ -938,7 +1024,7 @@
       "file_type": "code",
       "norm_label": "gettestimonials()",
       "source_file": "lib/data.ts",
-      "source_location": "L525"
+      "source_location": "L559"
     },
     {
       "id": "lib_data_getupcomingjadwal",
@@ -950,7 +1036,7 @@
       "file_type": "code",
       "norm_label": "getupcomingjadwal()",
       "source_file": "lib/data.ts",
-      "source_location": "L405"
+      "source_location": "L439"
     },
     {
       "id": "lib_data_hhmmtominutes",
@@ -962,7 +1048,7 @@
       "file_type": "code",
       "norm_label": "hhmmtominutes()",
       "source_file": "lib/data.ts",
-      "source_location": "L382"
+      "source_location": "L416"
     },
     {
       "id": "lib_data_safe",
@@ -986,7 +1072,7 @@
       "file_type": "code",
       "norm_label": "tanggaljamminutes()",
       "source_file": "lib/data.ts",
-      "source_location": "L288"
+      "source_location": "L296"
     },
     {
       "id": "lib_data_wibnow",
@@ -998,7 +1084,7 @@
       "file_type": "code",
       "norm_label": "wibnow()",
       "source_file": "lib/data.ts",
-      "source_location": "L365"
+      "source_location": "L399"
     },
     {
       "id": "lib_data_wibstampminutes",
@@ -1010,7 +1096,7 @@
       "file_type": "code",
       "norm_label": "wibstampminutes()",
       "source_file": "lib/data.ts",
-      "source_location": "L273"
+      "source_location": "L281"
     },
     {
       "id": "lib_data_ymdwib",
@@ -1022,7 +1108,7 @@
       "file_type": "code",
       "norm_label": "ymdwib()",
       "source_file": "lib/data.ts",
-      "source_location": "L261"
+      "source_location": "L269"
     },
     {
       "id": "app_admin_dashboard_jadwal_page_jadwalpage",
@@ -1046,7 +1132,7 @@
       "file_type": "code",
       "norm_label": "formattanggalymd()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L33"
+      "source_location": "L40"
     },
     {
       "id": "components_admin_jadwalmanager_hariselect",
@@ -1058,7 +1144,7 @@
       "file_type": "code",
       "norm_label": "hariselect()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L91"
+      "source_location": "L125"
     },
     {
       "id": "components_admin_jadwalmanager_jadwaleditrow",
@@ -1070,7 +1156,7 @@
       "file_type": "code",
       "norm_label": "jadwaleditrow()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L148"
+      "source_location": "L182"
     },
     {
       "id": "components_admin_jadwalmanager_jadwalmanager",
@@ -1082,7 +1168,7 @@
       "file_type": "code",
       "norm_label": "jadwalmanager()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L372"
+      "source_location": "L412"
     },
     {
       "id": "components_admin_jadwalmanager_jadwalrow",
@@ -1094,7 +1180,7 @@
       "file_type": "code",
       "norm_label": "jadwalrow()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L291"
+      "source_location": "L328"
     },
     {
       "id": "components_admin_jadwalmanager_labeljadwal",
@@ -1106,7 +1192,7 @@
       "file_type": "code",
       "norm_label": "labeljadwal()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L54"
+      "source_location": "L61"
     },
     {
       "id": "components_admin_jadwalmanager_programselect",
@@ -1118,7 +1204,7 @@
       "file_type": "code",
       "norm_label": "programselect()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L59"
+      "source_location": "L66"
     },
     {
       "id": "components_admin_jadwalmanager_tanggalinput",
@@ -1130,7 +1216,91 @@
       "file_type": "code",
       "norm_label": "tanggalinput()",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L122"
+      "source_location": "L156"
+    },
+    {
+      "id": "app_admin_dashboard_materi_page_materipage",
+      "label": "MateriPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materipage()",
+      "source_file": "app/admin/(dashboard)/materi/page.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "components_admin_materimanager_materieditrow",
+      "label": "MateriEditRow()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materieditrow()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L109"
+    },
+    {
+      "id": "components_admin_materimanager_materimanager",
+      "label": "MateriManager()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materimanager()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L322"
+    },
+    {
+      "id": "components_admin_materimanager_materirow",
+      "label": "MateriRow()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materirow()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L237"
+    },
+    {
+      "id": "components_admin_materimanager_programselect",
+      "label": "ProgramSelect()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "programselect()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L53"
+    },
+    {
+      "id": "components_admin_materimanager_tipebadge",
+      "label": "TipeBadge()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "tipebadge()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "components_admin_materimanager_tipeselect",
+      "label": "TipeSelect()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "tipeselect()",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L85"
     },
     {
       "id": "app_public_layout_publiclayout",
@@ -1205,28 +1375,88 @@
       "source_location": "L6"
     },
     {
-      "id": "app_admin_actions_gantipassword",
-      "label": "gantiPassword()",
+      "id": "app_admin_actions_resetpassword",
+      "label": "resetPassword()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
       "file_type": "code",
-      "norm_label": "gantipassword()",
+      "norm_label": "resetpassword()",
       "source_file": "app/admin/actions.ts",
-      "source_location": "L438"
+      "source_location": "L573"
     },
     {
-      "id": "app_admin_dashboard_galeri_page_galeripage",
-      "label": "GaleriPage()",
+      "id": "app_admin_reset_password_page_invalidtoken",
+      "label": "InvalidToken()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
       "file_type": "code",
-      "norm_label": "galeripage()",
-      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "norm_label": "invalidtoken()",
+      "source_file": "app/admin/reset-password/page.tsx",
+      "source_location": "L38"
+    },
+    {
+      "id": "app_admin_reset_password_page_resetpasswordpage",
+      "label": "ResetPasswordPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "resetpasswordpage()",
+      "source_file": "app/admin/reset-password/page.tsx",
       "source_location": "L8"
+    },
+    {
+      "id": "components_admin_resetpasswordform_resetpasswordform",
+      "label": "ResetPasswordForm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "resetpasswordform()",
+      "source_file": "components/admin/ResetPasswordForm.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "lib_passwordreset_generateresettoken",
+      "label": "generateResetToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "generateresettoken()",
+      "source_file": "lib/passwordReset.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "lib_passwordreset_hashtoken",
+      "label": "hashToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "hashtoken()",
+      "source_file": "lib/passwordReset.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "lib_passwordreset_isexpired",
+      "label": "isExpired()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "isexpired()",
+      "source_file": "lib/passwordReset.ts",
+      "source_location": "L14"
     },
     {
       "id": "app_admin_dashboard_kategori_page_kategoripage",
@@ -1238,18 +1468,6 @@
       "file_type": "code",
       "norm_label": "kategoripage()",
       "source_file": "app/admin/(dashboard)/kategori/page.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "app_admin_dashboard_materi_page_materipage",
-      "label": "MateriPage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "materipage()",
-      "source_file": "app/admin/(dashboard)/materi/page.tsx",
       "source_location": "L7"
     },
     {
@@ -1301,30 +1519,6 @@
       "source_location": "L7"
     },
     {
-      "id": "components_admin_galerilist_galerilist",
-      "label": "GaleriList()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "galerilist()",
-      "source_file": "components/admin/GaleriList.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "components_admin_gantipasswordform_gantipasswordform",
-      "label": "GantiPasswordForm()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "gantipasswordform()",
-      "source_file": "components/admin/GantiPasswordForm.tsx",
-      "source_location": "L14"
-    },
-    {
       "id": "components_admin_pesanlist_pesanlist",
       "label": "PesanList()",
       "_callable": true,
@@ -1335,6 +1529,30 @@
       "norm_label": "pesanlist()",
       "source_file": "components/admin/PesanList.tsx",
       "source_location": "L22"
+    },
+    {
+      "id": "components_admin_programmanager_programmanager",
+      "label": "ProgramManager()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "prisma.ts",
+      "file_type": "code",
+      "norm_label": "programmanager()",
+      "source_file": "components/admin/ProgramManager.tsx",
+      "source_location": "L145"
+    },
+    {
+      "id": "components_admin_testimonimanager_testimonimanager",
+      "label": "TestimoniManager()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "prisma.ts",
+      "file_type": "code",
+      "norm_label": "testimonimanager()",
+      "source_file": "components/admin/TestimoniManager.tsx",
+      "source_location": "L117"
     },
     {
       "id": "app_admin_actions_categoryslugdata",
@@ -1517,6 +1735,18 @@
       "source_location": "L106"
     },
     {
+      "id": "app_admin_actions_gantipassword",
+      "label": "gantiPassword()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "gantipassword()",
+      "source_file": "app/admin/actions.ts",
+      "source_location": "L438"
+    },
+    {
       "id": "app_admin_actions_materifilefromformdata",
       "label": "materiFileFromFormData()",
       "_callable": true,
@@ -1625,6 +1855,18 @@
       "source_location": "L76"
     },
     {
+      "id": "components_admin_gantipasswordform_gantipasswordform",
+      "label": "GantiPasswordForm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "gantipasswordform()",
+      "source_file": "components/admin/GantiPasswordForm.tsx",
+      "source_location": "L14"
+    },
+    {
       "id": "components_admin_kategorimanager_categoryrow",
       "label": "CategoryRow()",
       "_callable": true,
@@ -1647,90 +1889,6 @@
       "norm_label": "kategorimanager()",
       "source_file": "components/admin/KategoriManager.tsx",
       "source_location": "L110"
-    },
-    {
-      "id": "components_admin_materimanager_materieditrow",
-      "label": "MateriEditRow()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materieditrow()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L109"
-    },
-    {
-      "id": "components_admin_materimanager_materimanager",
-      "label": "MateriManager()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materimanager()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L322"
-    },
-    {
-      "id": "components_admin_materimanager_materirow",
-      "label": "MateriRow()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materirow()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L237"
-    },
-    {
-      "id": "components_admin_materimanager_programselect",
-      "label": "ProgramSelect()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "programselect()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L53"
-    },
-    {
-      "id": "components_admin_materimanager_tipebadge",
-      "label": "TipeBadge()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "tipebadge()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L41"
-    },
-    {
-      "id": "components_admin_materimanager_tipeselect",
-      "label": "TipeSelect()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "tipeselect()",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L85"
-    },
-    {
-      "id": "components_admin_programmanager_programmanager",
-      "label": "ProgramManager()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "programmanager()",
-      "source_file": "components/admin/ProgramManager.tsx",
-      "source_location": "L145"
     },
     {
       "id": "components_admin_programmanager_programrow",
@@ -1769,18 +1927,6 @@
       "source_location": "L22"
     },
     {
-      "id": "components_admin_testimonimanager_testimonimanager",
-      "label": "TestimoniManager()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "testimonimanager()",
-      "source_file": "components/admin/TestimoniManager.tsx",
-      "source_location": "L117"
-    },
-    {
       "id": "lib_schemas_haridaritanggal",
       "label": "hariDariTanggal()",
       "_callable": true,
@@ -1817,6 +1963,30 @@
       "source_location": "L18"
     },
     {
+      "id": "lib_storage_blobenabled",
+      "label": "blobEnabled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "blobenabled()",
+      "source_file": "lib/storage.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "lib_storage_isbloburl",
+      "label": "isBlobUrl()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "isbloburl()",
+      "source_file": "lib/storage.ts",
+      "source_location": "L10"
+    },
+    {
       "id": "lib_storage_removeimage",
       "label": "removeImage()",
       "_callable": true,
@@ -1827,6 +1997,18 @@
       "norm_label": "removeimage()",
       "source_file": "lib/storage.ts",
       "source_location": "L36"
+    },
+    {
+      "id": "lib_storage_storeimage",
+      "label": "storeImage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "storeimage()",
+      "source_file": "lib/storage.ts",
+      "source_location": "L18"
     },
     {
       "id": "app_admin_dashboard_layout_adminlayout",
@@ -1865,52 +2047,16 @@
       "source_location": "L5"
     },
     {
-      "id": "lib_storage_blobenabled",
-      "label": "blobEnabled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "blobenabled()",
-      "source_file": "lib/storage.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "lib_storage_isbloburl",
-      "label": "isBlobUrl()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "isbloburl()",
-      "source_file": "lib/storage.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "lib_storage_storeimage",
-      "label": "storeImage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "storeimage()",
-      "source_file": "lib/storage.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "app_admin_actions_resetpassword",
-      "label": "resetPassword()",
+      "id": "app_admin_dashboard_galeri_page_galeripage",
+      "label": "GaleriPage()",
       "_callable": true,
       "_origin": "ast",
       "community": 5,
       "community_name": "next",
       "file_type": "code",
-      "norm_label": "resetpassword()",
-      "source_file": "app/admin/actions.ts",
-      "source_location": "L573"
+      "norm_label": "galeripage()",
+      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "source_location": "L8"
     },
     {
       "id": "app_admin_login_page_adminloginpage",
@@ -1925,30 +2071,6 @@
       "source_location": "L5"
     },
     {
-      "id": "app_admin_reset_password_page_invalidtoken",
-      "label": "InvalidToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "invalidtoken()",
-      "source_file": "app/admin/reset-password/page.tsx",
-      "source_location": "L38"
-    },
-    {
-      "id": "app_admin_reset_password_page_resetpasswordpage",
-      "label": "ResetPasswordPage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "resetpasswordpage()",
-      "source_file": "app/admin/reset-password/page.tsx",
-      "source_location": "L8"
-    },
-    {
       "id": "app_layout_rootlayout",
       "label": "RootLayout()",
       "_callable": true,
@@ -1959,6 +2081,18 @@
       "norm_label": "rootlayout()",
       "source_file": "app/layout.tsx",
       "source_location": "L42"
+    },
+    {
+      "id": "components_admin_galerilist_galerilist",
+      "label": "GaleriList()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "next",
+      "file_type": "code",
+      "norm_label": "galerilist()",
+      "source_file": "components/admin/GaleriList.tsx",
+      "source_location": "L15"
     },
     {
       "id": "components_admin_loginform_loginform",
@@ -1985,18 +2119,6 @@
       "source_location": "L14"
     },
     {
-      "id": "components_admin_resetpasswordform_resetpasswordform",
-      "label": "ResetPasswordForm()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "resetpasswordform()",
-      "source_file": "components/admin/ResetPasswordForm.tsx",
-      "source_location": "L11"
-    },
-    {
       "id": "components_admin_uploadform_uploadform",
       "label": "UploadForm()",
       "_callable": true,
@@ -2019,42 +2141,6 @@
       "norm_label": "onsubmit()",
       "source_file": "components/admin/UploadForm.tsx",
       "source_location": "L16"
-    },
-    {
-      "id": "lib_passwordreset_generateresettoken",
-      "label": "generateResetToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "generateresettoken()",
-      "source_file": "lib/passwordReset.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "lib_passwordreset_hashtoken",
-      "label": "hashToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "hashtoken()",
-      "source_file": "lib/passwordReset.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "lib_passwordreset_isexpired",
-      "label": "isExpired()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "isexpired()",
-      "source_file": "lib/passwordReset.ts",
-      "source_location": "L14"
     },
     {
       "id": "prisma_migrate_categories_ensurecategory",
@@ -2635,13 +2721,24 @@
     },
     {
       "id": "app_public_kelas_slug_page",
-      "label": "[slug]/page.tsx",
+      "label": "kelas/[slug]/page.tsx",
       "_origin": "ast",
       "community": 10,
       "community_name": "data.ts",
       "file_type": "code",
-      "norm_label": "[slug]/page.tsx",
+      "norm_label": "kelas/[slug]/page.tsx",
       "source_file": "app/(public)/kelas/[slug]/page.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_public_program_slug_page",
+      "label": "program/[slug]/page.tsx",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "data.ts",
+      "file_type": "code",
+      "norm_label": "program/[slug]/page.tsx",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
       "source_location": "L1"
     },
     {
@@ -2963,6 +3060,72 @@
       "source_location": "L1"
     },
     {
+      "id": "app_admin_dashboard_materi_page",
+      "label": "materi/page.tsx",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materi/page.tsx",
+      "source_file": "app/admin/(dashboard)/materi/page.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_admin_dashboard_materi_page_dynamic",
+      "label": "dynamic",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "dynamic",
+      "source_file": "app/admin/(dashboard)/materi/page.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "app_admin_dashboard_materi_page_metadata",
+      "label": "metadata",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "metadata",
+      "source_file": "app/admin/(dashboard)/materi/page.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "components_admin_materimanager",
+      "label": "MateriManager.tsx",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materimanager.tsx",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "components_admin_materimanager_tipe_badge",
+      "label": "TIPE_BADGE",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "tipe_badge",
+      "source_file": "components/admin/MateriManager.tsx",
+      "source_location": "L31"
+    },
+    {
+      "id": "lib_schemas_materi_tipe_list",
+      "label": "MATERI_TIPE_LIST",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "MateriManager.tsx",
+      "file_type": "code",
+      "norm_label": "materi_tipe_list",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L185"
+    },
+    {
       "id": "app_public_layout",
       "label": "(public)/layout.tsx",
       "_origin": "ast",
@@ -3064,6 +3227,204 @@
       "source_location": "L1"
     },
     {
+      "id": "app_api_upload_route",
+      "label": "upload/route.ts",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "upload/route.ts",
+      "source_file": "app/api/upload/route.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_api_upload_route_runtime",
+      "label": "runtime",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "runtime",
+      "source_file": "app/api/upload/route.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "lib_schemas",
+      "label": "schemas.ts",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "schemas.ts",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_schemas_allowed_image_types",
+      "label": "ALLOWED_IMAGE_TYPES",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "allowed_image_types",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L86"
+    },
+    {
+      "id": "lib_schemas_allowed_materi_types",
+      "label": "ALLOWED_MATERI_TYPES",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "allowed_materi_types",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L192"
+    },
+    {
+      "id": "lib_schemas_categoryschema",
+      "label": "categorySchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "categoryschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "lib_schemas_forgotpasswordschema",
+      "label": "forgotPasswordSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "forgotpasswordschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L71"
+    },
+    {
+      "id": "lib_schemas_gantipasswordschema",
+      "label": "gantiPasswordSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "gantipasswordschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "lib_schemas_jadwalschema",
+      "label": "jadwalSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "jadwalschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L149"
+    },
+    {
+      "id": "lib_schemas_materischema",
+      "label": "materiSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "materischema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L207"
+    },
+    {
+      "id": "lib_schemas_max_image_bytes",
+      "label": "MAX_IMAGE_BYTES",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "max_image_bytes",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L93"
+    },
+    {
+      "id": "lib_schemas_max_materi_bytes",
+      "label": "MAX_MATERI_BYTES",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "max_materi_bytes",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L204"
+    },
+    {
+      "id": "lib_schemas_programschema",
+      "label": "programSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "programschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "lib_schemas_resetpasswordschema",
+      "label": "resetPasswordSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "resetpasswordschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L75"
+    },
+    {
+      "id": "lib_schemas_tanggalschema",
+      "label": "tanggalSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "tanggalschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L129"
+    },
+    {
+      "id": "lib_schemas_testimonialschema",
+      "label": "testimonialSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "testimonialschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "lib_schemas_uploadschema",
+      "label": "uploadSchema",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "code",
+      "norm_label": "uploadschema",
+      "source_file": "lib/schemas.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "ref_sharp",
+      "label": "sharp",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "schemas.ts",
+      "file_type": "concept",
+      "norm_label": "sharp",
+      "source_file": "package.json",
+      "source_location": "L23"
+    },
+    {
       "id": "app_api_auth_nextauth_route_get_post",
       "label": "{ GET, POST }",
       "_origin": "ast",
@@ -3086,37 +3447,48 @@
       "source_location": "L1"
     },
     {
-      "id": "app_admin_dashboard_galeri_page",
-      "label": "galeri/page.tsx",
+      "id": "app_admin_reset_password_page",
+      "label": "reset-password/page.tsx",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
       "file_type": "code",
-      "norm_label": "galeri/page.tsx",
-      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "norm_label": "reset-password/page.tsx",
+      "source_file": "app/admin/reset-password/page.tsx",
       "source_location": "L1"
     },
     {
-      "id": "app_admin_dashboard_galeri_page_dynamic",
-      "label": "dynamic",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "dynamic",
-      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "app_admin_dashboard_galeri_page_metadata",
+      "id": "app_admin_reset_password_page_metadata",
       "label": "metadata",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
       "file_type": "code",
       "norm_label": "metadata",
-      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "source_file": "app/admin/reset-password/page.tsx",
       "source_location": "L6"
+    },
+    {
+      "id": "components_admin_resetpasswordform",
+      "label": "ResetPasswordForm.tsx",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "resetpasswordform.tsx",
+      "source_file": "components/admin/ResetPasswordForm.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_passwordreset",
+      "label": "passwordReset.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "file_type": "code",
+      "norm_label": "passwordreset.ts",
+      "source_file": "lib/passwordReset.ts",
+      "source_location": "L1"
     },
     {
       "id": "app_admin_dashboard_kategori_page",
@@ -3149,39 +3521,6 @@
       "file_type": "code",
       "norm_label": "metadata",
       "source_file": "app/admin/(dashboard)/kategori/page.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "app_admin_dashboard_materi_page",
-      "label": "materi/page.tsx",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "materi/page.tsx",
-      "source_file": "app/admin/(dashboard)/materi/page.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "app_admin_dashboard_materi_page_dynamic",
-      "label": "dynamic",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "dynamic",
-      "source_file": "app/admin/(dashboard)/materi/page.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "app_admin_dashboard_materi_page_metadata",
-      "label": "metadata",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "metadata",
-      "source_file": "app/admin/(dashboard)/materi/page.tsx",
       "source_location": "L5"
     },
     {
@@ -3317,28 +3656,6 @@
       "source_location": "L5"
     },
     {
-      "id": "components_admin_galerilist",
-      "label": "GaleriList.tsx",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "galerilist.tsx",
-      "source_file": "components/admin/GaleriList.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "components_admin_gantipasswordform",
-      "label": "GantiPasswordForm.tsx",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "gantipasswordform.tsx",
-      "source_file": "components/admin/GantiPasswordForm.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "components_admin_pesanlist",
       "label": "PesanList.tsx",
       "_origin": "ast",
@@ -3405,6 +3722,17 @@
       "source_location": "L1"
     },
     {
+      "id": "components_admin_gantipasswordform",
+      "label": "GantiPasswordForm.tsx",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "gantipasswordform.tsx",
+      "source_file": "components/admin/GantiPasswordForm.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "components_admin_kategorimanager",
       "label": "KategoriManager.tsx",
       "_origin": "ast",
@@ -3414,28 +3742,6 @@
       "norm_label": "kategorimanager.tsx",
       "source_file": "components/admin/KategoriManager.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "components_admin_materimanager",
-      "label": "MateriManager.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materimanager.tsx",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "components_admin_materimanager_tipe_badge",
-      "label": "TIPE_BADGE",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "tipe_badge",
-      "source_file": "components/admin/MateriManager.tsx",
-      "source_location": "L31"
     },
     {
       "id": "components_admin_programmanager",
@@ -3460,149 +3766,6 @@
       "source_location": "L1"
     },
     {
-      "id": "lib_schemas",
-      "label": "schemas.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "schemas.ts",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_schemas_allowed_materi_types",
-      "label": "ALLOWED_MATERI_TYPES",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "allowed_materi_types",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L192"
-    },
-    {
-      "id": "lib_schemas_categoryschema",
-      "label": "categorySchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "categoryschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "lib_schemas_forgotpasswordschema",
-      "label": "forgotPasswordSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "forgotpasswordschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L71"
-    },
-    {
-      "id": "lib_schemas_gantipasswordschema",
-      "label": "gantiPasswordSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "gantipasswordschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "lib_schemas_jadwalschema",
-      "label": "jadwalSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "jadwalschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L149"
-    },
-    {
-      "id": "lib_schemas_materi_tipe_list",
-      "label": "MATERI_TIPE_LIST",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materi_tipe_list",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L185"
-    },
-    {
-      "id": "lib_schemas_materischema",
-      "label": "materiSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "materischema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L207"
-    },
-    {
-      "id": "lib_schemas_max_materi_bytes",
-      "label": "MAX_MATERI_BYTES",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "max_materi_bytes",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L204"
-    },
-    {
-      "id": "lib_schemas_programschema",
-      "label": "programSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "programschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L34"
-    },
-    {
-      "id": "lib_schemas_resetpasswordschema",
-      "label": "resetPasswordSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "resetpasswordschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L75"
-    },
-    {
-      "id": "lib_schemas_tanggalschema",
-      "label": "tanggalSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "tanggalschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L129"
-    },
-    {
-      "id": "lib_schemas_testimonialschema",
-      "label": "testimonialSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "actions.ts",
-      "file_type": "code",
-      "norm_label": "testimonialschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L45"
-    },
-    {
       "id": "lib_slug",
       "label": "slug.ts",
       "_origin": "ast",
@@ -3612,6 +3775,28 @@
       "norm_label": "slug.ts",
       "source_file": "lib/slug.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "lib_storage",
+      "label": "storage.ts",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "code",
+      "norm_label": "storage.ts",
+      "source_file": "lib/storage.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ref_vercel_blob",
+      "label": "@vercel/blob",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "actions.ts",
+      "file_type": "concept",
+      "norm_label": "@vercel/blob",
+      "source_file": "package.json",
+      "source_location": "L16"
     },
     {
       "id": "app_admin_dashboard_layout",
@@ -3656,28 +3841,6 @@
       "norm_label": "[...nextauth]/route.ts",
       "source_file": "app/api/auth/[...nextauth]/route.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "app_api_upload_route",
-      "label": "upload/route.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "upload/route.ts",
-      "source_file": "app/api/upload/route.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "app_api_upload_route_runtime",
-      "label": "runtime",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "runtime",
-      "source_file": "app/api/upload/route.ts",
-      "source_location": "L12"
     },
     {
       "id": "components_admin_signoutbutton",
@@ -3779,50 +3942,6 @@
       "source_location": "L13"
     },
     {
-      "id": "lib_schemas_allowed_image_types",
-      "label": "ALLOWED_IMAGE_TYPES",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "allowed_image_types",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L86"
-    },
-    {
-      "id": "lib_schemas_max_image_bytes",
-      "label": "MAX_IMAGE_BYTES",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "max_image_bytes",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L93"
-    },
-    {
-      "id": "lib_schemas_uploadschema",
-      "label": "uploadSchema",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "uploadschema",
-      "source_file": "lib/schemas.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "lib_storage",
-      "label": "storage.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "code",
-      "norm_label": "storage.ts",
-      "source_file": "lib/storage.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "middleware",
       "label": "middleware.ts",
       "_origin": "ast",
@@ -3856,6 +3975,17 @@
       "source_location": "L29"
     },
     {
+      "id": "ref_bcryptjs",
+      "label": "bcryptjs",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "auth.ts",
+      "file_type": "concept",
+      "norm_label": "bcryptjs",
+      "source_file": "package.json",
+      "source_location": "L17"
+    },
+    {
       "id": "ref_next_auth",
       "label": "next-auth",
       "_origin": "ast",
@@ -3867,28 +3997,6 @@
       "source_location": "L19"
     },
     {
-      "id": "ref_sharp",
-      "label": "sharp",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "concept",
-      "norm_label": "sharp",
-      "source_file": "package.json",
-      "source_location": "L23"
-    },
-    {
-      "id": "ref_vercel_blob",
-      "label": "@vercel/blob",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.ts",
-      "file_type": "concept",
-      "norm_label": "@vercel/blob",
-      "source_file": "package.json",
-      "source_location": "L16"
-    },
-    {
       "id": "ref_zod",
       "label": "zod",
       "_origin": "ast",
@@ -3898,6 +4006,39 @@
       "norm_label": "zod",
       "source_file": "package.json",
       "source_location": "L24"
+    },
+    {
+      "id": "app_admin_dashboard_galeri_page",
+      "label": "galeri/page.tsx",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "next",
+      "file_type": "code",
+      "norm_label": "galeri/page.tsx",
+      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_admin_dashboard_galeri_page_dynamic",
+      "label": "dynamic",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "next",
+      "file_type": "code",
+      "norm_label": "dynamic",
+      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "app_admin_dashboard_galeri_page_metadata",
+      "label": "metadata",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "next",
+      "file_type": "code",
+      "norm_label": "metadata",
+      "source_file": "app/admin/(dashboard)/galeri/page.tsx",
+      "source_location": "L6"
     },
     {
       "id": "app_admin_login_page",
@@ -3920,28 +4061,6 @@
       "norm_label": "metadata",
       "source_file": "app/admin/login/page.tsx",
       "source_location": "L3"
-    },
-    {
-      "id": "app_admin_reset_password_page",
-      "label": "reset-password/page.tsx",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "reset-password/page.tsx",
-      "source_file": "app/admin/reset-password/page.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "app_admin_reset_password_page_metadata",
-      "label": "metadata",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "metadata",
-      "source_file": "app/admin/reset-password/page.tsx",
-      "source_location": "L6"
     },
     {
       "id": "app_layout",
@@ -3988,6 +4107,17 @@
       "source_location": "L17"
     },
     {
+      "id": "components_admin_galerilist",
+      "label": "GaleriList.tsx",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "next",
+      "file_type": "code",
+      "norm_label": "galerilist.tsx",
+      "source_file": "components/admin/GaleriList.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "components_admin_loginform",
       "label": "LoginForm.tsx",
       "_origin": "ast",
@@ -3999,17 +4129,6 @@
       "source_location": "L1"
     },
     {
-      "id": "components_admin_resetpasswordform",
-      "label": "ResetPasswordForm.tsx",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "resetpasswordform.tsx",
-      "source_file": "components/admin/ResetPasswordForm.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "components_admin_uploadform",
       "label": "UploadForm.tsx",
       "_origin": "ast",
@@ -4018,17 +4137,6 @@
       "file_type": "code",
       "norm_label": "uploadform.tsx",
       "source_file": "components/admin/UploadForm.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_passwordreset",
-      "label": "passwordReset.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "next",
-      "file_type": "code",
-      "norm_label": "passwordreset.ts",
-      "source_file": "lib/passwordReset.ts",
       "source_location": "L1"
     },
     {
@@ -4195,17 +4303,6 @@
       "norm_label": "program_category",
       "source_file": "prisma/seed.ts",
       "source_location": "L24"
-    },
-    {
-      "id": "ref_bcryptjs",
-      "label": "bcryptjs",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "content.ts",
-      "file_type": "concept",
-      "norm_label": "bcryptjs",
-      "source_file": "package.json",
-      "source_location": "L17"
     },
     {
       "id": "ref_prisma_client",
@@ -5023,11 +5120,23 @@
       "type": "external"
     },
     {
+      "id": "ref_node_crypto",
+      "label": "ref_node_crypto",
+      "_origin": "semantic",
+      "community": 19,
+      "community_name": "reset-password/page.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_node_crypto",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "ref_node_fs",
       "label": "ref_node_fs",
       "_origin": "semantic",
-      "community": 4,
-      "community_name": "auth.ts",
+      "community": 3,
+      "community_name": "actions.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_fs",
@@ -5038,8 +5147,8 @@
       "id": "ref_node_path",
       "label": "ref_node_path",
       "_origin": "semantic",
-      "community": 4,
-      "community_name": "auth.ts",
+      "community": 3,
+      "community_name": "actions.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_path",
@@ -5055,18 +5164,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "app_globals",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_node_crypto",
-      "label": "ref_node_crypto",
-      "_origin": "semantic",
-      "community": 5,
-      "community_name": "next",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_node_crypto",
       "source_file": "",
       "type": "external"
     }
@@ -5789,7 +5886,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/admin/(dashboard)/jadwal/page.tsx",
-      "source_location": "L32",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -6021,6 +6118,66 @@
       "weight": 1.0
     },
     {
+      "source": "app_public_program_slug_page_generatemetadata",
+      "target": "lib_data_getprogrambyslug",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page_programslugpage",
+      "target": "app_public_program_slug_page_formattanggalymd",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page_programslugpage",
+      "target": "lib_data_getprogrambyslug",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page_programslugpage",
+      "target": "lib_data_getjadwalbyprogram",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page_programslugpage",
+      "target": "lib_data_getprogramsbycategory",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
       "source": "components_admin_jadwalmanager_jadwalrow",
       "target": "components_admin_jadwalmanager_labeljadwal",
       "relation": "calls",
@@ -6029,7 +6186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L324",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -6041,7 +6198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L55",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -6197,7 +6354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L210",
+      "source_location": "L218",
       "weight": 1.0
     },
     {
@@ -6209,7 +6366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L223",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
@@ -6221,7 +6378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L241",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -6233,7 +6390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L511",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -6245,7 +6402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L511",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -6257,7 +6414,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L306",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -6269,7 +6426,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L320",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data_getjadwalbyprogram",
+      "target": "lib_data_safe",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "lib/data.ts",
+      "source_location": "L340",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data_getjadwalbyprogram",
+      "target": "lib_data_ymdwib",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "lib/data.ts",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -6281,7 +6462,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L336",
+      "source_location": "L370",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data_getprogrambyslug",
+      "target": "lib_data_getprograms",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "lib/data.ts",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -6329,7 +6522,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L526",
+      "source_location": "L560",
       "weight": 1.0
     },
     {
@@ -6341,7 +6534,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L425",
+      "source_location": "L459",
       "weight": 1.0
     },
     {
@@ -6353,7 +6546,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L426",
+      "source_location": "L460",
       "weight": 1.0
     },
     {
@@ -6365,7 +6558,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L432",
+      "source_location": "L466",
       "weight": 1.0
     },
     {
@@ -6377,7 +6570,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L435",
+      "source_location": "L469",
       "weight": 1.0
     },
     {
@@ -6389,7 +6582,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L473",
+      "source_location": "L507",
       "weight": 1.0
     },
     {
@@ -6401,7 +6594,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L289",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -6413,7 +6606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/data.ts",
-      "source_location": "L274",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -7554,6 +7747,42 @@
       "context": "import",
       "source_file": "app/(public)/page.tsx",
       "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "lib_data_getjadwalbyprogram",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "lib_data_getprogrambyslug",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "lib_data_getprogramsbycategory",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -9259,6 +9488,30 @@
       "context": "import",
       "source_file": "app/(public)/page.tsx",
       "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "ref_next",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "lib_data",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -11115,6 +11368,50 @@
       "weight": 1.0
     },
     {
+      "source": "app_public_program_slug_page",
+      "target": "app_public_program_slug_page_formattanggalymd",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "app_public_program_slug_page_generatemetadata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "app_public_program_slug_page_programslugpage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "app_public_program_slug_page",
+      "target": "app_public_program_slug_page_props",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/(public)/program/[slug]/page.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "components_admin_forgotpasswordform",
       "target": "components_admin_forgotpasswordform_forgotpasswordform",
       "relation": "contains",
@@ -11171,24 +11468,24 @@
     },
     {
       "source": "components_admin_jadwalmanager",
+      "target": "components_admin_jadwalmanager_hariselect",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "components/admin/JadwalManager.tsx",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "components_admin_jadwalmanager",
       "target": "components_admin_jadwalmanager_tanggalinput",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L122",
-      "weight": 1.0
-    },
-    {
-      "source": "components_admin_jadwalmanager",
-      "target": "components_admin_jadwalmanager_adminjadwal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L14",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -11199,7 +11496,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L148",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "components_admin_jadwalmanager",
+      "target": "components_admin_jadwalmanager_programcategoryoption",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "components/admin/JadwalManager.tsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "components_admin_jadwalmanager",
+      "target": "components_admin_jadwalmanager_adminjadwal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "components/admin/JadwalManager.tsx",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -11210,7 +11529,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L291",
+      "source_location": "L328",
       "weight": 1.0
     },
     {
@@ -11221,7 +11540,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L33",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -11232,7 +11551,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L372",
+      "source_location": "L412",
       "weight": 1.0
     },
     {
@@ -11243,7 +11562,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L54",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -11254,18 +11573,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L59",
-      "weight": 1.0
-    },
-    {
-      "source": "components_admin_jadwalmanager",
-      "target": "components_admin_jadwalmanager_hariselect",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L91",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -12469,13 +12777,13 @@
     },
     {
       "source": "lib_data",
-      "target": "lib_data_getgallery",
+      "target": "lib_data_getprogrambyslug",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L209",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -12491,13 +12799,24 @@
     },
     {
       "source": "lib_data",
+      "target": "lib_data_getgallery",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/data.ts",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data",
       "target": "lib_data_getgallerybycategory",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L240",
+      "source_location": "L248",
       "weight": 1.0
     },
     {
@@ -12508,7 +12827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L247",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -12519,7 +12838,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L261",
+      "source_location": "L269",
       "weight": 1.0
     },
     {
@@ -12530,7 +12849,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L273",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -12541,7 +12860,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L288",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -12552,7 +12871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L292",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -12563,7 +12882,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L303",
+      "source_location": "L311",
       "weight": 1.0
     },
     {
@@ -12579,13 +12898,24 @@
     },
     {
       "source": "lib_data",
+      "target": "lib_data_getjadwalbyprogram",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/data.ts",
+      "source_location": "L337",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data",
       "target": "lib_data_getmateribycategory",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L333",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -12596,7 +12926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L349",
+      "source_location": "L383",
       "weight": 1.0
     },
     {
@@ -12607,7 +12937,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L365",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -12618,29 +12948,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L382",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_data",
-      "target": "lib_data_rawupcomingjadwal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/data.ts",
-      "source_location": "L388",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_data",
-      "target": "lib_data_getupcomingjadwal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/data.ts",
-      "source_location": "L405",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -12656,24 +12964,24 @@
     },
     {
       "source": "lib_data",
-      "target": "lib_data_getgallerygroups",
+      "target": "lib_data_rawupcomingjadwal",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L507",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
       "source": "lib_data",
-      "target": "lib_data_gettestimonials",
+      "target": "lib_data_getupcomingjadwal",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
-      "source_location": "L525",
+      "source_location": "L439",
       "weight": 1.0
     },
     {
@@ -12685,6 +12993,28 @@
       "confidence_score": 1.0,
       "source_file": "lib/data.ts",
       "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data",
+      "target": "lib_data_getgallerygroups",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/data.ts",
+      "source_location": "L541",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_data",
+      "target": "lib_data_gettestimonials",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/data.ts",
+      "source_location": "L559",
       "weight": 1.0
     },
     {
@@ -14018,7 +14348,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L158",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -14030,7 +14360,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "components/admin/JadwalManager.tsx",
-      "source_location": "L382",
+      "source_location": "L424",
       "weight": 1.0
     },
     {
@@ -14155,5 +14485,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "054d5dcaaef6577d7acc3dce30112ca60b81a7b2"
+  "built_at_commit": "2ee58442c81f5a3d4ad91eeb3937d983cebc348c"
 }
