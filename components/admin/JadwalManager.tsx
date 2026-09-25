@@ -421,7 +421,7 @@ export default function JadwalManager({
               className={inputCls}
             />
           </div>
-          <HariSelect id="new-hari" />
+          <TanggalInput id="new-tanggal" required />
           <div>
             <label htmlFor="new-jamMulai" className={labelCls}>
               Jam Mulai
