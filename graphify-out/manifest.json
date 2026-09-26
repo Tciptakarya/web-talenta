@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/layout.tsx": {
-    "mtime": 1790347866.6648507,
-    "seen": 1790348117.7033985,
-    "ast_hash": "1d2102863631079a082b5b7b7a092ea2",
+    "mtime": 1790409151.3714178,
+    "seen": 1790409281.0691965,
+    "ast_hash": "6e0b290b1261855b7f09fa4eeca793bb",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/page.tsx": {
@@ -282,9 +282,9 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1789307866.8087342,
-    "seen": 1790232965.0098076,
-    "ast_hash": "21ceb6533048be51308e69e7b74a35cf",
+    "mtime": 1790409235.763557,
+    "seen": 1790409281.069249,
+    "ast_hash": "d67475bb7023c5b489de9deac608bf65",
     "semantic_hash": ""
   },
   "README.md": {
@@ -438,9 +438,9 @@
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/kategori/page.tsx": {
-    "mtime": 1790104035.3717017,
-    "seen": 1790232965.0097554,
-    "ast_hash": "f71187811d6250fe63bbdb3f8a1aeb95",
+    "mtime": 1790407247.0611894,
+    "seen": 1790407259.0506742,
+    "ast_hash": "d7cae14012ef6978f98a324cb8ed11f3",
     "semantic_hash": ""
   },
   "components/admin/KategoriManager.tsx": {
@@ -528,9 +528,9 @@
     "semantic_hash": ""
   },
   "components/admin/JadwalManager.tsx": {
-    "mtime": 1790347826.3630707,
-    "seen": 1790348117.7034252,
-    "ast_hash": "1a4777e6d00e939ee9caf54495e4929c",
+    "mtime": 1790407247.0611894,
+    "seen": 1790407259.0506952,
+    "ast_hash": "2fe2efb0b75277def1d68ccd07001a3f",
     "semantic_hash": ""
   },
   "components/admin/MateriManager.tsx": {
@@ -591,6 +591,48 @@
     "mtime": 1790347330.647581,
     "seen": 1790348117.7034798,
     "ast_hash": "71c3ccd48e1775f058472a87bf384069",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/ARCHITECTURE.md": {
+    "mtime": 1790409274.4828434,
+    "seen": 1790409281.0692499,
+    "ast_hash": "906ae66d70fc26a74355b67a4cb665e4",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/CHANGELOG.md": {
+    "mtime": 1790409262.4568768,
+    "seen": 1790409281.0692508,
+    "ast_hash": "42d07a2d6424197b8196bf989da8df1e",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/CURRENT_STATE.md": {
+    "mtime": 1790409256.4297142,
+    "seen": 1790409281.0692515,
+    "ast_hash": "c4536d9d083818dcbe4325d2128dfca2",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/DECISIONS.md": {
+    "mtime": 1790408921.6720786,
+    "seen": 1790409281.069252,
+    "ast_hash": "ec372fd65be4cabbff1a1eee8915388a",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/HANDOFF.md": {
+    "mtime": 1790409267.7555165,
+    "seen": 1790409281.069253,
+    "ast_hash": "8ee482b7463fac7fb8a9df8a86a97bf3",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/PROJECT_CONTEXT.md": {
+    "mtime": 1790407379.415819,
+    "seen": 1790408882.546822,
+    "ast_hash": "c08180a50572057036c8680569d12a84",
+    "semantic_hash": ""
+  },
+  "AI_CONTEXT/TODO.md": {
+    "mtime": 1790409267.7555165,
+    "seen": 1790409281.0692546,
+    "ast_hash": "bf773c2d968586e04884f1c7144777b4",
     "semantic_hash": ""
   }
 }
