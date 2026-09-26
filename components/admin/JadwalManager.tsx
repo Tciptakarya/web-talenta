@@ -501,8 +501,8 @@ export default function JadwalManager({
               className={inputCls}
             />
             <p className="mt-1 text-xs text-mist">
-              Diisi → badge sisa kursi tampil & tombol Daftar nonaktif otomatis
-              saat penuh.
+              Diisi → badge sisa kursi tampil &amp; tombol Daftar nonaktif
+              otomatis saat penuh.
             </p>
           </div>
           <TanggalInput id="new-tanggal" required />

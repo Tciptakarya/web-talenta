@@ -16,9 +16,9 @@ export default async function KategoriPage() {
           Kategori Kelas
         </h1>
         <p className="text-sm text-mist mt-1">
-          Kelola kategori kelas. Nama & slug unik; slug dibuat otomatis dari nama.
-          Kategori yang masih dipakai program/foto tidak bisa dihapus — nonaktifkan
-          atau pindahkan data dulu.
+          Kelola kategori kelas. Nama &amp; slug unik; slug dibuat otomatis dari
+          nama. Kategori yang masih dipakai program/foto tidak bisa dihapus —
+          nonaktifkan atau pindahkan data dulu.
         </p>
       </div>
       <KategoriManager categories={categories} />
