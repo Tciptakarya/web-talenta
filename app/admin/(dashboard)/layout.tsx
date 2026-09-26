@@ -35,13 +35,13 @@ export default async function AdminLayout({
   ]);
 
   return (
-    <div className="min-h-screen bg-paper text-ink flex">
-      <aside className="w-64 shrink-0 bg-navy text-white p-6 flex flex-col gap-6 max-md:hidden">
+    <div className="min-h-screen md:min-h-0 md:h-dvh bg-paper text-ink flex md:overflow-hidden">
+      <aside className="admin-sidebar w-64 shrink-0 md:h-full bg-navy text-white p-6 hidden md:flex flex-col gap-6">
         <div>
           <p className="font-display text-lg font-semibold">Talenta Cipta Karya</p>
           <p className="text-xs text-[#B7C4EA] mt-1">Dashboard Admin</p>
         </div>
-        <nav className="flex flex-col gap-1">
+        <nav className="md:flex-1 md:min-h-0 md:overflow-y-auto flex flex-col gap-1 pr-1 -mr-1">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -65,9 +65,12 @@ export default async function AdminLayout({
             </Link>
           ))}
         </nav>
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto shrink-0 space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs text-[#8B98BE] break-all">
+            <p
+              className="text-[11px] text-[#8B98BE] break-words min-w-0"
+              title={session.user?.email ?? undefined}
+            >
               {session.user?.email}
             </p>
             <ThemeToggle />
@@ -76,9 +79,9 @@ export default async function AdminLayout({
         </div>
       </aside>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 md:h-full md:flex md:flex-col">
         {/* Nav mobile */}
-        <div className="md:hidden bg-navy text-white p-4 flex items-center gap-3 overflow-x-auto">
+        <div className="md:hidden shrink-0 bg-navy text-white p-4 flex items-center gap-3 overflow-x-auto">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -92,13 +95,16 @@ export default async function AdminLayout({
           <ThemeToggle />
           <SignOutButton inline />
         </div>
-        <main className="p-6 md:p-10 max-w-5xl">{children}</main>
-        <p className="px-6 md:px-10 pb-8 text-xs text-mist">
-          Mode penyimpanan foto:{" "}
-          <strong>{blobEnabled() ? "Vercel Blob" : "lokal (public/uploads)"}</strong>{" "}
-          · Notifikasi email:{" "}
-          <strong>{process.env.RESEND_API_KEY ? "Resend aktif" : "belum aktif (RESEND_API_KEY kosong)"}</strong>
-        </p>
+        {/* Area konten: satu-satunya yang scroll. Sidebar & nav mobile tetap diam. */}
+        <div className="md:flex-1 md:min-h-0 md:overflow-y-auto">
+          <main className="p-6 md:p-10 max-w-5xl">{children}</main>
+          <p className="px-6 md:px-10 pb-8 text-xs text-mist">
+            Mode penyimpanan foto:{" "}
+            <strong>{blobEnabled() ? "Vercel Blob" : "lokal (public/uploads)"}</strong>{" "}
+            · Notifikasi email:{" "}
+            <strong>{process.env.RESEND_API_KEY ? "Resend aktif" : "belum aktif (RESEND_API_KEY kosong)"}</strong>
+          </p>
+        </div>
       </div>
     </div>
   );

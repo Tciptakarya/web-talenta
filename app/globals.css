@@ -703,6 +703,10 @@
   transition:border-color .3s, color .3s, background .3s, transform .35s var(--ease);
 }
 .theme-toggle:hover{border-color:var(--blue); color:var(--blue); transform:translateY(-2px);}
+/* Di sidebar admin-bg navy: warna default navy membuat ikon (currentColor)
+   navy-di-atas-navy = tak terlihat. Paksa terang + border putih transparan. */
+.admin-sidebar .theme-toggle{color:#E9EDF9; border-color:rgba(255,255,255,.4);}
+.admin-sidebar .theme-toggle:hover{color:#fff; border-color:#fff;}
 .theme-toggle svg{width:18px; height:18px; display:block;}
 .theme-toggle .theme-icon-sun{display:none;}
 :root.dark .theme-toggle .theme-icon-sun{display:block;}
