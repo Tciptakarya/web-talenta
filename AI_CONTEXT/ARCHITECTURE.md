@@ -250,6 +250,32 @@ Dijelaskan per relasi:
 `Pendaftaran(jadwalId, status)` ·
 `MateriPelatihan(programId)`
 
+### Galeri (admin) — grouping KATEGORI lalu PROGRAM
+
+    /admin/galeri  (page.tsx, server component)
+      1 query: prisma.galleryImage.findMany(
+                orderBy: [{urutan:"asc"},{uploadedAt:"desc"}],
+                include: { category:{id,name}, program:{id,judul} })
+             + daftar kategori & program untuk dropdown
+      -> items[] (sudah urut + sudah punya category/program)
+    GaleriList (client component)
+      buildGroups(items)  = grouping PURE di klien, tanpa query tambahan
+        kategori -> sub-group program -> kartu foto
+      accordion: state "ciut" (kunci kategori|program),
+        default terbuka bila <=4 kategori; tombol Buka semua / Ciutkan semua
+      kartu: tombol naik/turun mengirim id + targetId (tetangga DALAM subgroup)
+      Edit/Hapus -> server action -> refresh() -> router.refresh() -> regroup
+
+- Tanpa N+1: satu query sudah menyediakan relasi; grouping murni di klien
+  (useMemo). Hanya kategori/program yang punya foto yang dirender;
+  "Tanpa Kategori" dan "Tanpa Program" menjadi grup terakhir.
+- Ordering: moveGalleryImage kini menerima targetId dan hanya menukar
+  urutan dua foto tersebut, bukan membalik daftar global. Urutan foto lain
+  tetap, jadi halaman publik tidak berubah selain posisi dua foto itu.
+  Badge nomor tetap mengikuti urutan global.
+- Upload tetap ke POST /api/upload; setelah sukses router.refresh() membuat
+  foto baru langsung muncul di grup kategori/program yang dipilih.
+
 ## File Upload Architecture (galeri & materi)
 
 ```

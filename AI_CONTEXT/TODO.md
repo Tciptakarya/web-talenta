@@ -90,6 +90,12 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 Berdasarkan history git (terverifikasi):
 
+- [x] **Admin Galeri dikelompokkan KATEGORI → PROGRAM** (accordion per
+      kategori & program, jumlah foto dari data aktual, "Tanpa Kategori"/
+      "Tanpa Program", ↑/↓ scoped subgroup, tanpa query tambahan) — data uji
+      8 foto dihapus, total kembali 12, halaman publik tidak berubah
+      (belum di-commit)
+
 - [x] **Vercel Blob aktif di production & upload terverifikasi** (2026-27) —
       footer "Mode penyimpanan foto: Vercel Blob"; PNG/JPG/WebP/AVIF
       (1,5 KB–2832 KB) semua **200** ke

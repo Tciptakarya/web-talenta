@@ -22,17 +22,26 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `fd32dae` (2026-09-26) sudah ter-push; perubahan terbaru = dokumentasi
-  `AI_CONTEXT/` + `AGENTS.md` (**belum di-commit**, tanpa source code).
+- HEAD `3d32e21` (2026-09-27) sudah ter-push; perubahan terbaru = grouping
+  Galeri KATEGORI → PROGRAM + `AI_CONTEXT/` (**belum di-commit**).
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
-- Server lokal **tidak berjalan** (shell background-nya dibatalkan).
+- Server lokal **sedang berjalan** saat verifikasi (port 3000).
 - Data (Neon): 8 kategori, 11 program, 12 foto, 2 testimoni, 1 admin;
   **jadwal 0, pendaftaran 0, materi 0, pesan 0** (2 token reset sisa uji coba).
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, belum di-commit): fix Upload Galeri di
-production** — root cause: `BLOB_READ_WRITE_TOKEN` kosong di Vercel →
+**Task terbaru (source code, belum di-commit): Admin Galeri dikelompokkan
+KATEGORI → PROGRAM** — `GaleriList.tsx` (grouping di klien dari satu query,
+accordion kategori + program, jumlah foto dari data aktual, grup "Tanpa
+Kategori"/"Tanpa Program", ↑/↓ scoped dalam subgroup) + `moveGalleryImage`
+menerima `targetId`. Terverifikasi: 4 kategori, 3 program dalam 1 kategori,
+foto tanpa program/kategori, ↑/↓, Edit memindahkan foto, Delete meng-update
+jumlah & menyembunyikan subgroup kosong, Upload masuk grup sesuai pilihan,
+sidebar tetap fixed, 0 console error, halaman publik 200. Data uji dihapus
+(kembali 12 foto, urutan 1..12).
+
+**Task sebelumnya (source code, sudah ter-push): upload Galeri di production** — root cause: `BLOB_READ_WRITE_TOKEN` kosong di Vercel →
 fallback `public/uploads` (filesystem hanya-baca) → `writeFile` gagal →
 `catch` lama hide penyebab di balik "Upload gagal". Fix: `lib/storage.ts`
 (StorageUnavailableError + taksonomi kode + `assertStorageReady()`),

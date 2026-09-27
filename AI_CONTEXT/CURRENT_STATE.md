@@ -17,8 +17,43 @@ bukan penulisan kode:
 
 ## Last Completed Work
 
-**Task terbaru (source code, belum di-commit): fix Upload Galeri — root cause
-"penyimpanan lokal tidak bisa ditulis"**
+**Task terbaru (source code, belum di-commit): Admin Galeri dikelompokkan
+KATEGORI → PROGRAM**
+
+- `components/admin/GaleriList.tsx`: grouping murni di klien via
+  `buildGroups(items)` (useMemo, tanpa query tambahan), section kategori +
+  sub-section program yang bisa di-expand/collapse (state "ciut",
+  `aria-expanded`, chevron), ringkasan "N kategori · M program · K foto",
+  tombol "Buka semua"/"Ciutkan semua". Badge kategori/program per kartu
+  dihapus (sudah tercermin di judul section). Label "Tanpa Kategori" dan
+  "Tanpa Program" untuk foto tanpa relasi.
+- `app/admin/actions.ts`: `moveGalleryImage` kini menerima `targetId` —
+  menukar `urutan` dua foto **di dalam subgroup** yang sama (sebelumnya
+  membalik daftar global, jadi tombol ↑/↓ terasa melompat kategori).
+- `app/admin/(dashboard)/galeri/page.tsx`: teks pengantar menjelaskan
+  grouping (query tetap satu, sudah include category & program).
+
+Verifikasi (localhost, 8 foto uji + 12 foto asli = 20):
+
+| Aspek | Hasil |
+|---|---|
+| Grouping multi kategori | 4 kategori: Barista 6, Kelas Komputer 7/9, Keselamatan Maritim 5, Tanpa Kategori 1 |
+| Multi program dalam 1 kategori | Keselamatan Maritim → Basic Fire & First Aid (3) + BOSIET (1) + Tanpa Program (1) |
+| Foto tanpa program | tampil di sub-section "Tanpa Program" (bukan hilang) |
+| Foto tanpa kategori | tampil di section "Tanpa Kategori", selalu di urutan akhir |
+| Jumlah foto kategori & program | akurat dari data aktual (6+7+5+1=20) |
+| Sorting/order | dalam subgroup ikut urutan publik (`urutan` asc dari server) |
+| Tombol ↑/↓ | scoped subgroup: foto pertama ↑ nonaktif, terakhir ↓ nonaktif; klik ↓ menukar #13↔#14 hanya di subgroup itu |
+| Edit kategori/program | foto berpindah grup setelah simpan (BOSIET → Basic Fire & First Aid) |
+| Delete | jumlah ikut turun; subsection kosong **tidak** dirender (Kursus Komputer hilang saat kosong) |
+| Upload | foto baru langsung masuk grup Basic Fire & First Aid/BOSIET sesuai pilihan |
+| Sidebar | tetap fixed: top 0, tinggi = viewport, account section gap 24px |
+| Overflow | tidak ada horizontal scroll; `body` tidak scroll |
+| Console | 0 error |
+| Regresi publik | `/`, `/kelas`, `/kelas/[slug]`, `/program/[slug]` tetap 200 + gambar render |
+| Kebersihan data | data uji dihapus (7 baris + 1 file), urutan dirapikan 1..12, total kembali 12 |
+
+**Task sebelumnya (source code, sudah ter-push): upload Galeri di production**
 
 - **Root cause**: di production `BLOB_READ_WRITE_TOKEN` kosong →
   `storeImage()` jatuh ke fallback `public/uploads`; filesystem Vercel

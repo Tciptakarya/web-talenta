@@ -68,7 +68,21 @@ Format: tanggal · isi · hash commit.
 
 ### Changed
 
-- **Sidebar admin jadi fixed terhadap viewport** —
+- **Admin Galeri dikelompokkan KATEGORI → PROGRAM** — `GaleriList.tsx`
+  membangun group di klien dari satu query yang sudah men-`include` relasi
+  (tanpa query tambahan/N+1); tiap kategori & program bisa di-expand/collapse
+  (`aria-expanded`, default terbuka bila ≤4 kategori, tombol Buka/Ciutkan
+  semua), jumlah foto per kategori & program dihitung dari data aktual, grup
+  "Tanpa Kategori"/"Tanpa Program" untuk foto tanpa relasi, dan subgroup/
+  kategori kosong tidak pernah dirender. Badge kategori/program per kartu
+  dihapus karena sudah tercermin di judul section. Terverifikasi: 4 kategori,
+  3 program dalam 1 kategori, foto tanpa program & tanpa kategori, ↑/↓ scoped
+  subgroup, Edit memindahkan foto antar grup, Delete meng-update jumlah,
+  Upload masuk grup sesuai pilihan, sidebar tetap fixed, 0 console error,
+  halaman publik tidak berubah — belum di-commit
+- `moveGalleryImage` menerima `targetId` dan menukar `urutan` dua foto dalam
+  subgroup yang sama (bukan membalik daftar global) — belum di-commit
+- **Sidebar admin fixed terhadap viewport + area akun global** —
   `app/admin/(dashboard)/layout.tsx`: wrapper `md:h-dvh` + `md:overflow-hidden`,
   area konten jadi container `md:overflow-y-auto` (hanya konten yang scroll),
   `nav` bisa scroll internal, account section (email + ThemeToggle + Keluar)

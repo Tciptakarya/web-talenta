@@ -474,6 +474,52 @@ agar environment baru (mis. Cloud Run) ikut terdeteksi.
 
 ---
 
+## Decision: Grouping galeri di klien + urutan scoped per subgroup
+
+### Decision
+
+1. Grouping KATEGORI → PROGRAM untuk halaman `/admin/galeri` dihitung **di
+   sisi klien** (`buildGroups(items)` di `GaleriList.tsx`) dari `items` yang
+   sudah diambil halaman lewat satu query (sudah `include` category & program).
+2. Section kategori & sub-section program berupa accordion (state React
+   `ciut`, `aria-expanded`), default terbuka bila ≤4 kategori; ada tombol
+   "Buka semua" / "Ciutkan semua".
+3. `moveGalleryImage` menerima `targetId` dan hanya **menukar `urutan` dua
+   foto** (tetangga dalam subgroup), bukan membalik urutan daftar global.
+4. Grup kosong tidak pernah dirender; foto tanpa kategori/program tetap tampil
+   di grup "Tanpa Kategori"/"Tanpa Program" (di urutan akhir).
+
+### Reason
+
+- Halaman sudah mengambil relasi dalam satu query — grouping di klien
+  menghilangkan risiko N+1 dan tidak menambah beban database.
+- Mengganti "urutan global" dengan "tukar dua foto" membuat tombol ↑/↓
+  masuk akal di tampilan bergroup: foto tidak melompat ke kategori lain,
+  sementara urutan foto lain (dan tampilan publik) tetap utuh.
+- Kategori/program kosong di-render hanya akan membingungkan admin; data
+  aslinya tidak ikut terhapus dari database.
+
+### Alternatives Considered
+
+- Query terpisah per kategori/program (N+1 — ditolak).
+- Menambah kolom `groupOrder` sendiri di DB (tidak perlu — `urutan` global
+  masih jadi acuan tampilan publik).
+- `<details>`/`<summary>` native (ditolak: memakai state agar styling & chevron
+  konsisten dengan tema admin).
+
+### Current Implementation
+
+`components/admin/GaleriList.tsx`, `app/admin/actions.ts`
+(`moveGalleryImage`), `app/admin/(dashboard)/galeri/page.tsx` (teks pengantar).
+
+### Important
+
+**Jangan** mengubah `moveGalleryImage` kembali ke pembalikan daftar global —
+itu membuat ↑/↓ terasa melompat antar kategori. Sorting **hanya** boleh
+mengikuti `urutan` (publik), bukan nama file/tanggal upload.
+
+---
+
 ## Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT`
 
 ### Decision
