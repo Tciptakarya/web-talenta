@@ -115,10 +115,10 @@ Tidak ada pekerjaan kode berjalan. Sisa pekerjaan bersifat **konfigurasi
 10. Nama community graphify = nama node hub (`prisma.ts`, `data.ts`) —
     informatif, tidak wajib LLM. Bisa dilabeli semantik gratis lokal:
     `graphify label . --backend=ollama --missing-only`.
-11. **Upload foto di production masih mustahil** — `BLOB_READ_WRITE_TOKEN`
-    belum aktif di environment Production (per 2026-09-27). Kode fix sudah
-    live (deploy `85405d4`) dan membalas **503 + pesan penyebab**, bukan
-    lagi pesan generik. Tinggal menambahkan env var + Redeploy di Vercel.
+11. ~~**Upload foto di production mustahil**~~ — **SUDAH TERPECAHKAN**
+    (2026-09-27): Vercel Blob aktif, upload 4 format terverifikasi 200 ke
+    `*.public.blob.vercel-storage.com`, data uji sudah dibersihkan. Kode juga
+    mendukung OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`).
 12. Batas upload platform Vercel ±4,5 MB vs 8 MB di UI → file 4,5–8 MB
     ditolak 413. Belum ada keputusan (lihat `CURRENT_STATE.md` Issue 11).
 13. Token GitHub `Tciptakarya` sempat terekspos di percakapan — sarankan

@@ -5,14 +5,6 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## Critical
 
-- [ ] **Aktifkan Vercel Blob (`BLOB_READ_WRITE_TOKEN`) di Vercel** — tanpa
-      ini **upload foto di production mustahil** (filesystem Vercel
-      hanya-baca). Caretakan root cause 2026-09-26: pesan tadinya generik
-      "Upload gagal"; sekarang sudah jelas 503
-      "Penyimpanan foto belum dikonfigurasi di server ini…". Alur:
-      Vercel → Storage → Blob → buat token → Environment Variables (Production
-      + Preview) → Redeploy. Selesai juga untuk materi pelatihan, yang memakai
-      `storeImage` yang sama. (`CURRENT_STATE.md` → Issue 10)
 - [ ] **Ganti `RESEND_API_KEY` yang tidak valid** — di `.env` lokal **dan** di
       Vercel Environment Variables, lalu Redeploy. Saat ini semua email
       (reset password, notifikasi kontak & pendaftaran) gagal dengan
@@ -97,6 +89,15 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 ## Completed
 
 Berdasarkan history git (terverifikasi):
+
+- [x] **Vercel Blob aktif di production & upload terverifikasi** (2026-27) —
+      footer "Mode penyimpanan foto: Vercel Blob"; PNG/JPG/WebP/AVIF
+      (1,5 KB–2832 KB) semua **200** ke
+      `aeiuzxqqxeye5usv.public.blob.vercel-storage.com`; file publik 200
+      (`image/webp`, 728.992 byte); foto muncul di beranda; data uji dihapus →
+      12 foto, 0 yatim. Kode juga mendukung OIDC (`BLOB_STORE_ID` +
+      `VERCEL_OIDC_TOKEN`) karena UI Vercel 2026 tidak lagi men-Show read-write
+      token. (`CURRENT_STATE.md` → Issue 10)
 
 - [x] **4 perbaikan minor admin** (belum di-commit):
       1. Email admin 1 baris (`text-[11px]` + `title`,.ukur empiris 148/160px)

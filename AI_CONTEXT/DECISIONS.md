@@ -458,6 +458,13 @@ Kode yang bisa gagal diam-diam harus gagal dengan jujur dan bisa ditindaklanjuti
   (`pesanFromStatus()` untuk balasan non-JSON/platform).
 - Pattern yang sama otomatis berlaku untuk materi pelatihan karena
   `materiFileFromFormData()` memakai `storeImage` yang sama.
+- **`blobEnabled()` menerima dua jalur kredensial**: `BLOB_READ_WRITE_TOKEN`
+  (statis, untuk lokal / di luar Vercel) **atau** `BLOB_STORE_ID` +
+  `VERCEL_OIDC_TOKEN` (OIDC). Alasannya: sejak 2026 UI Vercel tidak lagi
+  menampilkan read-write token — hanya "Rotate Credentials" — dan store yang
+  terhubung ke project memakai OIDC (token berumur pendek, berputar otomatis).
+  SDK mengabaikan read-write token bila OIDC tersedia, jadi token lama yang
+  tidak berlaku tidak lagi menggagalkan upload.
 
 ### Important
 

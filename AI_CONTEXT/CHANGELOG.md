@@ -25,6 +25,13 @@ Format: tanggal · isi · hash commit.
 
 ### Fixed
 
+- **Upload Galeri di production sekarang BEKERJA** (Vercel Blob aktif) —
+  terverifikasi: PNG/JPG/WebP/AVIF (1,5 KB–2832 KB) → HTTP 200 ke
+  `aeiuzxqqxeye5usv.public.blob.vercel-storage.com`, file publik 200
+  (`image/webp`, 728.992 byte), foto tampil di beranda, data uji dibersihkan
+  (kembali 12 foto, 0 yatim). `blobEnabled()` juga menerima OIDC
+  (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`) karena UI Vercel 2026 tidak lagi
+  menampilkan read-write token — `ac6a0e7`
 - **Upload Galeri gagal di production dengan pesan generik** — root cause:
   `BLOB_READ_WRITE_TOKEN` kosong di Vercel → fallback `public/uploads`
   (filesystem hanya-baca) → `writeFile` gagal → `catch` lama hide semua

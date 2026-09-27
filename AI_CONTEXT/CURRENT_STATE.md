@@ -466,25 +466,36 @@ production, reproduksi dengan `icacls /deny W`, `VERCEL=1` simulation,
 
 **Current Status**
 
-**Open — kode sudah live & terverifikasi (deploy `85405d4`, 2026-09-27).**
-Upload di production kini membalas **503 dengan pesan penyebab** (terverifikasi
-via `POST /api/upload`), bukan lagi "Upload gagal" generik. Namun
-`BLOB_READ_WRITE_TOKEN` **masih belum aktif** di environment Production — footer
-`/admin/galeri` masih "lokal (public/uploads)".
+**RESOLVED (2026-09-27).** Upload di production sudah terverifikasi bekerja
+penuh dengan Vercel Blob.
 
-**Recommended Next Investigation**
+Bukti verifikasi production (`https://talentaciptakarya.com`):
 
-Vercel → project `web-talenta` → **Settings → Environment Variables** →
-pastikan `BLOB_READ_WRITE_TOKEN` ada dan ter-centang **Production** (dan
-Preview). Kalau belum ada: **Storage → Create Database → Blob** → hubungkan ke
-project `web-talenta` → centang Production + Preview → Create. Lalu
-**Redeploy** (env var tidak aktif tanpa deployment baru). Verifikasi akhir:
-footer berubah menjadi "Vercel Blob" dan `POST /api/upload` membalas 200
-dengan URL `*.public.blob.vercel-storage.com`.
+- Footer `/admin/galeri`: **"Mode penyimpanan foto: Vercel Blob"**
+- Matriks upload: PNG 1,5 KB / JPG 1118 KB / WebP 920 KB / AVIF 468 KB /
+  PNG 2832 KB → **semuanya HTTP 200** dengan URL
+  `https://aeiuzxqqxeye5usv.public.blob.vercel-storage.com/galeri-*.webp`
+- File blob bisa diakses publik: **HTTP 200, `content-type: image/webp`,
+  728.992 byte** (JPG 1118 KB → WebP 728 KB, kompresi `sharp` bekerja)
+- Foto hasil upload **muncul di galeri beranda** publik
+- File non-image tetap 400, file > 8 MB tetap 413 (lihat Issue 11)
+- Data uji dibersihkan lewat UI admin: total galeri kembali **12**,
+  **0** record ber-URL blob, **0** file yatim (file ikut terhapus dari store)
 
-Catatan: kalau hanya melakukan "Connect to Project" dari halaman store, Vercel
-membuat `BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN` — itu **tidak cukup**, karena
-`blobEnabled()` memeriksa `BLOB_READ_WRITE_TOKEN`.
+**Catatan operasional (penting untuk agent berikutnya):**
+
+- UI Vercel 2026 **tidak lagi menampilkan read-write token** di halaman store;
+  hanya ada "Rotate Credentials". Karena itu `blobEnabled()` kini menerima
+  **OIDC** (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`) selain
+  `BLOB_READ_WRITE_TOKEN`.
+- Jejak troubleshoot yang berhasil: `RESEND_API_KEY`-style error "Upload
+  gagal" → cek footer `/admin/galeri` → 503 "belum dikonfigurasi" → cek
+  `Vercel → Settings → Environment Variables` (ada env var `BLOB_READ_WRITE_TOKEN`
+  **lama** dari store yang sudah dihapus) → **hapus env var lama** → putar
+  kredensial → Redeploy.
+- "Rotate Credentials" bisa gagal dengan *"Env vars cannot be safely rotated"*
+  karena env var lama bertipe **Secret** (write-only) sehingga Vercel tidak bisa
+  memverifikasinya. Solusinya: hapus dulu env var lama, lalu rotate lagi.
 
 ### Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB
 
