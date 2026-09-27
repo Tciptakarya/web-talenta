@@ -52,7 +52,8 @@ export default async function GaleriPage() {
         <p className="text-sm text-mist mt-1">
           Upload banyak foto sekaligus, atur urutan tampil (↑/↓), dan koreksi
           caption/kategori/program lewat tombol Edit — semuanya langsung tampil
-          di halaman publik tanpa deploy.
+          di halaman publik tanpa deploy. Daftar foto di bawah dikelompokkan per
+          kategori lalu per program; klik judulnya untuk buka/ciut.
         </p>
       </div>
 

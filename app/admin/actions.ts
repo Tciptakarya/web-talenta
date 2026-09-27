@@ -484,35 +484,39 @@ export async function updateGalleryImage(
  * Setelah ditukar, SEMUA baris dinomori ulang 1..n — sekaligus merapikan
  * `urutan` duplikat yang mungkin tersisa dari upload lama (count()+1).
  */
+/**
+ * Tukar urutan (posisi tampil) dua foto.
+ *
+ * `targetId` = id foto tetangga yang menjadi sasaran. Dipakai oleh UI galeri
+ * yang sudah dikelompokkan (kategori → program) agar tombol ↑/↓ memindahkan
+ * foto hanya DI DALAM subgroup-nya, bukan melompat ke kategori lain. Urutan
+ * global seluruh foto lain tetap apa adanya, jadi halaman publik tidak berubah
+ * selain posisi dua foto itu.
+ */
 export async function moveGalleryImage(formData: FormData) {
   await requireAdmin();
   const id = Number(formData.get("id"));
-  const arah = String(formData.get("arah") ?? "");
-  if (!Number.isFinite(id) || !["up", "down"].includes(arah)) return;
+  const targetId = Number(formData.get("targetId"));
+  if (!Number.isFinite(id) || !Number.isFinite(targetId) || id === targetId) {
+    return;
+  }
 
-  const semua = await prisma.galleryImage.findMany({
-    orderBy: [{ urutan: "asc" }, { uploadedAt: "desc" }, { id: "asc" }],
-    select: { id: true },
-  });
-  const index = semua.findIndex((g) => g.id === id);
-  if (index < 0) return;
+  const [a, b] = await prisma.$transaction([
+    prisma.galleryImage.findUnique({
+      where: { id },
+      select: { id: true, urutan: true },
+    }),
+    prisma.galleryImage.findUnique({
+      where: { id: targetId },
+      select: { id: true, urutan: true },
+    }),
+  ]);
+  if (!a || !b) return;
 
-  const target = arah === "up" ? index - 1 : index + 1;
-  if (target < 0 || target >= semua.length) return;
-
-  const urutanBaru = [...semua];
-  const [dipindah] = urutanBaru.splice(index, 1);
-  if (!dipindah) return;
-  urutanBaru.splice(target, 0, dipindah);
-
-  await prisma.$transaction(
-    urutanBaru.map((g, i) =>
-      prisma.galleryImage.update({
-        where: { id: g.id },
-        data: { urutan: i + 1 },
-      })
-    )
-  );
+  await prisma.$transaction([
+    prisma.galleryImage.update({ where: { id: a.id }, data: { urutan: b.urutan } }),
+    prisma.galleryImage.update({ where: { id: b.id }, data: { urutan: a.urutan } }),
+  ]);
   refresh();
 }
 
