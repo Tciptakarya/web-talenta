@@ -2,9 +2,22 @@ import { put, del } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-/** True kalau Vercel Blob sudah dikonfigurasi (BLOB_READ_WRITE_TOKEN terisi). */
+/**
+ * True kalau Vercel Blob siap dipakai. Dua cara (urutan prioritas SDK):
+ * 1. Read-write token statis — `BLOB_READ_WRITE_TOKEN` (dipakai juga saat
+ *    kode jalan di luar Vercel, mis. development lokal).
+ * 2. OIDC — `BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`. Vercel yang menambahkannya
+ *    otomatis saat store di-"Connect to Project"; tokennya berumur pendek dan
+ *    berputar sendiri, jadi tidak ada secret statis yang perlu disalin manual.
+ *
+ * SDK mengabaikan BLOB_READ_WRITE_TOKEN bila OIDC tersedia, jadi token lama
+ * yang tidak berlaku tidak akan menggagalkan upload selama OIDC aktif.
+ */
 export function blobEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  if (process.env.BLOB_READ_WRITE_TOKEN) return true;
+  return Boolean(
+    process.env.BLOB_STORE_ID && process.env.VERCEL_OIDC_TOKEN
+  );
 }
 
 /**
