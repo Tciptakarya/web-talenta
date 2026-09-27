@@ -25,6 +25,22 @@ Format: tanggal · isi · hash commit.
 
 ### Fixed
 
+- **Upload Galeri gagal di production dengan pesan generik** — root cause:
+  `BLOB_READ_WRITE_TOKEN` kosong di Vercel → fallback `public/uploads`
+  (filesystem hanya-baca) → `writeFile` gagal → `catch` lama hide semua
+  penyebab. Perbaikan:
+  - `lib/storage.ts`: `StorageUnavailableError` + taksonomi kode
+    (`blob-not-configured`/`readonly-fs`/`no-permission`/`disk-full`/
+    `unknown`), `isEphemeralFs()`, `describeStorageFailure()` (pesan aman),
+    `assertStorageReady()` (gagal cepat sebelum kompres),
+    `classifyStorageError()`.
+  - `app/api/upload/route.ts`: pre-flight 503 + penyebab; `catch` →
+    storage 503 / Prisma 500 / sharp 422, detail lengkap tetap di log.
+  - `components/admin/UploadForm.tsx`: `pesanFromStatus()` untuk balasan
+    non-JSON (413 batas ±4,5 MB Vercel, 401/403, 503, 5xx).
+  Diverifikasi: matriks 7 file lokal (PNG/JPG/WebP/AVIF 200; >8MB & non-image
+  400), simulasi `VERCEL=1` → 503 pesan jelas, folder dikunci → 503
+  "tidak bisa ditulis", UI menampilkan pesan per file — belum di-commit
 - **Ikon theme toggle tak terlihat di sidebar admin** — `.theme-toggle`
   memakai `color: var(--navy)` + ikon SVG `stroke="currentColor"`, jadi di
   sidebar navy ikon jadi navy-di-atas-navy. Ditambah override

@@ -117,7 +117,7 @@ payment gateway kecuali diminta eksplisit.
 | Vercel | Hosting + build + DNS | Aktif, live |
 | Neon (PostgreSQL) | Database produksi & lokal | Aktif |
 | Resend | Email notifikasi | **Terdampak (API key tidak valid)** |
-| Vercel Blob | Penyimpanan foto | Belum dikonfigurasi (token kosong) |
+| Vercel Blob | Penyimpanan foto (wajib di Vercel) | **Belum dikonfigurasi → upload production gagal** |
 | GitHub (`Tciptakarya/web-talenta`) | Sumber + auto-deploy | Aktif |
 | Titan Mail (`titan.email`) | Menerima email `info@` | **Perlu re-add MX di Vercel DNS** |
 | WhatsApp | Kanal kontak alternatif (tetap dipertahankan) | Aktif |

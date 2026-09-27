@@ -31,7 +31,23 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, belum di-commit): 4 perbaikan minor admin** —
+**Task terbaru (source code, belum di-commit): fix Upload Galeri di
+production** — root cause: `BLOB_READ_WRITE_TOKEN` kosong di Vercel →
+fallback `public/uploads` (filesystem hanya-baca) → `writeFile` gagal →
+`catch` lama hide penyebab di balik "Upload gagal". Fix: `lib/storage.ts`
+(StorageUnavailableError + taksonomi kode + `assertStorageReady()`),
+`app/api/upload/route.ts` (pre-flight 503 + pemetaan error 503/500/422),
+`components/admin/UploadForm.tsx` (`pesanFromStatus()` untuk 413/401/503/5xx).
+Bukti: file identik 200 lokal vs 500 production; reproduksi lokal dengan
+`icacls /deny W`; simulasi `VERCEL=1` → 503 pesan jelas; UI menampilkan
+pesan per file. Data uji sudah dibersihkan (kembali 12 foto, 0 file yatim).
+
+**Dua isu yang masih perlu keputusan user:**
+1. Vercel Blob harus diaktifkan (tanpa itu upload production mustahil).
+2. Batas 4,5 MB platform vs 8 MB di UI — belum diubah, hanya pesannya
+   yang diperjelas.
+
+**Task sebelumnya (source code, belum di-commit): 4 perbaikan minor admin** —
 (1) email admin kini 1 baris (`text-[11px]` + `title`, 148px dari 160px
 tersedia); (2) ikon theme toggle terlihat di sidebar navy
 (`.admin-sidebar .theme-toggle`, situs publik tidak berubah); (3) mobile
@@ -99,7 +115,13 @@ Tidak ada pekerjaan kode berjalan. Sisa pekerjaan bersifat **konfigurasi
 10. Nama community graphify = nama node hub (`prisma.ts`, `data.ts`) —
     informatif, tidak wajib LLM. Bisa dilabeli semantik gratis lokal:
     `graphify label . --backend=ollama --missing-only`.
-11. Token GitHub `Tciptakarya` sempat terekspos di percakapan — sarankan
+11. **Upload foto di production mustahil** — `BLOB_READ_WRITE_TOKEN` kosong di
+    Vercel; fallback `public/uploads` tidak bisa ditulis (filesystem
+    ephemeral). Kode sudah diperbaiki & pesannya jelas (503), tapi **perlu
+    token Vercel Blob** untuk benar-benar bisa upload.
+12. Batas upload platform Vercel ±4,5 MB vs 8 MB di UI → file 4,5–8 MB
+    ditolak 413. Belum ada keputusan (lihat `CURRENT_STATE.md` Issue 11).
+13. Token GitHub `Tciptakarya` sempat terekspos di percakapan — sarankan
     rotasi (tidak pernah ditulis ke file).
 
 ## IMPORTANT DECISIONS

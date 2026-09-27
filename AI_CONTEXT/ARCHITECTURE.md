@@ -143,7 +143,7 @@ components/
 | `app/api/auth/[...nextauth]/route.ts` | GET/POST | — | NextAuth handlers |
 | `app/api/contact/route.ts` | POST | publik | Simpan `ContactMessage` → email Resend (boleh gagal) |
 | `app/api/pendaftaran/route.ts` | POST | publik | Zod → cek jadwal+kuota → simpan `Pendaftaran` → email |
-| `app/api/upload/route.ts` | POST | session | Upload foto: sharp → Blob/`public/uploads` → `GalleryImage` |
+| `app/api/upload/route.ts` | POST | session | Upload foto: pre-flight storage → sharp → Blob/`public/uploads` → `GalleryImage` |
 
 ### Server Actions — `app/admin/actions.ts`
 
@@ -177,7 +177,7 @@ Pembagian: Testimoni (3), Kategori (3 + `deleteCategoryAction`), Program
 | `lib/data.ts` | Semua query publik bertipe + logika kuota (`sisaKursi`, tanggal WIB) |
 | `lib/schemas.ts` | Seluruh skema Zod (satu sumber kebenaran validasi) |
 | `lib/slug.ts` | `slugify` + `uniqueSlug` (slug unik auto: `-2`, `-3`, …) |
-| `lib/storage.ts` | `storeImage`/`removeImage` — Blob bila token ada, fallback `public/uploads` |
+| `lib/storage.ts` | `storeImage`/`removeImage` — Blob bila token ada, fallback `public/uploads`; `StorageUnavailableError` + `describeStorageFailure()` (pesan aman), `isEphemeralFs()`, `assertStorageReady()` |
 | `lib/resend.ts` | 3 fungsi email: kontak, reset password, pendaftaran → status `sent\|failed\|skipped` |
 | `lib/passwordReset.ts` | `generateResetToken`, `hashToken` (SHA256), `isExpired` |
 | `lib/rateLimit.ts` | Rate limiter in-memory sliding window |
@@ -249,6 +249,34 @@ Dijelaskan per relasi:
 `JadwalPelatihan(programId, tanggal)` ·
 `Pendaftaran(jadwalId, status)` ·
 `MateriPelatihan(programId)`
+
+## File Upload Architecture (galeri & materi)
+
+```
+Admin pilih file (satu per request, 2 paralel)
+   ↓ UploadForm: validasi klien ukuran (8MB) + FormData
+POST /api/upload  (butuh session admin)
+   ↓ auth() → 401
+   ↓ req.formData() → 400
+   ↓ MIME/ekstensi → 400 · ukuran > 8MB → 400
+   ↓ assertStorageReady()  ← BARU: hosting ephemeral & Blob kosong → 503
+   ↓ gallerySchema (Zod) → 400 · categoryId/programId → 400
+   ↓ sharp: rotate + resize 1600px + webp q82
+   ↓ storeImage() → Blob (BLOB_READ_WRITE_TOKEN) | public/uploads
+   ↓ prisma.galleryImage.create (urutan = max+1)
+   ↓ 200 { ok, image }  |  503 storage · 500 Prisma · 422 proses gambar
+```
+
+- Kegagalan storage **tidak pernah** menjadi pesan generik: kode penyebab
+  (`blob-not-configured` / `readonly-fs` / `no-permission` / `disk-full`)
+  dipetakan ke pesan aman; detail teknis (path, errno) hanya di server log.
+- File yatim dicegah: bila `prisma.create` gagal, file dihapus via
+  `removeImage(url)`.
+- Batas platform: request body serverless Vercel ≈ **4,5 MB** → file lebih
+  besar ditolak platform (413) sebelum route jalan; `UploadForm` memetakan
+  413 ke pesan yang jelas. Batas aplikasi tetap 8 MB (belum diubah — lihat
+  `CURRENT_STATE.md` Issue 11).
+- Preview/commit: `public/uploads` fallback **hanya** untuk lokal/self-hosted.
 
 ## Payment Architecture
 

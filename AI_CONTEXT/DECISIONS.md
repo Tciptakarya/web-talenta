@@ -423,6 +423,50 @@ Jangan menambahkan role/permission system kecuali diminta.
 
 ---
 
+## Decision: Penyimpanan foto wajib Vercel Blob di hosting ephemeral + error bertipe
+
+### Decision
+
+1. `lib/storage.ts` mengekspor `StorageUnavailableError` + taksonomi
+   `StorageFailCode` (`blob-not-configured`, `readonly-fs`, `no-permission`,
+   `disk-full`, `unknown`), `isEphemeralFs()`, `assertStorageReady()`, dan
+   `describeStorageFailure()`.
+2. Route `/api/upload` memanggil `assertStorageReady()` **sebelum** memproses
+   gambar; `catch` memetakan storage→503, Prisma→500, sharp/lain→422, dan
+   selalu `console.error` detail lengkap di server.
+3. Pesan ke user tidak boleh memuat path internal, stack trace, atau kredensial.
+
+### Reason
+
+Kejadian 2026-09-26: di production semua upload gagal dengan satu pesan
+generik, padahal penyebabnya konfigurasi storage. `catch` lama menelan
+semua exception (EPERM/EROFS, error sharp, error Prisma) jadi satu kalimat.
+Kode yang bisa gagal diam-diam harus gagal dengan jujur dan bisa ditindaklanjuti.
+
+### Alternatives Considered
+
+- Hanya perbaiki pesan error tanpa mengubah arsitektur (ditolak — pesan tanpa
+  kode penyebab tidak bisa ditindaklanjuti).
+- Hapus fallback `public/uploads` sepenuhnya (ditolak — fallback ini yang
+  membuat development lokal tetap jalan tanpa setup apa pun).
+- Tulis file ke `/tmp` di Vercel (ditolak — ephemeral, hilang tiap instance;
+  bukan penyimpanan).
+
+### Current Implementation
+
+- `lib/storage.ts`, `app/api/upload/route.ts`, `components/admin/UploadForm.tsx`
+  (`pesanFromStatus()` untuk balasan non-JSON/platform).
+- Pattern yang sama otomatis berlaku untuk materi pelatihan karena
+  `materiFileFromFormData()` memakai `storeImage` yang sama.
+
+### Important
+
+**Jangan kembali ke generic catch-all.** Storage baru dianggap "aman"
+bila `BLOB_READ_WRITE_TOKEN` terisi di hosting production. Jaga `isEphemeralFs()`
+agar environment baru (mis. Cloud Run) ikut terdeteksi.
+
+---
+
 ## Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT`
 
 ### Decision

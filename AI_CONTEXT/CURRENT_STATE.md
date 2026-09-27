@@ -17,7 +17,46 @@ bukan penulisan kode:
 
 ## Last Completed Work
 
-**Task terbaru (source code, belum di-commit): 4 perbaikan minor admin**
+**Task terbaru (source code, belum di-commit): fix Upload Galeri — root cause
+"penyimpanan lokal tidak bisa ditulis"**
+
+- **Root cause**: di production `BLOB_READ_WRITE_TOKEN` kosong →
+  `storeImage()` jatuh ke fallback `public/uploads`; filesystem Vercel
+  serverless hanya-baca/ephemeral → `mkdir`/`writeFile` gagal → `catch`
+  lama mengembalikan satu pesan generik untuk semua penyebab.
+- **Bukti**:
+  - File yang sama (PNG 965 KB) → lokal **200**, production **500** generik.
+  - Production: bahkan PNG **1,5 KB** gagal 500 → bukan soal ukuran/format.
+  - Validasi (400) & halaman lain tetap jalan → route dieksekusi, gagalnya
+    di dalam `try` (sharp/storeImage/DB).
+  - Simulasi lokal (folder dikunci `icacls /deny W`) → **gejala identik**:
+    500 generik; server log: `EPERM ... open '...\public\uploads\galeri-*.webp'`.
+  - Platform production: `oversize.png` (10,6 MB) → **413
+    `FUNCTION_PAYLOAD_TOO_LARGE`** → terkonfirmasi Vercel.
+  - Footer production: "Mode penyimpanan foto: lokal (public/uploads)".
+- **Fix**:
+  - `lib/storage.ts`: `StorageUnavailableError` + `StorageFailCode`
+    (`blob-not-configured` / `readonly-fs` / `no-permission` / `disk-full` /
+    `unknown`), `isEphemeralFs()` (VERCEL/AWS_LAMBDA/NETLIFY),
+    `describeStorageFailure()` (pesan aman, tanpa path/stack/credential),
+    `assertStorageReady()` (gagal cepat sebelum kompres), dan
+    `classifyStorageError()` (EROFS→readonly, EACCES/EPERM→no-permission,
+    ENOSPC→disk-full).
+  - `app/api/upload/route.ts`: pre-flight `assertStorageReady()` → **503**
+    + pesan penyebab; `catch` dipetakan: storage→503, Prisma (`P…`)→500
+    "gagal menyimpan data", sharp/lain→422 "Gagal memproses gambar";
+    detail penuh tetap `console.error` di server.
+  - `components/admin/UploadForm.tsx`: `pesanFromStatus()` untuk balasan
+    non-JSON/platform: 413 (batas ±4,5 MB Vercel), 401/403 (sesi), 503
+    (storage), 5xx. Tidak ada perubahan desain/auth/schema.
+- **Verifikasi**: `tsc` 0 error; build hijau; matriks 7 file lokal
+  (PNG/JPG/WebP/AVIF 200, >8MB 400, non-image 400); `VERCEL=1` → 503
+  "Penyimpanan foto belum dikonfigurasi…"; folder dikunci → 503
+  "folder upload tidak bisa ditulis"; UI menampilkan pesan baru per file;
+  file tidak sempat ditulis saat gagal; data uji dibersihkan (kembali 12
+  foto, 0 file yatim).
+
+**Task sebelumnya (source code, belum di-commit): 4 perbaikan minor admin**
 
 1. **Email admin tidak lagi terpotong** — `break-all` + `text-xs` →
    `text-[11px] break-words min-w-0` + `title`. Diuji empiris: tersedia
@@ -404,6 +443,65 @@ Bentrok proses graphify yang sama-sama menulis `graphify-out/`:
   (edit `.codex/hooks.json` / `graphify hook status`) agar tidak ada dua
   proses graphify bersamaan.
 - Bila berulang: `uv tool upgrade graphifyy` (terpasang 0.9.67).
+
+### Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong)
+
+**Symptoms**
+
+Semua upload galeri di `https://talentaciptakarya.com` gagal. Sebelumnya
+pesan generic "Upload gagal. Coba lagi dengan foto lain."; setelah fix pesan
+503 "Penyimpanan foto belum dikonfigurasi di server ini…".
+
+**Suspected Cause — terkonfirmasi**
+
+`BLOB_READ_WRITE_TOKEN` tidak ada di Vercel → `storeImage()` memakai fallback
+`public/uploads` → filesystem Vercel hanya-baca/ephemeral → write gagal.
+Lokal tetap aman karena disk Windows writable.
+
+**Investigation Already Done**
+
+Lihat *Last Completed Work* (bukti lengkap: file identik 200 lokal vs 500
+production, reproduksi dengan `icacls /deny W`, `VERCEL=1` simulation,
+`FUNCTION_PAYLOAD_TOO_LARGE` = Vercel).
+
+**Current Status**
+
+**Open — kode sudah diperbaiki &(jelas), konfigurasi belum.** Butuh aksi
+user di dashboard Vercel.
+
+**Recommended Next Investigation**
+
+Vercel → Storage → Blob → buat store + token → Environment Variables
+(Production & Preview) → Redeploy. Lalu uji upload lagi di production.
+
+### Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB
+
+**Symptoms**
+
+File 4,5–8 MB ditolak platform dengan 413 `FUNCTION_PAYLOAD_TOO_LARGE` —
+route tidak pernah dipanggil. Terbukti: `oversize.png` 10,6 MB → 413 dari
+Vercel (bukan 400 dari aplikasi).
+
+**Suspected Cause**
+
+Request multipart lewat serverless function; Vercel membatasi body ±4,5 MB.
+Tidak ada bedanya dengan/ tanpa Vercel Blob — file tetap melewati function.
+
+**Investigation Already Done**
+
+- 413 datang dari platform (`sin1::…`), body aplikasi tidak pernah jalan.
+- `pesanFromStatus()` di `UploadForm.tsx` sudah memetakan 413 ke pesan
+  yang jelas.
+
+**Current Status**
+
+**Open, keputusan dibutuhkan user** (batas 8 MB tidak diubah tanpa persetujuan).
+
+**Recommended Next Investigation**
+
+Pilih: (a) turunkan batas ke ~4 MB + sesuaikan teks UI; (b) client-side
+upload langsung ke Vercel Blob agar body tidak lewat function; atau
+(c) biarkan 8 MB dengan pesan 413 yang sudah ada.
 
 ### Catatan: `graphify label` tidak butuh API key
 

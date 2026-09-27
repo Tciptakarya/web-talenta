@@ -5,6 +5,14 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## Critical
 
+- [ ] **Aktifkan Vercel Blob (`BLOB_READ_WRITE_TOKEN`) di Vercel** — tanpa
+      ini **upload foto di production mustahil** (filesystem Vercel
+      hanya-baca). Caretakan root cause 2026-09-26: pesan tadinya generik
+      "Upload gagal"; sekarang sudah jelas 503
+      "Penyimpanan foto belum dikonfigurasi di server ini…". Alur:
+      Vercel → Storage → Blob → buat token → Environment Variables (Production
+      + Preview) → Redeploy. Selesai juga untuk materi pelatihan, yang memakai
+      `storeImage` yang sama. (`CURRENT_STATE.md` → Issue 10)
 - [ ] **Ganti `RESEND_API_KEY` yang tidak valid** — di `.env` lokal **dan** di
       Vercel Environment Variables, lalu Redeploy. Saat ini semua email
       (reset password, notifikasi kontak & pendaftaran) gagal dengan
@@ -38,10 +46,14 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## Planned
 
-- [ ] **Konfigurasi `BLOB_READ_WRITE_TOKEN` di Vercel** — token lokal masih
-      kosong (`""`), sehingga foto jatuh ke `public/uploads/` yang masuk
-      `.gitignore`. Di Vercel (filesystem ephemeral) foto hasil upload bisa
-      hilang. Buka Vercel → Storage → Blob → Environment Variables → Redeploy.
+- [ ] **Batas upload 4,5 MB di Vercel** — request body lewat serverless
+      function, jadi file 4,5–8 MB **selalu ditolak platform** (413
+      `FUNCTION_PAYLOAD_TOO_LARGE`) walau UI mengizinkan 8 MB. Belum
+      diputuskan: (a) turunkan batas jadi ~4 MB + ubah teks UI, (b) upload
+      langsung ke client (Vercel Blob client upload) agar request tidak
+      lewat function, atau (c) biarkan dan andalkan pesan 413 yang sudah
+      ditambahkan. Tidak ada perubahan limit yang dibuat tanpa persetujuan
+      user. (`CURRENT_STATE.md` → Issue 11)
 - [ ] **Perbarui dokumentasi yang menyimpang** (hanya bila diminta):
       `DEPLOY.md` masih menjelaskan deploy Hostinger, `.env.example` masih
       menyebut SQLite/`prisma/dev.db`, `README.md` merujuk file
