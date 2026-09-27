@@ -23,6 +23,8 @@ export type AdminGalleryItem = {
   alt?: string | null;
   /** Urutan tampil di publik (kecil = lebih dulu) — diatur lewat tombol ↑/↓. */
   urutan: number;
+  /** Tahun kegiatan (2026, 2025, ...). Null = foto lama yang belum diatur. */
+  year: number | null;
   category: { id: number; name: string } | null;
   program: { id: number; judul: string } | null;
 };
@@ -122,6 +124,7 @@ function GaleriCard({
   item,
   categories,
   programs,
+  tahunTersedia,
   isFirst,
   isLast,
   prevId,
@@ -130,6 +133,8 @@ function GaleriCard({
   item: AdminGalleryItem;
   categories: { id: number; name: string }[];
   programs: AdminGalleryProgram[];
+  /** Opsi tahun untuk dropdown edit (terbaru di atas). */
+  tahunTersedia: number[];
   /** True bila foto ini pertama di dalam subgroup-nya. */
   isFirst: boolean;
   /** True bila foto ini terakhir di dalam subgroup-nya. */
@@ -168,6 +173,19 @@ function GaleriCard({
 
       <div className="p-4 space-y-3 flex-1 flex flex-col">
         <p className="text-sm font-bold text-navy line-clamp-2">{item.caption}</p>
+
+        {/* Tahun kegiatan — info utama agar admin tahu foto masuk grup tahun
+            mana; peringatan bila belum diatur (foto lama tanpa sinyal tahun). */}
+        <p className="text-xs font-semibold text-mist">
+          Tahun :{" "}
+          {item.year ? (
+            <span className="text-navy font-bold">{item.year}</span>
+          ) : (
+            <span className="text-amber-600 font-bold">
+              belum diatur — klik Edit
+            </span>
+          )}
+        </p>
 
         {editing ? (
           <form
@@ -241,6 +259,27 @@ function GaleriCard({
                   ))}
                 </select>
               </div>
+            </div>
+            <div>
+              <label htmlFor={`tahun-${item.id}`} className={labelCls}>
+                Tahun kegiatan (wajib)
+              </label>
+              <select
+                id={`tahun-${item.id}`}
+                name="year"
+                required
+                defaultValue={item.year ? String(item.year) : ""}
+                className={inputCls}
+              >
+                <option value="" disabled>
+                  — Pilih tahun —
+                </option>
+                {tahunTersedia.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
             </div>
             {state?.error && (
               <p className="text-xs font-semibold text-red-600">{state.error}</p>
@@ -413,10 +452,12 @@ export default function GaleriList({
   items,
   categories,
   programs,
+  tahunTersedia,
 }: {
   items: AdminGalleryItem[];
   categories: { id: number; name: string }[];
   programs: AdminGalleryProgram[];
+  tahunTersedia: number[];
 }) {
   const groups = useMemo(() => buildGroups(items), [items]);
 
@@ -442,6 +483,9 @@ export default function GaleriList({
     return <p className="text-sm text-mist">Belum ada foto di galeri.</p>;
   }
 
+  /** Foto lama yang tahunnya belum diatur — muncul sebagai grup "Tanpa Tahun". */
+  const tanpaTahun = items.filter((i) => i.year === null).length;
+
   const toggle = (
     setter: React.Dispatch<React.SetStateAction<string[]>>,
     key: string
@@ -457,6 +501,11 @@ export default function GaleriList({
         <p className="text-xs text-mist">
           {groups.length} kategori · {semuaKey.length} program · {items.length}{" "}
           foto
+          {tanpaTahun > 0 && (
+            <span className="ml-2 font-bold text-amber-600">
+              · {tanpaTahun} belum punya tahun
+            </span>
+          )}
         </p>
         <div className="flex items-center gap-2">
           <button
@@ -510,6 +559,7 @@ export default function GaleriList({
                             item={item}
                             categories={categories}
                             programs={programs}
+                            tahunTersedia={tahunTersedia}
                             isFirst={i === 0}
                             isLast={i === sub.items.length - 1}
                             prevId={sub.items[i - 1]?.id ?? null}

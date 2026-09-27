@@ -97,6 +97,7 @@ export async function POST(req: Request) {
   const meta = gallerySchema.safeParse({
     categoryId: form.get("categoryId"),
     programId: form.get("programId") ?? "",
+    year: form.get("year"),
     caption: form.get("caption") ?? "",
     alt: form.get("alt") ?? "",
   });
@@ -171,6 +172,7 @@ export async function POST(req: Request) {
         url,
         categoryId: meta.data.categoryId,
         programId: programIdValue,
+        year: meta.data.year,
         caption: meta.data.caption,
         alt: meta.data.alt || null,
         urutan: (tertinggi._max.urutan ?? 0) + 1,

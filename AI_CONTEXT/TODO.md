@@ -19,10 +19,19 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## In Progress
 
-- Tidak ada pekerjaan yang sedang berjalan.
+- Tidak ada pekerjaan yang sedang berjalan. Task **struktur galeri
+  PROGRAM → TAHUN → FOTO** selesai diverifikasi, **belum di-commit**
+  (source code + `AI_CONTEXT/` + `graphify-out/`).
 
 ## Next
 
+- [ ] **Isi tahun 8 foto lama yang `year = NULL`** lewat Edit di
+      `/admin/galeri` (peringatan "N belum punya tahun"). Tahunnya harus
+      benar-benar diketahui admin — jangan ditebak. Selama NULL, foto tampil
+      di grup **"Tanpa Tahun"** (bukan hilang).
+- [ ] **Commit + push task galeri PROGRAM → TAHUN → FOTO** (setelah user
+      menyetujui): source code (11 file) + `prisma/backfill-gallery-year.ts`
+      + `AI_CONTEXT/` + `graphify-out/`.
 - [ ] **Verifikasi fix modal pendaftaran di production** — buka
       `https://talentaciptakarya.com`, klik **Daftar** pada tabel jadwal:
       modal harus terpusat dan tidak menimpa tabel. (Sudah diverifikasi hanya
@@ -54,6 +63,17 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## Bugs
 
+- [ ] **React error #418 (hydration text mismatch)** muncul di console
+      `/admin/kategori` dan `/admin/program` — **pre-existing** (2026-09-27
+      dibuktikan identik di `talentaciptakarya.com` yang menjalankan kode
+      lama; kedua halaman tidak disentuh task galeri). Tidak fatal (halaman
+      tetap jalan), tapi perlu diselidiki suatu saat: kemungkinan konten
+      yang di-generate saat SSR ≠ render client (mis. tanggal/random).
+- [ ] **Race `urutan` saat batch upload paralel** — `POST /api/upload`
+      menghitung `urutan = max+1` per request; dua file yang diproses
+      bersamaan (KONKURENSI=2) bisa mendapat `urutan` sama. Pre-existing,
+      bukan dari task tahun. Dampak: urutan tampilan bisa tidak stabil di
+      antara dua foto itu (tie dipecah `uploadedAt`).
 - [ ] `npm audit` melaporkan 5 vulnerability. **Sengaja tidak
       di-force-fix** — `npm audit fix --force` menarik `next@16` dan versi
       Prisma yang menyebabkan breaking change. Audit ulang hanya jika versi
@@ -90,9 +110,22 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 Berdasarkan history git (terverifikasi):
 
+- [x] **Struktur galeri PROGRAM → TAHUN → FOTO** (2026-09-27, source code
+      **belum di-commit**) — kolom `year Int?` di `GalleryImage` (db push
+      aman), backfill idempoten dari caption saja (22 terisi, 8 dibiarkan
+      NULL → grup "Tanpa Tahun"), validasi Zod (1990…tahun+1, 6 kasus
+      ditolak 400), select Tahun di UploadForm & Edit admin + info tahun
+      per kartu + ringkasan "N belum punya tahun", galeri publik kelompok
+      program → tahun (accordion, terbaru terbuka), homepage jadi 1 section
+      `#galeri`, Header nav → `/#galeri`. Teruji: upload batch 2 foto →
+      grup/tahun baru muncul tanpa ubah kode, edit tahun/program pindah
+      grup, hapus bersih (30 foto), keyboard + lightbox, 8 breakpoint
+      tanpa overflow, regresi 10 rute publik + 9 halaman admin 0 error.
+
 - [x] **Redesign UI/UX galeri publik** — container 1360px (`.wrap-gallery`),
       4/3/2 kolom, gap 14px, card & caption compact, `sizes` benar; 8
-      breakpoint tanpa overflow, lightbox & filter utuh (belum di-commit)
+      breakpoint tanpa overflow, lightbox & filter utuh — `4ee76d1` + docs
+      `b0e16be` + graphify `4f08b1d` (sudah ter-push)
 
 - [x] **Admin Galeri dikelompokkan KATEGORI → PROGRAM** (accordion per
       kategori & program, jumlah foto dari data aktual, "Tanpa Kategori"/

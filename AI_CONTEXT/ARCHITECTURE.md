@@ -242,6 +242,7 @@ Dijelaskan per relasi:
 | `MateriPelatihan` | `tipe` (`VIDEO\|MODUL CETAK\|PDF\|SLIDE`), `fileUrl?`, `linkUrl?` | wajib salah satu (upload **atau** link) |
 | `PasswordResetToken` | `tokenHash @unique`, `expiresAt`, `usedAt?` | hanya hash tersimpan; 30 menit; sekali pakai |
 | `AdminUser` | `email @unique`, `passwordHash` | bcrypt |
+| `GalleryImage` | `year Int?` | tahun kegiatan foto → sub-grup TAHUN di galeri publik; `null` = foto lama belum diatur (grup "Tanpa Tahun") |
 
 ### Index
 
@@ -257,10 +258,14 @@ Dijelaskan per relasi:
                 orderBy: [{urutan:"asc"},{uploadedAt:"desc"}],
                 include: { category:{id,name}, program:{id,judul} })
              + daftar kategori & program untuk dropdown
-      -> items[] (sudah urut + sudah punya category/program)
+             + tahunTersedia = (tahun di data ∪ tahun berjalan ∪ +1) desc,
+               dihitung di server — opsi dropdown dinamis, tanpa hardcode
+      -> items[] (sudah urut + sudah punya category/program/year)
     GaleriList (client component)
       buildGroups(items)  = grouping PURE di klien, tanpa query tambahan
         kategori -> sub-group program -> kartu foto
+      kartu menampilkan "Tahun : 2026" (atau "belum diatur — klik Edit")
+      form Edit: Kategori / Program / Tahun(wajib) / Caption / Alt
       accordion: state "ciut" (kunci kategori|program),
         default terbuka bila <=4 kategori; tombol Buka semua / Ciutkan semua
       kartu: tombol naik/turun mengirim id + targetId (tetangga DALAM subgroup)
@@ -286,7 +291,8 @@ POST /api/upload  (butuh session admin)
    ↓ req.formData() → 400
    ↓ MIME/ekstensi → 400 · ukuran > 8MB → 400
    ↓ assertStorageReady()  ← BARU: hosting ephemeral & Blob kosong → 503
-   ↓ gallerySchema (Zod) → 400 · categoryId/programId → 400
+   ↓ gallerySchema (Zod) → 400 · categoryId/programId/**year** → 400
+      (year: coerce → int → min 1990 → max tahun berjalan + 1)
    ↓ sharp: rotate + resize 1600px + webp q82
    ↓ storeImage() → Blob (BLOB_READ_WRITE_TOKEN) | public/uploads
    ↓ prisma.galleryImage.create (urutan = max+1)
@@ -304,7 +310,7 @@ POST /api/upload  (butuh session admin)
   `CURRENT_STATE.md` Issue 11).
 - Preview/commit: `public/uploads` fallback **hanya** untuk lokal/self-hosted.
 
-### Galeri publik (redesign 2026-09-27)
+### Galeri publik — PROGRAM → TAHUN → FOTO (2026-09-27)
 
 Section galeri memakai container **lebih lebar** dari container global agar
 galeri jadi konten utama halaman:
@@ -321,13 +327,36 @@ galeri jadi konten utama halaman:
   hover scale(1.03) transisi 250ms.
 - `.gallery-caption` = overlay tetap (gradient navy), dipadatkan: 13px,
   padding 14px 12px 10px, line-clamp 2.
-- `GalleryGrid` (client) tetap menangani filter program + **lightbox**
-  (klik/Enter/Spasi, panah kiri/kanan, Escape, caption + counter) — fungsinya
-  tidak diubah; hanya atribut `sizes` yang diselaraskan
-  ((max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw).
-- Dipakai di: beranda (section per kategori + "Galeri Lainnya") dan
-  `/kelas/[slug]` (section Galeri, dipisah ke container sendiri).
-  `/kelas` dan `/program/[slug]` tidak punya galeri — tidak berubah.
+
+Struktur data (baru, menggantikan grouping per kategori):
+
+    app/(public)/page.tsx
+      getGallery()  (satu query, include category + program + year)
+      -> SATU section id="galeri-utama" di dalam <div id="galeri">
+         (dulu: N section per kategori; nav Header → /#galeri)
+    GalleryGrid (client) — grouping murni di klien dari rows[]:
+      level 1 PROGRAM : program.judul → fallback category.name → "Lainnya"
+      level 2 TAHUN   : year desc, "Tanpa Tahun" (year=null) paling bawah
+      level 3 FOTO    : kartu .gallery-item
+      - tahun terbaru per program DEFAULT TERBUKA, sisanya ciut;
+        accordion ciut tidak merender DOM/gambar (hemat render)
+      - grup/tahun kosong tidak dirender; jumlah dari data
+        ("2026 · 5 Foto"), tanpa hardcode program/tahun
+      - chips filter program dihitung dari data (Semua (30) ...)
+      - filter menampilkan semua tahun program terpilih (lightbox
+        mengikuti foto yang tampil, tidak pernah nyangkut)
+      - aria-expanded + focus-visible emas; kartu role=button
+        (Enter/Spasi), lightbox: klik/Enter, panah, Escape,
+        fokus kembali ke kartu terakhir
+    kelas/[slug]  : getGalleryByCategory(id) → struktur sama,
+                    heading program disembunyikan bila cuma 1 grup
+                    (kategori tetap jadi metadata "Kategori · X")
+
+- `year` datang dari `lib/data.ts` `GalleryRow.year` — bukan dari relasi.
+- Tidak ada query tambahan / N+1: grouping dari satu `findMany` include.
+- SEO: H2 section galeri → H3 nama program (tanpa lompatan level); alt
+  wajib; `sizes` (max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw;
+  gambar `loading="lazy"` (hanya grup terbuka yang merender img).
 
 ## Payment Architecture
 

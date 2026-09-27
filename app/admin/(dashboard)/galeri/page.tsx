@@ -39,9 +39,21 @@ export default async function GaleriPage() {
     caption: i.caption,
     alt: i.alt,
     urutan: i.urutan,
+    year: i.year,
     category: i.category,
     program: i.program,
   }));
+
+  // Opsi tahun untuk dropdown upload/edit: tahun di data existing ∪ tahun
+  // berjalan ∪ 1 tahun mendatang — dinamis dari DB, tidak di-hardcode.
+  const tahunSekarang = new Date().getFullYear();
+  const tahunTersedia = [
+    ...new Set([
+      ...items.map((i) => i.year).filter((y): y is number => y !== null),
+      tahunSekarang,
+      tahunSekarang + 1,
+    ]),
+  ].sort((a, b) => b - a);
 
   return (
     <div className="space-y-8">
@@ -57,7 +69,11 @@ export default async function GaleriPage() {
         </p>
       </div>
 
-      <UploadForm categories={categories} programs={programs} />
+      <UploadForm
+        categories={categories}
+        programs={programs}
+        tahunTersedia={tahunTersedia}
+      />
 
       <div>
         <h2 className="font-display text-xl font-semibold text-navy mb-4">
@@ -67,6 +83,7 @@ export default async function GaleriPage() {
           items={daftar}
           categories={categories}
           programs={programs}
+          tahunTersedia={tahunTersedia}
         />
       </div>
     </div>

@@ -1,15 +1,17 @@
 # Current State
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
-> 2026-09-26** (commit `fd32dae`). Diperbarui setelah pekerjaan signifikan.
+> 2026-09-27** (HEAD `4f08b1d`; task galeri `year` belum di-commit).
+> Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
 
-Tidak ada fitur baru yang sedang dikerjakan. Semua fitur PRD v2.1 yang
-diprioritaskan sudah diimplementasi, di-commit, dan ter-push ke `main`.
+Tidak ada fitur yang sedang dikerjakan. Task **struktur galeri
+PROGRAM → TAHUN → FOTO** (kolom `year`, backfill, admin, galeri publik)
+**selesai dan terverifikasi penuh** — source code + `AI_CONTEXT/` +
+`graphify-out/` masih **belum di-commit** (menunggu izin user).
 
-Pekerjaan yang tersisa bersifat **operasional/konfigurasi** (email & DNS),
-bukan penulisan kode:
+Sisa pekerjaan non-kode (email & DNS):
 
 1. Mengganti `RESEND_API_KEY` yang tidak valid.
 2. Menambah ulang record MX Titan di Vercel DNS.
@@ -17,7 +19,57 @@ bukan penulisan kode:
 
 ## Last Completed Work
 
-**Task terbaru (source code, belum di-commit): redesign UI/UX galeri publik**
+**Task terbaru (source code, BELUM di-commit): struktur galeri
+PROGRAM → TAHUN → FOTO**
+
+- **Database**: `GalleryImage.year Int?` (`prisma/schema.prisma` +
+  `npm run db:push` — aman, nullable; tidak ada baris/file dihapus).
+  Backfill `prisma/backfill-gallery-year.ts` (idempoten) membaca sinyal
+  tahun **hanya dari caption** (`"YYYY: "` / `Tahun YYYY`, range-check):
+  **22 foto terisi** (2026:5, 2025:4, 2024:7, 2023:5, 2022:1), **8 dibiarkan
+  `NULL`** (ids 2,5,7–12; `uploadedAt` sengaja tidak dipakai — semua foto
+  diunggah 2026 tapi kegiatannya 2022–2026).
+- **Validasi** `lib/schemas.ts`: `TAHUN_MIN=1990`, `TAHUN_MAKS=tahun+1`,
+  `year` wajib di Zod (coerce → int → min → max) dengan pesan ramah.
+  Teruji langsung ke `POST /api/upload`: `99999` → "Tahun maksimal 2027.",
+  `0`/`""`/tidak terkirim/`1899`/`abc` → "Tahun wajib dipilih." (semua 400,
+  tidak ada data dibuat).
+- **Persist**: `app/api/upload/route.ts` (create) dan
+  `app/admin/actions.ts::updateGalleryImage` (edit) ikut menyimpan `year`.
+- **Admin `/admin/galeri`**: `tahunTersedia` = data ∪ tahun berjalan ∪ +1
+  (urut turun, dihitung server); UploadForm jadi grid **Kategori · Program ·
+  Tahun** (default tahun berjalan); form Edit punya select Tahun wajib;
+  kartu menampilkan "Tahun : 2026" atau "belum diatur — klik Edit"; ringkasan
+  "2 kategori · 2 program · 30 foto · **8 belum punya tahun**".
+  Filter admin **tidak ditambahkan** (30 foto — grouping + ringkasan cukup).
+- **Galeri publik** (`components/site/GalleryGrid.tsx` ditulis ulang):
+  level program (fallback `category.name` → "Lainnya") → level tahun
+  (`year` desc, "Tanpa Tahun" di bawah) → foto. Tahun terbaru per program
+  default terbuka (sisanya ciut, tidak merender DOM/gambar); grup/tahun
+  kosong tidak dirender; jumlah dari data; chips program dari data;
+  caption lightbox `Program · Tahun · caption (n/total)`.
+- **Homepage**: N section galeri per kategori → **satu** section
+  `id="galeri-utama"` di `<div id="galeri">`; `Header` `/#galeri-lainnya` →
+  `/#galeri`; `getGalleryGroups()` dihapus dari `lib/data.ts`.
+
+Verifikasi task ini:
+
+| Aspek | Hasil |
+|---|---|
+| `npx tsc --noEmit` | **0 error** |
+| `npm run build` | **hijau**, 22 routes (2×: sebelum & sesudah ubah terakhir; server lokal dimatikan dulu) |
+| Upload batch 2 foto (Kelas Komputer/Kursus Komputer/2025) | "Berhasil"; chip **baru** "Kursus Komputer (2)" + grup tahun muncul **tanpa ubah kode** |
+| Edit tahun (foto → 2024) | "Foto diperbarui."; kartu & grup publik langsung pindah (`▼ 2024 · 2 Foto`) |
+| Edit program (→ tanpa program) | foto pindah ke grup fallback "Kelas Komputer" (6→7), tahun tetap |
+| Hapus 2 foto uji | DB kembali **30 foto** `{"2022":1,"2023":5,"2024":7,"2025":4,"2026":5,"NULL":8}`; file uji terhapus (0 yatim); publik kembali `Semua (30)` + 3 chip |
+| Keyboard | Tab antar tombol tahun; Enter → `aria-expanded=true` + kartu muncul; lightbox Enter/→/←/Escape + **fokus kembali ke kartu** |
+| Validasi API (6 kasus) | semua 400 + pesan ramah |
+| Hierarki SEO | H1→H2→H3 tanpa lompatan; alt 0 kosong; `sizes` + `lazy` |
+| Regresi | 10 rute publik + 2 rute `/program/*` + 9 halaman admin: tanpa 404, **0 console error**, tanpa overflow |
+| Breakpoint 8 lebar | 4/4/4/3/2/2/2/2 kolom, rasio 1.33, tanpa overflow; `/kelas/barista` & `/kelas/kelas-komputer` ok di 390/360 |
+| `graphify update .` | hijau — **766 node / 1303 edge / 45 community** |
+
+**Task sebelumnya (source code, sudah ter-push): redesign UI/UX galeri publik**
 
 - `app/globals.css`: modifier `.wrap-gallery` (**1360px**, container global
   `.wrap` 1180px tidak diubah) + `.gallery-section` (padding 64px/44px,
@@ -245,13 +297,20 @@ Status verifikasi:
 
 ## Currently In Progress
 
-**Tidak ada pekerjaan kode yang sedang berjalan.**
+**Tidak ada pekerjaan kode yang sedang berjalan** — task galeri
+`PROGRAM → TAHUN → FOTO` selesai (lihat *Last Completed Work*), tinggal
+**commit/push menunggu izin user**.
 
 Catatan lingkungan:
 
-- Server lokal (`npm run start`) **tidak berjalan** — shell background-nya
-  dibatalkan saat restart. Jalankan ulang bila perlu verifikasi browser.
-- `graphify-out/` sudah sinkron (update terakhir: tidak ada perubahan topologi).
+- Server lokal (`npm run start`) **sedang berjalan** di port 3000 (shell
+  background); hentikan dengan `taskkill /F /IM node.exe` sebelum
+  `npm run build` (EPERM Prisma DLL).
+- `graphify-out/` sudah di-update setelah perubahan (766 node / 1303 edge /
+  45 community) — perubahan graphify ini juga belum di-commit.
+- Skrip temporer (`prisma/tmp-*.ts`) sudah dihapus; hanya
+  `prisma/backfill-gallery-year.ts` yang dipertahankan (berguna untuk
+  backfill ulang bila perlu).
 
 ## Current Problems
 
@@ -680,20 +739,22 @@ konfigurasi luar: API key Resend dan record DNS.)
 
 ## Exact Next Step
 
-**Ganti `RESEND_API_KEY` lama dengan key baru dari resend.com, di dua tempat:
-`.env` lokal dan Vercel Environment Variables, lalu Redeploy.**
+**Minta izin user untuk commit + push hasil task galeri
+`PROGRAM → TAHUN → FOTO`.**
 
-Urutan konkret:
+Commit mencakup bersamaan: source code (11 file) + `prisma/backfill-gallery-year.ts`
++ `AI_CONTEXT/` (6 file) + `graphify-out/`. Pesan (Indonesia, gaya `feat:`):
 
-1. User membuat API key baru di dashboard resend.com (dan menyelesaikan
-   verifikasi domain → Issue 3).
-2. Update nilai `RESEND_API_KEY` di `.env` lokal → restart server lokal.
-3. Update env yang sama di Vercel → **Redeploy**.
-4. Uji: minta reset password di `/admin/forgot-password` → email harus
-   terkirim; isi form pendaftaran → cek `/admin/pendaftaran` →
-   `statusEmail` = `sent`.
-5. Sambil di sana, verifikasi fix modal di live
-   `https://talentaciptakarya.com` (Issue 4) dan tambahkan MX Titan
-   (Issue 2).
+```
+feat(galeri): struktur PROGRAM-TAHUN-FOTO — kolom year, input tahun admin, accordion tahun publik
+```
 
-Setelah itu, kembali ke `TODO.md` bagian **Next**.
+Setelah ter-push, Vercel auto-deploy — periksa `talentaciptakarya.com`
+(galeri publik + `/admin/galeri`), lalu kembali ke pekerjaan non-kode:
+
+1. Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal **dan** Vercel →
+   Redeploy → uji reset password & `statusEmail = sent` (Issue 1).
+2. Tambah MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend
+   (Issue 3).
+3. Opsional data: isi tahun 8 foto lama via Edit `/admin/galeri`
+   (hanya bila tahunnya benar-benar diketahui).

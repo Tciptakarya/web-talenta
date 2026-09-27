@@ -8,6 +8,71 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-09-27]
+
+### Added
+
+- **Kolom `year Int?` di `GalleryImage`** (`prisma/schema.prisma` +
+  `npm run db:push`) — tahun kegiatan foto, dipakai sebagai sub-grup TAHUN
+  di galeri publik. Nullable (migrasi aman: tidak ada baris/file diubah).
+- **Backfill idempoten `prisma/backfill-gallery-year.ts`** — membaca sinyal
+  tahun yang tertulis di caption saja (`"YYYY: "` / `Tahun YYYY`, range-check
+  1990…tahun+1). Hasil: **22 foto terisi** (2022–2026), **8 foto dibiarkan
+  `NULL`** (tidak ada tebakan; `uploadedAt` sengaja tidak dipakai karena
+  terbukti salah). Run ulang mengisi 0.
+- **Validasi `year` di Zod** (`lib/schemas.ts`): `TAHUN_MIN=1990`,
+  `TAHUN_MAKS=tahun berjalan+1`, pesan ramah — 0 / 99999 / kosong /
+  tidak terkirim / string non-angka → **400** (teruji langsung ke
+  `POST /api/upload`).
+- **Input Tahun di admin `/admin/galeri`**: select `sm:grid-cols-3`
+  (Kategori · Program · **Tahun**) di UploadForm (default = tahun berjalan)
+  dan di form Edit (wajib); opsi `tahunTersedia` dihitung di server dari
+  data ∪ tahun berjalan ∪ +1 (urut turun) — dinamis, tanpa hardcode.
+- **Info tahun per kartu admin**: "Tahun : 2026" atau peringatan amber
+  "belum diatur — klik Edit", plus baris ringkasan "N belum punya tahun".
+- **Chips filter program** di galeri publik dihitung dari data
+  (`Semua (30)`, `Pelatihan Barista (24)`, `Kelas Komputer (6)`).
+
+### Changed
+
+- **Galeri publik disusun ulang PROGRAM → TAHUN → FOTO**
+  (`components/site/GalleryGrid.tsx` ditulis ulang): grup program
+  (fallback `category.name` → "Lainnya") → sub-grup tahun (desc,
+  "Tanpa Tahun" di bawah) → foto. Tahun terbaru tiap program default
+  terbuka, sisanya ciut (accordion ciut tidak merender DOM/gambar);
+  grup/tahun kosong tidak dirender; jumlah dari data ("2026 · 5 Foto").
+- **Homepage**: N section galeri per kategori digabung jadi satu section
+  `id="galeri-utama"` di dalam `<div id="galeri">`; `getGalleryGroups()`
+  dihapus dari `lib/data.ts` (dead code); `Header` nav Galeri
+  `/#galeri-lainnya` → `/#galeri`.
+- **Edit admin (`updateGalleryImage`)** kini ikut menyimpan `year`;
+  `/api/upload` menyimpan `year` saat create.
+- Lightbox caption jadi `Program · Tahun · caption (n/total)`; daftar
+  lightbox mengikuti foto yang sedang tampil (terfilter).
+
+### Technical Notes
+
+- Verifikasi: `npx tsc --noEmit` **0 error**; `npm run build` **hijau**
+  (22 routes, dijalankan 2×: sebelum & sesudah perubahan terakhir);
+  browser E2E upload batch (2 foto → grup/tahun baru muncul tanpa ubah
+  kode), edit tahun (foto pindah grup), edit program (foto pindah grup),
+  hapus (DB + file kembali bersih, total 30), keyboard (Tab antar tombol
+  tahun, Enter toggle `aria-expanded`, lightbox Enter/panah/Escape +
+  fokus kembali), filter chips, validasi API (6 kasus), regresi 10 rute
+  publik + 9 halaman admin → **0 console error**.
+- 8 breakpoint (1920/1440/1366/1024/768/430/390/360): 4/4/4/3/2/2/2/2
+  kolom, rasio 4:3 (1.33) di semua lebar, **tanpa horizontal overflow**.
+- Hierarki SEO H1→H2→H3 tanpa lompatan; alt lengkap; `sizes` + lazy.
+- Data uji dibersihkan: DB kembali `{"2022":1,"2023":5,"2024":7,"2025":4,"2026":5,"NULL":8}`
+  = 30 foto asli; 0 foto uji, 0 file yatim.
+- `graphify update .` hijau: **766 node / 1303 edge / 45 community**.
+- Bug pre-existing (bukan dari task ini, sudah dibuktikan identik di
+  production): React error #418 (hydration text) di `/admin/kategori` &
+  `/admin/program`.
+- Belum di-commit.
+
+---
+
 ## [2026-09-26]
 
 ### Added

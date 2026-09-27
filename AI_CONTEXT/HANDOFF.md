@@ -22,22 +22,43 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `3d32e21` (2026-09-27) sudah ter-push; perubahan terbaru = grouping
-  Galeri KATEGORI → PROGRAM + `AI_CONTEXT/` (**belum di-commit**).
+- HEAD `4f08b1d` (2026-09-27, sudah ter-push) = redesign galeri publik;
+  perubahan terbaru = **struktur galeri PROGRAM → TAHUN → FOTO** + update
+  `AI_CONTEXT/` + `graphify-out/` — **BELUM di-commit** (11 file source,
+  `prisma/backfill-gallery-year.ts`, 6 file `AI_CONTEXT`).
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
-- Server lokal **sedang berjalan** saat verifikasi (port 3000).
-- Data (Neon): 8 kategori, 11 program, 12 foto, 2 testimoni, 1 admin;
-  **jadwal 0, pendaftaran 0, materi 0, pesan 0** (2 token reset sisa uji coba).
+- Server lokal **sedang berjalan** (port 3000) — `taskkill /F /IM node.exe`
+  sebelum build.
+- Data (Neon, **dipakai juga production**): 8 kategori, 11 program,
+  **30 foto galeri** (`year`: 2026:5, 2025:4, 2024:7, 2023:5, 2022:1,
+  NULL:8), 2 testimoni, 1 admin; **jadwal 0, pendaftaran 0, materi 0,
+  pesan 0**. Foto uji task ini sudah dihapus semua.
+- `graphify-out/`: 766 node / 1303 edge / 45 community (sudah update).
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, belum di-commit): redesign UI/UX galeri publik**
-— `.wrap-gallery` 1360px (`.wrap` global 1180px tetap), grid 4/3/2 kolom,
-gap 14px, card radius 14px + hover 1.03, caption compact (line-clamp 2),
-section padding 64px, `sizes` next/image diselaraskan. Terverifikasi di
-1920/1440/1366/1024/768/430/390/360 tanpa overflow; 20 foto terlihat di
-1920×1080; lightbox & filter program utuh; 0 console error; halaman lain
-tidak berubah.
+**Task terbaru (source code, BELUM di-commit): struktur galeri
+PROGRAM → TAHUN → FOTO** — kolom `GalleryImage.year Int?` (db push aman,
+nullable); backfill idempoten `prisma/backfill-gallery-year.ts` membaca
+tahun **hanya dari caption** (22 terisi, **8 dibiarkan NULL** → grup
+"Tanpa Tahun" — tidak boleh ditebak, `uploadedAt` terbukti salah);
+validasi Zod `year` wajib (1990…tahun+1) di `/api/upload` &
+`updateGalleryImage`; admin: select Tahun di UploadForm & Edit, info tahun
+per kartu, ringkasan "8 belum punya tahun", `tahunTersedia` dari data;
+galeri publik ditulis ulang → program → tahun (accordion, tahun terbaru
+default terbuka, sisanya ciut tanpa render DOM) → foto, chips dari data,
+caption lightbox `Program · Tahun · caption (n/total)`; homepage jadi satu
+section `#galeri`, Header `/#galeri`, `getGalleryGroups()` dihapus.
+Teruji penuh: build hijau 2×, tsc 0, upload/edit/hapus E2E (data kembali
+persis 30 foto), keyboard + lightbox, 6 kasus validasi 400, regresi 10
+rute publik + 9 admin 0 error, 8 breakpoint tanpa overflow, graphify hijau.
+
+**Task sebelumnya (source code, sudah ter-push): redesign UI/UX galeri
+publik** — `.wrap-gallery` 1360px (`.wrap` global 1180px tetap), grid 4/3/2
+kolom, gap 14px, card radius 14px + hover 1.03, caption compact (line-clamp
+2), section padding 64px, `sizes` next/image diselaraskan. Terverifikasi di
+1920/1440/1366/1024/768/430/390/360 tanpa overflow; lightbox & filter
+program utuh; 0 console error — commit `4ee76d1` + `b0e16be` + `4f08b1d`.
 
 **Task sebelumnya (source code, sudah ter-push): grouping Galeri admin
 KATEGORI → PROGRAM** — `GaleriList.tsx` (grouping di klien dari satu query,
@@ -104,8 +125,10 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Tidak ada pekerjaan kode berjalan. Sisa pekerjaan bersifat **konfigurasi
-(ops, bukan kode)**.
+Tidak ada pekerjaan kode berjalan. Task galeri `PROGRAM → TAHUN → FOTO`
+selesai & terverifikasi — **menunggu izin user untuk commit + push**
+(source code + `AI_CONTEXT/` + `graphify-out/` digabung). Sisa pekerjaan
+lain bersifat **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
 
@@ -140,6 +163,15 @@ Tidak ada pekerjaan kode berjalan. Sisa pekerjaan bersifat **konfigurasi
     ditolak 413. Belum ada keputusan (lihat `CURRENT_STATE.md` Issue 11).
 13. Token GitHub `Tciptakarya` sempat terekspos di percakapan — sarankan
     rotasi (tidak pernah ditulis ke file).
+14. **React error #418 (hydration)** di console `/admin/kategori` dan
+    `/admin/program` — **pre-existing**, sudah dibuktikan identik di
+    production (kode lama); bukan regresi task galeri. Halaman tetap jalan.
+15. **8 foto galeri belum punya `year`** (NULL) → tampil di grup "Tanpa
+    Tahun". Isi lewat Edit `/admin/galeri` **hanya bila tahunnya benar
+    diketahui** — jangan ditebak.
+16. **Race `urutan` batch upload paralel** (`max+1` per request) bisa
+    membuat 2 foto memperoleh `urutan` sama — pre-existing, bukan dari
+    task tahun.
 
 ## IMPORTANT DECISIONS
 
@@ -149,6 +181,10 @@ Tidak ada pekerjaan kode berjalan. Sisa pekerjaan bersifat **konfigurasi
 - Semua mutasi admin = Server Action di `app/admin/actions.ts` + `requireAdmin()`.
 - Kategori & galeri lewat **relasi**; URL pakai **slug**; kategori terpakai
   tidak boleh dihapus (PRD §10).
+- **Galeri `year`**: Int nullable di DB, **wajib di Zod** (1990…tahun+1);
+  tahun lama **tidak boleh ditebak** (8 foto NULL → "Tanpa Tahun");
+  grouping publik = program → tahun → foto, tanpa hardcode program/tahun.
+  Detail: `DECISIONS.md` → *Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO*.
 - Tidak ada payment gateway, tidak ada multi-role.
 - Seed tidak boleh menimpa password admin.
 - Modal pendaftaran tetap via portal.
@@ -169,11 +205,18 @@ Tanpa instruksi eksplisit dari user:
 
 ## NEXT ACTION
 
-Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal dan di Vercel, lalu
-Redeploy. Setelah itu uji email reset password dan kolom `statusEmail` =
-`sent`, sambil memverifikasi modal pendaftaran di
-`https://talentaciptakarya.com` dan menambahkan MX Titan di Vercel DNS.
-Detail urutan: `CURRENT_STATE.md` → *Exact Next Step*.
+**Minta izin user untuk commit + push** hasil task galeri
+`PROGRAM → TAHUN → FOTO` — pesan:
+`feat(galeri): struktur PROGRAM-TAHUN-FOTO — kolom year, input tahun admin, accordion tahun publik`
+(Indonesia, `feat:`; push bila timeout HTTP/2 → fallback HTTP/1.1 di
+bagian GIT). Setelah ter-push, cek production
+`https://talentaciptakarya.com` (galeri + `/admin/galeri`).
+
+Lalu kembali ke pekerjaan non-kode: ganti `RESEND_API_KEY` (resend.com) di
+`.env` lokal dan di Vercel → Redeploy → uji email reset password + kolom
+`statusEmail = sent`, sambil memverifikasi modal pendaftaran di live dan
+menambahkan MX Titan di Vercel DNS. Detail urutan: `CURRENT_STATE.md` →
+*Exact Next Step*.
 
 ## VERIFICATION
 

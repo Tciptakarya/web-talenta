@@ -35,9 +35,11 @@ export type GalleryRow = {
   caption: string;
   alt: string | null;
   urutan: number;
+  /** Tahun kegiatan — sub-grup galeri publik (null = "Tanpa Tahun"). */
+  year: number | null;
   categoryId: number | null;
   category: CategoryRow | null;
-  /** Program opsional — dipakai filter galeri publik (mis. "semua foto Barista"). */
+  /** Program opsional — grouping UTAMA galeri publik (PROGRAM → TAHUN → FOTO). */
   program: { id: number; judul: string; slug: string } | null;
 };
 
@@ -233,6 +235,7 @@ export async function getGallery(): Promise<GalleryRow[]> {
         caption: g.caption,
         alt: g.alt,
         url: g.url,
+        year: null,
         categoryId: fallbackCategory(g.kategoriSlug)?.id ?? null,
         category: fallbackCategory(g.kategoriSlug),
         program: null,
@@ -244,6 +247,7 @@ export async function getGallery(): Promise<GalleryRow[]> {
       caption: g.caption,
       alt: g.alt,
       url: g.url,
+      year: null,
       categoryId: fallbackCategory(g.kategoriSlug)?.id ?? null,
       category: fallbackCategory(g.kategoriSlug),
       program: null,
@@ -617,26 +621,6 @@ export async function getUpcomingJadwal(
     .sort((a, b) => a._sort - b._sort || a._tie - b._tie)
     .slice(0, Math.max(0, limit))
     .map(({ _sort: _s, _tie: _t, ...row }) => row);
-}
-
-/**
- * Galeri dikelompokkan per kategori aktif untuk section galeri di beranda.
- * Dinamis dari DB — tanpa hardcode "Barista"/"Komputer".
- */
-export async function getGalleryGroups(): Promise<{
-  groups: { category: CategoryRow; items: GalleryRow[] }[];
-  lainnya: GalleryRow[];
-}> {
-  const [cats, all] = await Promise.all([getActiveCategories(), getGallery()]);
-  const groups = cats
-    .map((category) => ({
-      category,
-      items: all.filter((g) => g.categoryId === category.id),
-    }))
-    .filter((g) => g.items.length > 0);
-  const activeIds = new Set(cats.map((c) => c.id));
-  const lainnya = all.filter((g) => !g.categoryId || !activeIds.has(g.categoryId));
-  return { groups, lainnya };
 }
 
 /* ── Testimoni ─────────────────────────────────────────────────── */

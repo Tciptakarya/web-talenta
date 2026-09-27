@@ -50,6 +50,10 @@ model GalleryImage {
   url        String
   caption    String
   alt        String?
+  // Tahun kegiatan foto (2026, 2025, ...) — Int, bukan String.
+  // Nullable: foto lama boleh belum punya tahun (ditampilkan sebagai
+  // grup "Tanpa Tahun"), foto baru WAJIB diisi (lib/schemas.ts gallerySchema).
+  year       Int?
   urutan     Int       @default(0)
   uploadedAt DateTime  @default(now())
   categoryId Int?

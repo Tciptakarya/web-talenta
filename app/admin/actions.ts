@@ -420,8 +420,9 @@ export async function deleteGalleryImage(formData: FormData) {
 }
 
 /**
- * Edit metadata foto tanpa hapus + upload ulang (caption/alt/kategori/program).
- * Dipakai form inline di /admin/galeri (pola useActionState seperti updateJadwal).
+ * Edit metadata foto tanpa hapus + upload ulang (caption/alt/kategori/program/
+ * tahun). Dipakai form inline di /admin/galeri (pola useActionState seperti
+ * updateJadwal).
  */
 export async function updateGalleryImage(
   _prev: ActionState | undefined,
@@ -437,6 +438,7 @@ export async function updateGalleryImage(
     const parsed = gallerySchema.safeParse({
       categoryId: formData.get("categoryId"),
       programId: formData.get("programId") ?? "",
+      year: formData.get("year"),
       caption: formData.get("caption") ?? "",
       alt: formData.get("alt") ?? "",
     });
@@ -468,7 +470,13 @@ export async function updateGalleryImage(
 
     await prisma.galleryImage.update({
       where: { id },
-      data: { categoryId, programId, caption, alt: alt || null },
+      data: {
+        categoryId,
+        programId,
+        year: parsed.data.year,
+        caption,
+        alt: alt || null,
+      },
     });
 
     refresh();

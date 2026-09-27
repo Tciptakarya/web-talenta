@@ -7,6 +7,8 @@ import type { AdminGalleryProgram } from "@/components/admin/GaleriList";
 type UploadFormProps = {
   categories: { id: number; name: string }[];
   programs: AdminGalleryProgram[];
+  /** Opsi tahun (terbaru di atas) — dihitung halaman dari data + tahun berjalan. */
+  tahunTersedia: number[];
 };
 
 /** Maksimal foto per batch & jumlah unggahan paralel (hemat memori server). */
@@ -50,8 +52,17 @@ function pesanFromStatus(status: number): string {
   return "Upload gagal. Coba lagi dengan foto lain.";
 }
 
-export default function UploadForm({ categories, programs }: UploadFormProps) {
+export default function UploadForm({
+  categories,
+  programs,
+  tahunTersedia,
+}: UploadFormProps) {
   const router = useRouter();
+  const tahunSekarang = new Date().getFullYear();
+  /** Default = tahun berjalan (bila masuk daftar), bukan tahun terdaftar. */
+  const tahunDefault = tahunTersedia.includes(tahunSekarang)
+    ? tahunSekarang
+    : (tahunTersedia[0] ?? tahunSekarang);
   const [status, setStatus] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -117,6 +128,7 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
     const fd = new FormData(e.currentTarget);
     const categoryId = String(fd.get("categoryId") ?? "");
     const programId = String(fd.get("programId") ?? "");
+    const year = String(fd.get("year") ?? "");
     const caption = String(fd.get("caption") ?? "").trim();
     const alt = String(fd.get("alt") ?? "");
 
@@ -126,6 +138,10 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
     }
     if (!categoryId) {
       setStatus({ type: "err", msg: "Pilih kategori dulu." });
+      return;
+    }
+    if (!year) {
+      setStatus({ type: "err", msg: "Pilih tahun kegiatan dulu." });
       return;
     }
 
@@ -155,6 +171,7 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
       body.append("file", file);
       body.append("categoryId", categoryId);
       if (programId) body.append("programId", programId);
+      body.append("year", year);
       // Caption wajib 2 karakter: pakai nama file sebagai cadangan bila kosong.
       body.append("caption", caption || file.name.replace(/\.[^.]+$/, ""));
       body.append("alt", alt);
@@ -310,7 +327,7 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
         </div>
       )}
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-3 gap-4">
         <div>
           <label htmlFor="categoryId" className={labelCls}>
             Kategori (wajib)
@@ -344,7 +361,28 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
             ))}
           </select>
           <p className="mt-1 text-xs text-mist">
-            Untuk filter galeri publik. Pilihan mengikuti kategori di samping.
+            Jadi pengelompok utama di galeri publik. Ikut kategori di samping.
+          </p>
+        </div>
+        <div>
+          <label htmlFor="year" className={labelCls}>
+            Tahun kegiatan (wajib)
+          </label>
+          <select
+            id="year"
+            name="year"
+            required
+            defaultValue={tahunDefault}
+            className={inputCls}
+          >
+            {tahunTersedia.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-mist">
+            Tahun jadi sub-grup di galeri publik (terbaru di atas).
           </p>
         </div>
       </div>

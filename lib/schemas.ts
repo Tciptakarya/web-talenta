@@ -22,9 +22,15 @@ export type CategoryInput = z.infer<typeof categorySchema>;
 
 /**
  * Meta foto galeri — dipakai upload (/api/upload) DAN edit inline dashboard.
- * Kategori wajib; program opsional (harus satu kategori — dicek di server)
+ * Kategori wajib; tahun kegiatan WAJIB (kelompok PROGRAM → TAHUN di galeri
+ * publik); program opsional (harus satu kategori — dicek di server)
  * supaya halaman publik bisa memfilter "semua foto Barista" bila diperlukan.
  */
+/** Batas tahun: tidak menerima 0 / 99999, tapi tetap mengizinkan arsip lama. */
+export const TAHUN_MIN = 1990;
+/** +1: mengizinkan foto kegiatan tahun depan yang sudah dijadwalkan. */
+export const TAHUN_MAKS = new Date().getFullYear() + 1;
+
 export const gallerySchema = z.object({
   categoryId: z.coerce
     .number()
@@ -33,6 +39,11 @@ export const gallerySchema = z.object({
   programId: z
     .union([z.coerce.number().int().positive(), z.literal("")])
     .optional(),
+  year: z.coerce
+    .number({ error: "Tahun wajib dipilih." })
+    .int("Tahun tidak valid.")
+    .min(TAHUN_MIN, "Tahun wajib dipilih.")
+    .max(TAHUN_MAKS, `Tahun maksimal ${TAHUN_MAKS}.`),
   caption: z.string().trim().min(2, "Caption minimal 2 karakter").max(200),
   alt: z.string().trim().max(300).optional().or(z.literal("")),
 });

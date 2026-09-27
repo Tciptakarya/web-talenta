@@ -11,41 +11,150 @@ export type GalleryItem = {
   url: string;
   caption: string;
   alt?: string | null;
-  /** Program opsional — dipakai untuk filter chip di dalam kategori. */
+  /** Tahun kegiatan foto — sub-grup di bawah program (null = "Tanpa Tahun"). */
+  year?: number | null;
+  /** Level grouping UTAMA galeri publik (PROGRAM → TAHUN → FOTO). */
   program?: GalleryProgram | null;
+  /** Metadata + fallback grouping bila foto tidak punya program. */
+  category?: { id: number; name: string } | null;
+};
+
+/** Label foto lama yang tahunnya belum diatur — tetap ditampil, jangan dihapus. */
+const TANPA_TAHUN = "Tanpa Tahun";
+
+/** Satu sub-grup tahun di dalam satu program. */
+type KelompokTahun = {
+  key: string; // "2026" | "none"
+  label: string; // "2026" | "Tanpa Tahun"
+  urut: number; // tahun numerik; -1 untuk "Tanpa Tahun" (selalu paling bawah)
+  items: GalleryItem[];
+};
+
+/** Satu grup program (level utama). */
+type KelompokProgram = {
+  key: string; // "p1" (program) | "c2" (fallback kategori) | "lainnya"
+  nama: string; // judul program, atau nama kategori bila foto tanpa program
+  kategori: string | null;
+  dariProgram: boolean;
+  items: GalleryItem[];
+  tahun: KelompokTahun[]; // terbaru di atas, "Tanpa Tahun" di bawah
 };
 
 /**
- * Galeri + lightbox (script.js v1 bagian lightbox, aksesibilitas dipertahankan).
- * Bila satu kategori memuat ≥2 program berfoto, muncul chip filter per program
- * (mis. "semua foto Barista") — galeri tetap satu section, tanpa section kosong.
+ * Kelompokkan foto PROGRAM → TAHUN di sisi klien dari satu query yang sudah
+ * di-include (category + program) — tanpa query tambahan / N+1.
+ *
+ * Aturan:
+ * - Urutan grup = kemunculan pertama (data dari server sudah terurut `urutan`
+ *   asc), jadi tidak ada hardcode nama program/kategori.
+ * - Foto TANPA program jatuh ke grup namanya kategori (bukan hilang); bila
+ *   kategori juga kosong → "Lainnya".
+ * - Tahun: terbaru di atas; `year = null` → grup "Tanpa Tahun" paling bawah.
+ * - Grup kosong tidak pernah dibentuk (dibentuk hanya saat ada fotonya).
+ */
+function buildGroups(items: GalleryItem[]): KelompokProgram[] {
+  const map = new Map<string, KelompokProgram>();
+
+  for (const item of items) {
+    const dariProgram = Boolean(item.program);
+    const key = item.program
+      ? `p${item.program.id}`
+      : item.category
+        ? `c${item.category.id}`
+        : "lainnya";
+    const nama = item.program?.judul ?? item.category?.name ?? "Lainnya";
+
+    let grup = map.get(key);
+    if (!grup) {
+      grup = {
+        key,
+        nama,
+        kategori: item.category?.name ?? null,
+        dariProgram,
+        items: [],
+        tahun: [],
+      };
+      map.set(key, grup);
+    }
+    grup.items.push(item);
+
+    const tahunKey = item.year == null ? "none" : String(item.year);
+    let tahun = grup.tahun.find((t) => t.key === tahunKey);
+    if (!tahun) {
+      tahun = {
+        key: tahunKey,
+        label: item.year == null ? TANPA_TAHUN : String(item.year),
+        urut: item.year ?? -1,
+        items: [],
+      };
+      grup.tahun.push(tahun);
+    }
+    tahun.items.push(item);
+  }
+
+  for (const grup of map.values()) {
+    grup.tahun.sort((a, b) => b.urut - a.urut); // terbaru dulu; null (-1) di bawah
+  }
+  return [...map.values()];
+}
+
+/**
+ * Galeri publik: PROGRAM → TAHUN → FOTO + lightbox (aksesibilitas dipertahankan).
+ *
+ * - Chip filter per program (bila ada >1 grup).
+ * - Tiap tahun berbentuk accordion; default hanya TAHUN TERBARU tiap program
+ *   yang terbuka supaya halaman tetap ringkas & mudah dipindai.
+ * - Foto di tahun yang ciut TIDAK dirender (hemat DOM & request gambar).
+ * - Tahun 2027, 2028, dst. otomatis muncul sebagai grup baru — tanpa ubah kode.
  */
 export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
-  const [filterProgram, setFilterProgram] = useState<number | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
   const [lightboxId, setLightboxId] = useState<number | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
-  const programTersedia = useMemo(() => {
-    const map = new Map<number, string>();
-    items.forEach((i) => {
-      if (i.program) map.set(i.program.id, i.program.judul);
-    });
-    return [...map.entries()].map(([id, judul]) => ({ id, judul }));
-  }, [items]);
-
-  const tampil = useMemo(
-    () =>
-      filterProgram === null
-        ? items
-        : items.filter((i) => i.program?.id === filterProgram),
-    [items, filterProgram]
+  const groups = useMemo(() => buildGroups(items), [items]);
+  const groupsTampil = useMemo(
+    () => (filter ? groups.filter((g) => g.key === filter) : groups),
+    [groups, filter]
   );
+  /** Daftar untuk navigasi lightbox mengikuti urutan tampil (kiri → kanan). */
+  const tampil = useMemo(
+    () => groupsTampil.flatMap((g) => g.tahun.flatMap((t) => t.items)),
+    [groupsTampil]
+  );
+
+  // Default accordion: tahun terbaru tiap program terbuka, sisanya ciut.
+  // Grup/tahun baru yang muncul kemudian ikut terbuka (tidak ada di daftar).
+  const [tutup, setTutup] = useState<Set<string>>(() => {
+    const awal = new Set<string>();
+    buildGroups(items).forEach((g) =>
+      g.tahun.slice(1).forEach((t) => awal.add(`${g.key}|${t.key}`))
+    );
+    return awal;
+  });
+
+  const toggleTahun = (key: string) =>
+    setTutup((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
 
   const indeksAktif =
     lightboxId === null ? -1 : tampil.findIndex((i) => i.id === lightboxId);
   const aktif = indeksAktif >= 0 ? tampil[indeksAktif] : undefined;
   const bisaPrev = indeksAktif > 0;
   const bisaNext = indeksAktif >= 0 && indeksAktif < tampil.length - 1;
+  /** "Program · Tahun · " di depan caption lightbox (program → kategori bila kosong). */
+  const metaAktif = aktif
+    ? [
+        aktif.program?.judul ?? aktif.category?.name,
+        aktif.year != null ? String(aktif.year) : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
 
   const open = (item: GalleryItem) => {
     lastFocusedRef.current = (document.activeElement as HTMLElement) ?? null;
@@ -92,71 +201,131 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
   const chipAktif = "bg-navy text-white";
   const chipIdle = "bg-white text-navy border border-line hover:bg-paper";
+  /** Judul program hanya bila ada >1 grup (di halaman kategori tunggal
+   *  judulnya redundan dengan judul section). */
+  const tampilkanJudulProgram = groups.length > 1;
 
   return (
     <>
-      {/* Filter program — hanya bila kategori ini memuat ≥2 program berfoto */}
-      {programTersedia.length > 1 && (
+      {/* Filter program — hanya bila galeri memuat >1 grup berfoto */}
+      {groups.length > 1 && (
         <div
-          className="flex flex-wrap justify-center gap-2 mb-6"
+          className="flex flex-wrap justify-center gap-2 mb-7"
           role="group"
           aria-label="Filter program galeri"
         >
           <button
             type="button"
-            onClick={() => setFilterProgram(null)}
-            aria-pressed={filterProgram === null}
+            onClick={() => setFilter(null)}
+            aria-pressed={filter === null}
             className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition ${
-              filterProgram === null ? chipAktif : chipIdle
+              filter === null ? chipAktif : chipIdle
             }`}
           >
             Semua ({items.length})
           </button>
-          {programTersedia.map((p) => {
-            const jumlah = items.filter((i) => i.program?.id === p.id).length;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setFilterProgram(p.id)}
-                aria-pressed={filterProgram === p.id}
-                className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition ${
-                  filterProgram === p.id ? chipAktif : chipIdle
-                }`}
-              >
-                {p.judul} ({jumlah})
-              </button>
-            );
-          })}
+          {groups.map((g) => (
+            <button
+              key={g.key}
+              type="button"
+              onClick={() => setFilter(g.key)}
+              aria-pressed={filter === g.key}
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition ${
+                filter === g.key ? chipAktif : chipIdle
+              }`}
+            >
+              {g.nama} ({g.items.length})
+            </button>
+          ))}
         </div>
       )}
 
-      <Reveal className="gallery-grid">
-        {tampil.map((item) => (
-          <div
-            key={item.id}
-            className="gallery-item"
-            role="button"
-            tabIndex={0}
-            aria-label={`Perbesar foto: ${item.caption}`}
-            onClick={() => open(item)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                open(item);
-              }
-            }}
+      {groupsTampil.map((g) => {
+        const kategoriBeda =
+          g.dariProgram && g.kategori !== null && g.kategori !== g.nama;
+        return (
+          <section
+            key={g.key}
+            aria-label={`Galeri ${g.nama}`}
+            className="mb-9 last:mb-0"
           >
-            <Image
-              src={item.url}
-              alt={item.alt || item.caption}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw"
-            />
-            <div className="gallery-caption">{item.caption}</div>
-          </div>
-        ))}
-      </Reveal>
+            {tampilkanJudulProgram && (
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-3 mb-4">
+                <h3 className="font-display text-xl md:text-2xl font-bold text-navy uppercase tracking-wide">
+                  {g.nama}
+                </h3>
+                {kategoriBeda && (
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue">
+                    Kategori · {g.kategori}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-3">
+              {g.tahun.map((t) => {
+                const tkey = `${g.key}|${t.key}`;
+                const terbuka = !tutup.has(tkey);
+                return (
+                  <div key={t.key}>
+                    <button
+                      type="button"
+                      onClick={() => toggleTahun(tkey)}
+                      aria-expanded={terbuka}
+                      className="w-full flex items-center gap-3 rounded-xl border border-line bg-paper px-4 py-2.5 text-left hover:border-blue hover:bg-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="w-3 shrink-0 text-blue text-xs font-bold"
+                      >
+                        {terbuka ? "▼" : "▶"}
+                      </span>
+                      <span className="font-display text-base md:text-lg font-bold text-navy">
+                        {t.label}
+                      </span>
+                      <span className="ml-auto text-xs font-bold text-mist whitespace-nowrap">
+                        {t.items.length} Foto
+                      </span>
+                    </button>
+
+                    {/* Foto di tahun yang ciut tidak dirender sama sekali. */}
+                    {terbuka && (
+                      <div className="mt-3">
+                        <Reveal className="gallery-grid">
+                          {t.items.map((item) => (
+                            <div
+                              key={item.id}
+                              className="gallery-item"
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Perbesar foto: ${item.caption}`}
+                              onClick={() => open(item)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  open(item);
+                                }
+                              }}
+                            >
+                              <Image
+                                src={item.url}
+                                alt={item.alt || item.caption}
+                                fill
+                                sizes="(max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw"
+                              />
+                              <div className="gallery-caption">{item.caption}</div>
+                            </div>
+                          ))}
+                        </Reveal>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
 
       {aktif && (
         <div
@@ -206,7 +375,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
             {/* src sudah diambil dari galeri di atas (sama, ada di cache) */}
             <img src={aktif.url} alt={aktif.alt || aktif.caption} />
             <p className="lightbox-caption">
-              {aktif.program ? `${aktif.program.judul} · ` : ""}
+              {metaAktif ? `${metaAktif} · ` : ""}
               {aktif.caption}
               <span className="lightbox-counter">
                 {" "}
@@ -219,4 +388,3 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
     </>
   );
 }
-

@@ -676,5 +676,75 @@ token. Bukti pengukuran:
 
 Ikuti *Workflow low-token* di `AGENTS.md`. Jangan membaca banyak file untuk
 pertanyaan arsitektur yang bisa dijawab `query`/`explain`/`path`/`affected`.
-Parser graphify **tidak** bisa menangani `&` mentah di teks JSX (invalid XML) —
+Parser graphify **tidak** bisa menangani `&` mentah di teks JSX (invalid XML) -
 tulis `&amp;`. Warning parsial 2 file tersebut sudah diperbaiki 2026-09-26.
+
+---
+
+## Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO
+
+### Decision
+
+1. `GalleryImage` mendapat kolom **`year Int?`** (nullable), di-`db push`
+   tanpa migrasi. Validasi ada di Zod (`gallerySchema.year`): coerce → int →
+   `min(TAHUN_MIN=1990)` → `max(TAHUN_MAKS = tahun berjalan + 1)` — jadi 0,
+   99999, string kosong, dan `undefined` semuanya **ditolak 400**. `year`
+   **wajib** di Zod (upload & edit) meski kolom DB nullable.
+2. **Tahun lama tidak boleh dikarang.** Backfill idempoten
+   `prisma/backfill-gallery-year.ts` hanya membaca sinyal tahun yang
+   tertulis di caption (`"YYYY: "` di awal, atau `Tahun YYYY`), dengan
+   range-check. `uploadedAt` **tidak dipakai** — terbukti salah (semua foto
+   diunggah 2026, kegiatannya 2022–2026). 22 dari 30 foto terisi; 8 sisanya
+   tetap `NULL` → grup publik **"Tanpa Tahun"** (keputusan user).
+3. Level grouping utama publik: **program** → fallback `category.name` →
+   `"Lainnya"`; sub-level **tahun** (`year` desc, "Tanpa Tahun" di bawah);
+   foto = level ketiga. Grup/tahun kosong tidak dirender, jumlah dihitung
+   dari data, **tanpa hardcode** program/tahun apa pun — data baru muncul
+   otomatis tanpa ubah frontend.
+4. Tahun terbaru per program **default terbuka**, sisanya ciut; accordion
+   ciut tidak merender DOM/gambar. Filter chips tetap per program.
+5. Homepage: N section galeri per kategori digabung jadi **satu** section
+   `id="galeri-utama"` dalam `<div id="galeri">`; link Header
+   `/#galeri-lainnya` → `/#galeri`. `getGalleryGroups()` dihapus (dead code).
+6. **Tidak menambah index** `year` — hanya satu `findMany` + grouping klien
+   (30 baris). Tidak ada filter tahun/tahun di admin (data terlalu kecil);
+   cukup info "Tahun" per kartu + ringkasan "N belum punya tahun".
+
+### Reason
+
+Permintaan user: struktur galeri harus PROGRAM → TAHUN → FOTO, tanpa
+mengarang data lama dan tanpa merusak fungsi yang sudah jalan. `year` Integer
+(bukan String) agar urutan tahun benar dan bisa divalidasi rentang; nullable
+agar migrasi aman (tidak ada baris yang diubah/dihapus, URL foto tidak
+berubah).
+
+### Alternatives Considered
+
+- Tahun dari `uploadedAt` (ditolak — terbukti salah datanya).
+- Menebak tahun dari nama file/program (ditolak — itu mengarang).
+- `year String` (ditolak — urutan leksikografis & validasi rentang sulit).
+- Filter tahun di admin (ditolak — 30 foto, grouping + ringkasan cukup;
+  aturan PRD §23 melarang filter yang tidak perlu).
+- Membuka semua tahun semua program (ditolak — meledaknya render gambar).
+
+### Current Implementation
+
+- `prisma/schema.prisma` (`year Int?`), `prisma/backfill-gallery-year.ts`.
+- `lib/schemas.ts`: `TAHUN_MIN`, `TAHUN_MAKS`, `gallerySchema.year`
+  (`z.coerce.number({ error: "Tahun wajib dipilih." })`).
+- `app/api/upload/route.ts` + `app/admin/actions.ts`
+  (`updateGalleryImage`): persist `year`.
+- `app/admin/(dashboard)/galeri/page.tsx`: `tahunTersedia` (data ∪ sekarang
+  ∪ +1, desc) → `UploadForm` & `GaleriList`.
+- `components/site/GalleryGrid.tsx`: grouping klien + accordion tahun +
+  chips + lightbox (caption `Program · Tahun · caption (n/total)`).
+- `lib/data.ts`: `GalleryRow.year` (fallback `year: null`).
+
+### Important
+
+- **Jangan** pernah mengisi `year` dengan tebakan; foto tanpa sinyal tahun
+  biarkan `NULL`.
+- **Jangan** menjadikan `year` required di Prisma sebelum 8 foto lama diisi
+  admin lewat Edit.
+- Kolom `year` tidak boleh dipakai sebagai filter wajib di query — grouping
+  tetap dilakukan setelah `findMany`.
