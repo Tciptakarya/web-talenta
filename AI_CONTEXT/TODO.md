@@ -90,6 +90,10 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 Berdasarkan history git (terverifikasi):
 
+- [x] **Redesign UI/UX galeri publik** — container 1360px (`.wrap-gallery`),
+      4/3/2 kolom, gap 14px, card & caption compact, `sizes` benar; 8
+      breakpoint tanpa overflow, lightbox & filter utuh (belum di-commit)
+
 - [x] **Admin Galeri dikelompokkan KATEGORI → PROGRAM** (accordion per
       kategori & program, jumlah foto dari data aktual, "Tanpa Kategori"/
       "Tanpa Program", ↑/↓ scoped subgroup, tanpa query tambahan) — data uji

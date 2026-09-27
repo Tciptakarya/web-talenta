@@ -68,6 +68,14 @@ Format: tanggal · isi · hash commit.
 
 ### Changed
 
+- **Redesign UI/UX galeri publik** — container galeri lebih lebar
+  (`.wrap-gallery` 1360px vs `.wrap` global 1180px yang tidak diubah), grid
+  4 kolom di desktop besar / 3 di desktop / 2 di tablet & mobile, gap 14px,
+  card lebih compact (radius 14px, hover scale 1.03, transisi 250ms),
+  caption dipadatkan (13px, line-clamp 2), spacing section 64px, dan
+  atribut `sizes` pada `next/image` diselaraskan. Filter program & lightbox
+  tetap utuh. Terverifikasi di 8 breakpoint (tanpa horizontal overflow),
+  20 foto terlihat pada 1920×1080, 0 console error — belum di-commit
 - **Admin Galeri dikelompokkan KATEGORI → PROGRAM** — `GaleriList.tsx`
   membangun group di klien dari satu query yang sudah men-`include` relasi
   (tanpa query tambahan/N+1); tiap kategori & program bisa di-expand/collapse

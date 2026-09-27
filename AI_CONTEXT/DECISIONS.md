@@ -474,6 +474,49 @@ agar environment baru (mis. Cloud Run) ikut terdeteksi.
 
 ---
 
+## Decision: Galeri publik memakai container & grid sendiri
+
+### Decision
+
+1. Section galeri memakai modifier container **`.wrap-gallery` (1360px)**, bukan
+   `.wrap` global (1180px) — `.wrap` global **tidak diubah** supaya halaman
+   lain tidak ikut melebar.
+2. `.gallery-grid` jadi 4 kolom (≥1181px) / 3 kolom (861–1180px) / 2 kolom
+   (≤860px) dengan gap 14px, aspect-ratio 4/3, radius 14px.
+3. Section galeri memakai class `.gallery-section` (padding 64px/44px,
+   header margin 28px) agar lebih rapat dari section biasa (104px/56px).
+4. `/kelas/[slug]` dipecah menjadi tiga blok `.wrap` supaya section Galeri
+   berada di container lebar sendiri.
+
+### Reason
+
+Galeri adalah konten utama situs; dengan 3 kolom di 1116px pada layar 1920px
+ada ~740px whitespace terbuang. Container khusus + 4 kolom mengisi ruang dan
+menambah jumlah foto per viewport (20 foto dalam 1080px vs 12 sebelumnya)
+tanpa mengorbankan halaman lain. CSS Grid + aspect ratio konsisten dipilih
+( bukan masonry) agar sejajar, responsif, dan mudah dipindai.
+
+### Alternatives Considered
+
+- Menaikkan `.wrap` global ke 1360px (ditolak: mengubah semua halaman publik).
+- Masonry (ditolak: alignment kurang rapi & sulit rawat).
+- Ubah batas 1180px tapi perkecil foto saja (ditolak: tidak menambah area).
+
+### Current Implementation
+
+`app/globals.css` (`.wrap-gallery`, `.gallery-section`, `.gallery-grid`,
+`.gallery-item`, `.gallery-caption`), `app/(public)/page.tsx`,
+`app/(public)/kelas/[slug]/page.tsx`, `components/site/GalleryGrid.tsx`
+(atribut `sizes` saja).
+
+### Important
+
+**Jangan** mengubah `.wrap` global. Section galeri baru WAJIB memakai
+`wrap wrap-gallery`. Filter program + lightbox adalah existing functionality —
+ jangan dihapus saat menata tampilan.
+
+---
+
 ## Decision: Grouping galeri di klien + urutan scoped per subgroup
 
 ### Decision

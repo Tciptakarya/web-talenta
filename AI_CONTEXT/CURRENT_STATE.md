@@ -17,8 +17,52 @@ bukan penulisan kode:
 
 ## Last Completed Work
 
-**Task terbaru (source code, belum di-commit): Admin Galeri dikelompokkan
-KATEGORI → PROGRAM**
+**Task terbaru (source code, belum di-commit): redesign UI/UX galeri publik**
+
+- `app/globals.css`: modifier `.wrap-gallery` (**1360px**, container global
+  `.wrap` 1180px tidak diubah) + `.gallery-section` (padding 64px/44px,
+  header margin 28px); `.gallery-grid` jadi **4/3/2 kolom** (≥1181 / 861–1180 /
+  ≤860) dengan gap 14px (10px ≤420px); `.gallery-item` radius 20→**14px**,
+  hover scale 1.08→**1.03**, transisi .6s→**.25s**; `.gallery-caption`
+  dipadatkan (13px, padding 14px 12px 10px, line-clamp 2).
+- `components/site/GalleryGrid.tsx`: atribut `sizes` diselaraskan agar
+  `next/image` memilih ukuran srcset yang benar. Filter + lightbox utuh.
+- `app/(public)/page.tsx`: section galeri (per kategori + "Galeri Lainnya")
+  memakai `wrap wrap-gallery` + `gallery-section`.
+- `app/(public)/kelas/[slug]/page.tsx`: section Galeri dipisah ke container
+  `wrap wrap-gallery` sendiri (JSX dipecah menjadi tiga blok `.wrap`).
+
+Verifikasi (localhost, diukur dengan iframe pada lebar CSS asli):
+
+| Breakpoint | Kolom | Lebar grid | Lebar foto | Rasio | Overflow |
+|---|---|---|---|---|---|
+| 1920 | **4** | 1296 | 314 | 1.33 | tidak |
+| 1440 | **4** | 1296 | 314 | 1.33 | tidak |
+| 1366 | **4** | 1287 | 311 | 1.33 | tidak |
+| 1024 | **3** | 945 | 306 | 1.33 | tidak |
+| 768 | **2** | 689 | 338 | 1.33 | tidak |
+| 430 | **2** | 375 | 181 | 1.33 | tidak |
+| 390 | **2** | 335 | 163 | 1.33 | tidak |
+| 360 | **2** | 305 | 148 | 1.33 | tidak |
+
+- Isolasi terverifikasi: di 1920px semua `.wrap` biasa tetap **1180px**,
+hanya `.wrap-gallery` = 1360px, grid 1296px.
+- Foto terlihat dalam viewport 1920×1080: **20 foto (5 baris)**; 1366×768 → 16.
+- `sizes` benar: srcset `w=384` terpilih untuk kartu 266px.
+- Lightbox: buka (klik), gambar 1056×792 termuat, caption + counter + tombol
+  nav ada, Escape menutup ✓
+- Regresi: `/`, `/kelas/barista`, `/kelas`, `/program/[slug]` → semua 200,
+  section Programs/Jadwal utuh, **0 console error**, tanpa horizontal overflow.
+- `npx tsc --noEmit` 0 error; `npm run build` hijau (22 routes).
+
+**Catatan:** screenshot "sebelum" yang dikirim user ter-render **zoom-out** di
+browser (grid sebenarnya 1116px/3 kolom, bukan sempit). Keluhan whitespace
+masih valid: 3 kolom di 1116px + 740px kosong di 1920px. Setelah redesign:
+4 kolom di 1296px (16% lebih lebar, 33% lebih banyak foto per baris).
+
+- `sizes` benar: srcset `w=384` terpilih untuk kartu 266px.
+
+**Task sebelumnya (source code, sudah ter-push): grouping Galeri admin**
 
 - `components/admin/GaleriList.tsx`: grouping murni di klien via
   `buildGroups(items)` (useMemo, tanpa query tambahan), section kategori +
@@ -91,7 +135,7 @@ Verifikasi (localhost, 8 foto uji + 12 foto asli = 20):
   file tidak sempat ditulis saat gagal; data uji dibersihkan (kembali 12
   foto, 0 file yatim).
 
-**Task sebelumnya (source code, belum di-commit): 4 perbaikan minor admin**
+**Task sebelumnya (source code, sudah ter-push): 4 perbaikan minor admin**
 
 1. **Email admin tidak lagi terpotong** — `break-all` + `text-xs` →
    `text-[11px] break-words min-w-0` + `title`. Diuji empiris: tersedia
@@ -124,7 +168,7 @@ Verifikasi ulang setelah keempatnya: 9/9 halaman `sideTop [0,0]`,
 `bodyScroll false`, console **0 error**, `npx tsc --noEmit` 0 error,
 `npm run build` hijau (22 routes).
 
-**Task sebelumnya (source code, belum di-commit): sidebar admin fixed + account
+**Task sebelumnya (source code, sudah ter-push): sidebar admin fixed + account
 section global**
 
 - File: `app/admin/(dashboard)/layout.tsx` (satu-satunya file diubah).
@@ -158,7 +202,7 @@ section global**
     `grep '<aside'` di `app/` + `components/` → **hanya 1** (di layout),
     jadi tidak ada sidebar duplikat.
 
-**Task sebelumnya (source code, belum di-commit): `fix: escape & di teks JSX`**
+**Task sebelumnya (source code, sudah ter-push): `fix: escape & di teks JSX`**
 
 - Masalah: `&` mentah di teks JSX → tidak valid XML → parser graphify berhenti,
   sehingga `kategori/page.tsx` (3 simbol) dan `JadwalManager.tsx` (11 simbol)
@@ -378,7 +422,7 @@ XML**, dan parser graphify gagal di titik itu. Baris lain yang memuat `&`
 
 **Current Status**
 
-**FIXED (2026-09-26, belum di-commit).** `&` → `&amp;` di dua titik teks JSX:
+**FIXED (2026-09-26, sudah ter-push).** `&` → `&amp;` di dua titik teks JSX:
 
 - `app/admin/(dashboard)/kategori/page.tsx:19`
 - `components/admin/JadwalManager.tsx:504`

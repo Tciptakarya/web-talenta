@@ -31,7 +31,15 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, belum di-commit): Admin Galeri dikelompokkan
+**Task terbaru (source code, belum di-commit): redesign UI/UX galeri publik**
+— `.wrap-gallery` 1360px (`.wrap` global 1180px tetap), grid 4/3/2 kolom,
+gap 14px, card radius 14px + hover 1.03, caption compact (line-clamp 2),
+section padding 64px, `sizes` next/image diselaraskan. Terverifikasi di
+1920/1440/1366/1024/768/430/390/360 tanpa overflow; 20 foto terlihat di
+1920×1080; lightbox & filter program utuh; 0 console error; halaman lain
+tidak berubah.
+
+**Task sebelumnya (source code, sudah ter-push): grouping Galeri admin
 KATEGORI → PROGRAM** — `GaleriList.tsx` (grouping di klien dari satu query,
 accordion kategori + program, jumlah foto dari data aktual, grup "Tanpa
 Kategori"/"Tanpa Program", ↑/↓ scoped dalam subgroup) + `moveGalleryImage`
@@ -56,7 +64,7 @@ pesan per file. Data uji sudah dibersihkan (kembali 12 foto, 0 file yatim).
 2. Batas 4,5 MB platform vs 8 MB di UI — belum diubah, hanya pesannya
    yang diperjelas.
 
-**Task sebelumnya (source code, belum di-commit): 4 perbaikan minor admin** —
+**Task sebelumnya (source code, sudah ter-push): 4 perbaikan minor admin** —
 (1) email admin kini 1 baris (`text-[11px]` + `title`, 148px dari 160px
 tersedia); (2) ikon theme toggle terlihat di sidebar navy
 (`.admin-sidebar .theme-toggle`, situs publik tidak berubah); (3) mobile
@@ -65,7 +73,7 @@ tersedia); (2) ikon theme toggle terlihat di sidebar navy
 Re-verifikasi: 9/9 halaman `sideTop [0,0]`, `acctGap [24,24]`, email 1 baris,
 console 0 error, `tsc` 0 error, build hijau.
 
-**Task sebelumnya (source code, belum di-commit): sidebar admin fixed + account
+**Task sebelumnya (source code, sudah ter-push): sidebar admin fixed + account
 section global** — hanya `app/admin/(dashboard)/layout.tsx`. Wrapper
 `min-h-screen md:min-h-0 md:h-dvh flex md:overflow-hidden`; konten jadi
 container `md:overflow-y-auto`; `nav` `md:overflow-y-auto`; account section
@@ -78,7 +86,7 @@ console, tombol Keluar → `/admin/login`. `tsc` 0 error, build hijau.
 Ringkas: **hanya ada 1 `<aside>`** di seluruh project (di layout tersebut) —
 sidebar & account section otomatis global untuk semua halaman admin.
 
-**Task sebelumnya (source code, belum di-commit): `fix: escape & di teks JSX`** —
+**Task sebelumnya (source code, sudah ter-push): `fix: escape & di teks JSX`** —
 `&` → `&amp;` di `app/admin/(dashboard)/kategori/page.tsx:19` dan
 `components/admin/JadwalManager.tsx:504`. Akar masalah: `&` mentah di teks JSX
 tidak valid XML sehingga parser graphify berhenti (3 + 11 simbol hilang dari
@@ -86,7 +94,7 @@ graph). Verifikasi: `npx tsc --noEmit` 0 error, `npm run build` hijau 22
 routes, `graphify update .` → **warning hilang** (709 → 713 node), teks di
 build output ter-decode tetap `&` (tampilan tidak berubah).
 
-**Task dokumentasi (belum di-commit):** folder `AI_CONTEXT/` (7 file),
+**Task dokumentasi (sudah ter-push):** folder `AI_CONTEXT/` (7 file),
 aturan wajib *Setelah Menyelesaikan Task* + *Workflow low-token* di
 `AGENTS.md`.
 

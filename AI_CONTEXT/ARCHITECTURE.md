@@ -304,6 +304,31 @@ POST /api/upload  (butuh session admin)
   `CURRENT_STATE.md` Issue 11).
 - Preview/commit: `public/uploads` fallback **hanya** untuk lokal/self-hosted.
 
+### Galeri publik (redesign 2026-09-27)
+
+Section galeri memakai container **lebih lebar** dari container global agar
+galeri jadi konten utama halaman:
+
+- `.wrap` (global) = **1180px** — dipakai semua section LAIN, tidak diubah.
+- `.wrap-gallery` = **1360px** — modifier khusus section galeri.
+- `.gallery-section` = padding vertikal 64px (44px di mobile) + `.section-head`
+  dengan margin-bottom 28px (lebih rapat dari section biasa 104px/56px).
+- `.gallery-grid` = CSS Grid, **gap 14px** (10px di ≤420px):
+  - ≥1181px → **4 kolom**
+  - 861–1180px → **3 kolom**
+  - ≤860px → **2 kolom** (termasuk mobile 430/390/360)
+- `.gallery-item` = aspect-ratio 4/3, object-fit cover, radius **14px**,
+  hover scale(1.03) transisi 250ms.
+- `.gallery-caption` = overlay tetap (gradient navy), dipadatkan: 13px,
+  padding 14px 12px 10px, line-clamp 2.
+- `GalleryGrid` (client) tetap menangani filter program + **lightbox**
+  (klik/Enter/Spasi, panah kiri/kanan, Escape, caption + counter) — fungsinya
+  tidak diubah; hanya atribut `sizes` yang diselaraskan
+  ((max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw).
+- Dipakai di: beranda (section per kategori + "Galeri Lainnya") dan
+  `/kelas/[slug]` (section Galeri, dipisah ke container sendiri).
+  `/kelas` dan `/program/[slug]` tidak punya galeri — tidak berubah.
+
 ## Payment Architecture
 
 **Tidak ada.** Tidak ada provider pembayaran, order, webhook, atau status
