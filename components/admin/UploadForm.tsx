@@ -30,6 +30,26 @@ function formatUkuran(bytes: number): string {
  * /api/upload satu per satu (2 paralel) dengan status per file. Koreksi caption
  * atau kategori per foto dilakukan lewat tombol "Edit" di daftar bawah.
  */
+/**
+ * Pesan fallback saat server tidak mengirim JSON (mis. platform menolak
+ * request sebelum masuk route, atau balgat 413 dari hosting).
+ */
+function pesanFromStatus(status: number): string {
+  if (status === 413) {
+    return "Ukuran file ditolak server sebelum diproses. Di hosting serverless (Vercel) batasnya sekitar 4,5 MB per request — pilih foto yang lebih kecil atau kompres dulu.";
+  }
+  if (status === 401 || status === 403) {
+    return "Sesi admin tidak valid. Muat ulang halaman lalu login kembali.";
+  }
+  if (status === 503) {
+    return "Server sedang tidak dapat menyimpan foto. Coba lagi nanti atau hubungi administrator.";
+  }
+  if (status >= 500) {
+    return "Server gagal menyimpan foto. Coba lagi beberapa saat lagi.";
+  }
+  return "Upload gagal. Coba lagi dengan foto lain.";
+}
+
 export default function UploadForm({ categories, programs }: UploadFormProps) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
@@ -149,7 +169,7 @@ export default function UploadForm({ categories, programs }: UploadFormProps) {
           gagal += 1;
           setStatusFile(index, {
             status: "gagal",
-            pesan: data.error ?? "Upload gagal.",
+            pesan: data.error ?? pesanFromStatus(res.status),
           });
           return;
         }

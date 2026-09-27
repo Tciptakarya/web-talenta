@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { removeImage, storeImage } from "@/lib/storage";
+import {
+  StorageUnavailableError,
+  assertStorageReady,
+  describeStorageFailure,
+  removeImage,
+  storeImage,
+} from "@/lib/storage";
 import {
   ALLOWED_IMAGE_TYPES,
   MAX_IMAGE_BYTES,
@@ -10,6 +16,12 @@ import {
 } from "@/lib/schemas";
 
 export const runtime = "nodejs";
+
+/** Error Prisma dikenali dari kode "P...." (P2002, P2025, dst). */
+function isPrismaError(err: unknown): boolean {
+  const code = (err as { code?: unknown } | null)?.code;
+  return typeof code === "string" && code.startsWith("P");
+}
 
 /**
  * POST /api/upload — upload foto galeri dari dashboard admin (PRD §6).
@@ -60,6 +72,25 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { ok: false, error: "Ukuran foto maksimal 8MB." },
       { status: 400 }
+    );
+  }
+
+  // Penjaga storage: di hosting dengan filesystem ephemeral (Vercel) dan
+  // Blob belum dikonfigurasi, menulis ke public/uploads pasti gagal —
+  // gagal cepat dengan penyebab yang jelas, jangan enigmatic "Upload gagal".
+  try {
+    assertStorageReady();
+  } catch (err) {
+    const code =
+      err instanceof StorageUnavailableError ? err.code : "unknown";
+    console.error(
+      `[upload] penyimpanan tidak siap (${code}): BLOB_READ_WRITE_TOKEN=${
+        process.env.BLOB_READ_WRITE_TOKEN ? "terisi" : "KOSONG"
+      }, hosting ephemeral=${Boolean(process.env.VERCEL)}`
+    );
+    return NextResponse.json(
+      { ok: false, error: describeStorageFailure(code) },
+      { status: 503 }
     );
   }
 
@@ -151,9 +182,35 @@ export async function POST(req: Request) {
     console.error("[upload] gagal:", err);
     // Jangan tinggalkan file yatim di storage bila penyimpanan metadata gagal.
     if (url) await removeImage(url);
+
+    // Penyebab storage → pesan spesifik (503) + tetap log penuh di server.
+    if (err instanceof StorageUnavailableError) {
+      return NextResponse.json(
+        { ok: false, error: describeStorageFailure(err.code) },
+        { status: 503 }
+      );
+    }
+
+    // Database: file sudah diproses, metadata yang gagal.
+    if (isPrismaError(err)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "Foto berhasil diproses tetapi gagal disimpan ke database. Silakan coba lagi.",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Sisanya: pemrosesan gambar (sharp) atau hal lain yang tak terduga.
     return NextResponse.json(
-      { ok: false, error: "Upload gagal. Coba lagi dengan foto lain." },
-      { status: 500 }
+      {
+        ok: false,
+        error:
+          "Gagal memproses gambar. Pastikan file JPG, PNG, WebP, atau AVIF yang valid.",
+      },
+      { status: 422 }
     );
   }
 }
