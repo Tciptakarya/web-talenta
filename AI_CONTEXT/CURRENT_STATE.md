@@ -466,13 +466,25 @@ production, reproduksi dengan `icacls /deny W`, `VERCEL=1` simulation,
 
 **Current Status**
 
-**Open — kode sudah diperbaiki &(jelas), konfigurasi belum.** Butuh aksi
-user di dashboard Vercel.
+**Open — kode sudah live & terverifikasi (deploy `85405d4`, 2026-09-27).**
+Upload di production kini membalas **503 dengan pesan penyebab** (terverifikasi
+via `POST /api/upload`), bukan lagi "Upload gagal" generik. Namun
+`BLOB_READ_WRITE_TOKEN` **masih belum aktif** di environment Production — footer
+`/admin/galeri` masih "lokal (public/uploads)".
 
 **Recommended Next Investigation**
 
-Vercel → Storage → Blob → buat store + token → Environment Variables
-(Production & Preview) → Redeploy. Lalu uji upload lagi di production.
+Vercel → project `web-talenta` → **Settings → Environment Variables** →
+pastikan `BLOB_READ_WRITE_TOKEN` ada dan ter-centang **Production** (dan
+Preview). Kalau belum ada: **Storage → Create Database → Blob** → hubungkan ke
+project `web-talenta` → centang Production + Preview → Create. Lalu
+**Redeploy** (env var tidak aktif tanpa deployment baru). Verifikasi akhir:
+footer berubah menjadi "Vercel Blob" dan `POST /api/upload` membalas 200
+dengan URL `*.public.blob.vercel-storage.com`.
+
+Catatan: kalau hanya melakukan "Connect to Project" dari halaman store, Vercel
+membuat `BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN` — itu **tidak cukup**, karena
+`blobEnabled()` memeriksa `BLOB_READ_WRITE_TOKEN`.
 
 ### Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB
 
