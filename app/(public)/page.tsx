@@ -40,8 +40,8 @@ export default async function HomePage() {
       {/* Anchor #galeri — target nav "Galeri" di Header/Footer */}
       <div id="galeri">
         {galleryGroups.groups.map((group) => (
-          <section key={group.category.id} className="section" id={`galeri-${group.category.slug}`}>
-            <div className="wrap">
+          <section key={group.category.id} className="section gallery-section" id={`galeri-${group.category.slug}`}>
+            <div className="wrap wrap-gallery">
               <Reveal className="section-head">
                 <span className="kicker">{group.category.name}</span>
                 <h2>{group.category.description ?? `Dokumentasi kegiatan ${group.category.name}`}</h2>
@@ -52,8 +52,8 @@ export default async function HomePage() {
         ))}
 
         {galleryGroups.lainnya.length > 0 && (
-          <section className="section" id="galeri-lainnya">
-            <div className="wrap">
+          <section className="section gallery-section" id="galeri-lainnya">
+            <div className="wrap wrap-gallery">
               <Reveal className="section-head">
                 <span className="kicker">Galeri Lainnya</span>
                 <h2>Dokumentasi kegiatan pelatihan kami</h2>

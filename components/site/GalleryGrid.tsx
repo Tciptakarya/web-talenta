@@ -151,7 +151,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
               src={item.url}
               alt={item.alt || item.caption}
               fill
-              sizes="(max-width: 520px) 50vw, (max-width: 980px) 50vw, 33vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1180px) 33vw, 25vw"
             />
             <div className="gallery-caption">{item.caption}</div>
           </div>

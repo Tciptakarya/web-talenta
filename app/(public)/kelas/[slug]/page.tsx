@@ -152,17 +152,29 @@ export default async function KelasSlugPage({ params }: Props) {
             <p className="text-mist">Belum ada program untuk kategori ini.</p>
           )}
         </section>
+      </div>
 
-        {/* Gallery */}
-        {categoryGallery.length > 0 && (
-          <section aria-labelledby="gallery-heading" className="mb-12">
-            <h2 id="gallery-heading" className="font-display text-2xl font-semibold text-navy mb-6">
+      {/* Gallery — container lebih lebar (.wrap-gallery) supaya galeri jadi
+          konten utama halaman; .wrap di atas & di bawah tetap 1180px. */}
+      {categoryGallery.length > 0 && (
+        <div className="wrap wrap-gallery">
+          <section
+            aria-labelledby="gallery-heading"
+            className="gallery-section"
+            style={{ paddingTop: 0 }}
+          >
+            <h2
+              id="gallery-heading"
+              className="font-display text-2xl font-semibold text-navy mb-6"
+            >
               Galeri {category.name}
             </h2>
             <GalleryGrid items={categoryGallery} />
           </section>
-        )}
+        </div>
+      )}
 
+      <div className="wrap">
         {/* Jadwal Pelatihan */}
         {jadwalList.length > 0 && (
           <section aria-labelledby="jadwal-heading" className="mb-12">
