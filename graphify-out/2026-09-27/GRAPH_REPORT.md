@@ -1,17 +1,17 @@
-# Graph Report - tciptakarya-main  (2026-09-27)
+# Graph Report - tciptakarya-main  (2026-09-26)
 
 ## Corpus Check
-- 83 files · ~172,657 words
+- 83 files · ~171,279 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 728 nodes · 1221 edges · 44 communities (42 shown, 2 thin omitted)
+- 728 nodes · 1220 edges · 44 communities (42 shown, 2 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 64 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1e854e86`
+- Built from commit: `ffc931bf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -66,23 +66,23 @@
 3. `next` - 24 edges
 4. `react` - 20 edges
 5. `Decisions` - 20 edges
-6. `Project Context` - 18 edges
-7. `prisma` - 18 edges
+6. `prisma` - 18 edges
+7. `Project Context` - 18 edges
 8. `compilerOptions` - 16 edges
 9. `AI HANDOFF` - 13 edges
 10. `safe()` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Decision` --references--> `FormPendaftaran()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → components/site/FormPendaftaran.tsx
-- `Current Implementation` --references--> `getGalleryByCategory()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → lib/data.ts
-- `Current Implementation` --references--> `refresh()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → app/admin/actions.ts
 - `Development Rules` --references--> `requireAdmin()`  [INFERRED]
   AGENTS.md → app/admin/actions.ts
 - `Important Files` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Important Decisions` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/CHANGELOG.md → app/admin/actions.ts
+- `IMPORTANT DECISIONS` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/HANDOFF.md → app/admin/actions.ts
 
 ## Import Cycles
 - None detected.
@@ -258,8 +258,8 @@ Cohesion: 0.50
 Nodes (4): Current Implementation, Decision, Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token), Important
 
 ## Knowledge Gaps
-- **348 isolated node(s):** `runtime`, `UploadFormProps`, `AntreanStatus`, `Antrean`, `StorageFailCode` (+343 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 396 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **348 isolated node(s):** `Props`, `dynamic`, `metadata`, `dynamic`, `Props` (+343 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 397 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -275,7 +275,7 @@ _Questions this graph is uniquely positioned to answer:_
   _`requireAdmin()` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `refresh()` (e.g. with `Form Handling & Validation` and `Current Implementation`) actually correct?**
   _`refresh()` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `runtime`, `UploadFormProps`, `AntreanStatus` to the rest of the system?**
+- **What connects `Props`, `dynamic`, `metadata` to the rest of the system?**
   _348 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `(public)/page.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
