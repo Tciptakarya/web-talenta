@@ -20,8 +20,8 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 ## In Progress
 
 - Tidak ada pekerjaan yang sedang berjalan. Task **struktur galeri
-  PROGRAM → TAHUN → FOTO** selesai diverifikasi, **belum di-commit**
-  (source code + `AI_CONTEXT/` + `graphify-out/`).
+  PROGRAM → TAHUN → FOTO** selesai, sudah di-commit & ter-push
+  (`368d947` + `6accd2a`), live di production.
 
 ## Next
 
@@ -29,9 +29,6 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
       `/admin/galeri` (peringatan "N belum punya tahun"). Tahunnya harus
       benar-benar diketahui admin — jangan ditebak. Selama NULL, foto tampil
       di grup **"Tanpa Tahun"** (bukan hilang).
-- [ ] **Commit + push task galeri PROGRAM → TAHUN → FOTO** (setelah user
-      menyetujui): source code (11 file) + `prisma/backfill-gallery-year.ts`
-      + `AI_CONTEXT/` + `graphify-out/`.
 - [ ] **Verifikasi fix modal pendaftaran di production** — buka
       `https://talentaciptakarya.com`, klik **Daftar** pada tabel jadwal:
       modal harus terpusat dan tidak menimpa tabel. (Sudah diverifikasi hanya
@@ -110,17 +107,19 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 Berdasarkan history git (terverifikasi):
 
-- [x] **Struktur galeri PROGRAM → TAHUN → FOTO** (2026-09-27, source code
-      **belum di-commit**) — kolom `year Int?` di `GalleryImage` (db push
-      aman), backfill idempoten dari caption saja (22 terisi, 8 dibiarkan
-      NULL → grup "Tanpa Tahun"), validasi Zod (1990…tahun+1, 6 kasus
-      ditolak 400), select Tahun di UploadForm & Edit admin + info tahun
-      per kartu + ringkasan "N belum punya tahun", galeri publik kelompok
-      program → tahun (accordion, terbaru terbuka), homepage jadi 1 section
-      `#galeri`, Header nav → `/#galeri`. Teruji: upload batch 2 foto →
-      grup/tahun baru muncul tanpa ubah kode, edit tahun/program pindah
-      grup, hapus bersih (30 foto), keyboard + lightbox, 8 breakpoint
-      tanpa overflow, regresi 10 rute publik + 9 halaman admin 0 error.
+- [x] **Struktur galeri PROGRAM → TAHUN → FOTO** (2026-09-27, commit
+      `368d947` + `6accd2a`, **sudah ter-push & live**) — kolom `year Int?`
+      di `GalleryImage` (db push aman), backfill idempoten dari caption saja
+      (22 terisi, 8 dibiarkan NULL → grup "Tanpa Tahun"), validasi Zod
+      (1990…tahun+1, 6 kasus ditolak 400), select Tahun di UploadForm & Edit
+      admin + info tahun per kartu + ringkasan "N belum punya tahun",
+      galeri publik kelompok program → tahun (accordion, terbaru terbuka),
+      homepage jadi 1 section `#galeri`, Header nav → `/#galeri`. Teruji:
+      upload batch 2 foto → grup/tahun baru muncul tanpa ubah kode, edit
+      tahun/program pindah grup, hapus bersih (30 foto), keyboard + lightbox,
+      8 breakpoint tanpa overflow, regresi 10 rute publik + 9 halaman admin
+      0 error; live diverifikasi di `talentaciptakarya.com` (publik +
+      `/admin/galeri`).
 
 - [x] **Redesign UI/UX galeri publik** — container 1360px (`.wrap-gallery`),
       4/3/2 kolom, gap 14px, card & caption compact, `sizes` benar; 8

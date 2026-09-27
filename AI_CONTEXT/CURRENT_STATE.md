@@ -1,15 +1,16 @@
 # Current State
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
-> 2026-09-27** (HEAD `4f08b1d`; task galeri `year` belum di-commit).
+> 2026-09-27** (HEAD `6accd2a`, **sudah ter-push & live**).
 > Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
 
 Tidak ada fitur yang sedang dikerjakan. Task **struktur galeri
 PROGRAM → TAHUN → FOTO** (kolom `year`, backfill, admin, galeri publik)
-**selesai dan terverifikasi penuh** — source code + `AI_CONTEXT/` +
-`graphify-out/` masih **belum di-commit** (menunggu izin user).
+**selesai, terverifikasi, sudah di-commit & ter-push** — commit
+`368d947` (source + `AI_CONTEXT/`) + `6accd2a` (graphify-out), ter-deploy
+& terverifikasi di `https://talentaciptakarya.com`.
 
 Sisa pekerjaan non-kode (email & DNS):
 
@@ -19,8 +20,8 @@ Sisa pekerjaan non-kode (email & DNS):
 
 ## Last Completed Work
 
-**Task terbaru (source code, BELUM di-commit): struktur galeri
-PROGRAM → TAHUN → FOTO**
+**Task terbaru (source code, SUDAH ter-push `368d947` + `6accd2a`, LIVE di
+production): struktur galeri PROGRAM → TAHUN → FOTO**
 
 - **Database**: `GalleryImage.year Int?` (`prisma/schema.prisma` +
   `npm run db:push` — aman, nullable; tidak ada baris/file dihapus).
@@ -298,16 +299,16 @@ Status verifikasi:
 ## Currently In Progress
 
 **Tidak ada pekerjaan kode yang sedang berjalan** — task galeri
-`PROGRAM → TAHUN → FOTO` selesai (lihat *Last Completed Work*), tinggal
-**commit/push menunggu izin user**.
+`PROGRAM → TAHUN → FOTO` selesai, di-commit (`368d947`, `6accd2a`),
+ter-push, dan terverifikasi live (lihat *Last Completed Work*).
 
 Catatan lingkungan:
 
 - Server lokal (`npm run start`) **sedang berjalan** di port 3000 (shell
   background); hentikan dengan `taskkill /F /IM node.exe` sebelum
   `npm run build` (EPERM Prisma DLL).
-- `graphify-out/` sudah di-update setelah perubahan (766 node / 1303 edge /
-  45 community) — perubahan graphify ini juga belum di-commit.
+- `graphify-out/` sudah di-update & ikut ter-commit (766 node / 1303 edge /
+  45 community).
 - Skrip temporer (`prisma/tmp-*.ts`) sudah dihapus; hanya
   `prisma/backfill-gallery-year.ts` yang dipertahankan (berguna untuk
   backfill ulang bila perlu).
@@ -739,18 +740,13 @@ konfigurasi luar: API key Resend dan record DNS.)
 
 ## Exact Next Step
 
-**Minta izin user untuk commit + push hasil task galeri
-`PROGRAM → TAHUN → FOTO`.**
+~~Commit + push task galeri~~ — **SELESAI** (`368d947` source+dokumen,
+`6accd2a` graphify), ter-deploy & terverifikasi live: `/` memakai
+`#galeri-utama` + chips `Semua (30)` + accordion tahun, `/admin/galeri`
+menampilkan 30 kartu bertahun + ringkasan "8 belum punya tahun", 0 console
+error.
 
-Commit mencakup bersamaan: source code (11 file) + `prisma/backfill-gallery-year.ts`
-+ `AI_CONTEXT/` (6 file) + `graphify-out/`. Pesan (Indonesia, gaya `feat:`):
-
-```
-feat(galeri): struktur PROGRAM-TAHUN-FOTO — kolom year, input tahun admin, accordion tahun publik
-```
-
-Setelah ter-push, Vercel auto-deploy — periksa `talentaciptakarya.com`
-(galeri publik + `/admin/galeri`), lalu kembali ke pekerjaan non-kode:
+Langkah berikutnya = pekerjaan non-kode:
 
 1. Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal **dan** Vercel →
    Redeploy → uji reset password & `statusEmail = sent` (Issue 1).

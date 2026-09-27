@@ -22,10 +22,9 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `4f08b1d` (2026-09-27, sudah ter-push) = redesign galeri publik;
-  perubahan terbaru = **struktur galeri PROGRAM → TAHUN → FOTO** + update
-  `AI_CONTEXT/` + `graphify-out/` — **BELUM di-commit** (11 file source,
-  `prisma/backfill-gallery-year.ts`, 6 file `AI_CONTEXT`).
+- HEAD `6accd2a` (2026-09-27) **sudah ter-push**; isi: task **struktur
+  galeri PROGRAM → TAHUN → FOTO** (`368d947` source + `AI_CONTEXT/`) +
+  refresh graph (`6accd2a`). Ter-deploy & terverifikasi live.
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
 - Server lokal **sedang berjalan** (port 3000) — `taskkill /F /IM node.exe`
   sebelum build.
@@ -37,8 +36,8 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, BELUM di-commit): struktur galeri
-PROGRAM → TAHUN → FOTO** — kolom `GalleryImage.year Int?` (db push aman,
+**Task terbaru (source code, SUDAH ter-push `368d947` + `6accd2a`, LIVE):
+struktur galeri PROGRAM → TAHUN → FOTO** — kolom `GalleryImage.year Int?` (db push aman,
 nullable); backfill idempoten `prisma/backfill-gallery-year.ts` membaca
 tahun **hanya dari caption** (22 terisi, **8 dibiarkan NULL** → grup
 "Tanpa Tahun" — tidak boleh ditebak, `uploadedAt` terbukti salah);
@@ -126,9 +125,9 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 ## CURRENTLY WORKING ON
 
 Tidak ada pekerjaan kode berjalan. Task galeri `PROGRAM → TAHUN → FOTO`
-selesai & terverifikasi — **menunggu izin user untuk commit + push**
-(source code + `AI_CONTEXT/` + `graphify-out/` digabung). Sisa pekerjaan
-lain bersifat **konfigurasi (ops, bukan kode)**.
+**selesai, ter-push (`368d947` + `6accd2a`), dan terverifikasi live** di
+`talentaciptakarya.com` (publik + `/admin/galeri`, 0 console error).
+Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
 
@@ -205,18 +204,18 @@ Tanpa instruksi eksplisit dari user:
 
 ## NEXT ACTION
 
-**Minta izin user untuk commit + push** hasil task galeri
-`PROGRAM → TAHUN → FOTO` — pesan:
-`feat(galeri): struktur PROGRAM-TAHUN-FOTO — kolom year, input tahun admin, accordion tahun publik`
-(Indonesia, `feat:`; push bila timeout HTTP/2 → fallback HTTP/1.1 di
-bagian GIT). Setelah ter-push, cek production
-`https://talentaciptakarya.com` (galeri + `/admin/galeri`).
+**Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal dan di Vercel, lalu
+Redeploy.** Setelah itu uji email reset password di `/admin/forgot-password`
+→ email terkirim; isi form pendaftaran → `/admin/pendaftaran` → kolom
+`statusEmail = sent`; sambil memverifikasi modal pendaftaran di live dan
+menambahkan MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend
+(Issue 3).
 
-Lalu kembali ke pekerjaan non-kode: ganti `RESEND_API_KEY` (resend.com) di
-`.env` lokal dan di Vercel → Redeploy → uji email reset password + kolom
-`statusEmail = sent`, sambil memverifikasi modal pendaftaran di live dan
-menambahkan MX Titan di Vercel DNS. Detail urutan: `CURRENT_STATE.md` →
+Opsional (data): isi tahun 8 foto lama via Edit `/admin/galeri` — hanya
+bila tahunnya benar diketahui. Detail urutan: `CURRENT_STATE.md` →
 *Exact Next Step*.
+
+*(Task galeri selesai: commit `368d947` + `6accd2a`, sudah ter-push.)*
 
 ## VERIFICATION
 

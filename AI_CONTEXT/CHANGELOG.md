@@ -69,7 +69,11 @@ Format: tanggal · isi · hash commit.
 - Bug pre-existing (bukan dari task ini, sudah dibuktikan identik di
   production): React error #418 (hydration text) di `/admin/kategori` &
   `/admin/program`.
-- Belum di-commit.
+- Commit `368d947` (source + `AI_CONTEXT/`) + `6accd2a` (graphify-out) —
+  **sudah ter-push & ter-deploy**; live diverifikasi di
+  `talentaciptakarya.com` (publik: `#galeri-utama` + chips `Semua (30)` +
+  accordion tahun; admin: 30 kartu bertahun, ringkasan "8 belum punya
+  tahun"; 0 console error).
 
 ---
 
