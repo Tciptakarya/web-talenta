@@ -10,6 +10,10 @@ Format: tanggal · isi · hash commit.
 
 ## [2026-09-28]
 
+Commit: `c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
+(`graphify-out/`) — keduanya ter-push ke `main` & terverifikasi live di
+`https://talentaciptakarya.com` (0 console error).
+
 ### Changed
 
 - **Redesain visual galeri publik ke gaya editorial/premium minimal**

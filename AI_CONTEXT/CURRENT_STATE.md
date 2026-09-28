@@ -1,26 +1,21 @@
 # Current State
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
-> 2026-09-28** (HEAD `47908f5` sudah ter-push & live; **working tree
-> memuat task visual galeri + fix 2 bug review yang BELUM di-commit**).
+> 2026-09-28** (HEAD `b61d5c4` **sudah ter-push & live** di
+> `talentaciptakarya.com`; working tree **bersih**).
 > Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
 
-Task **visual galeri editorial/premium minimal** + **fix 2 bug hasil
-review user** (2026-09-28) **selesai diverifikasi** (`npx tsc --noEmit`
-0 error, `npm run build` hijau, E2E browser mode gelap + terang,
-verifikasi posisi elemen + sapuan 4 halaman admin, 0 console error
-selain React #418 pre-existing) tetapi **BELUM di-commit** — menunggu
-persetujuan user (lihat *Exact Next Step*). Isi fix: (a) kop program
-galeri `<header>` → `<div>` (rule global navbar `header{position:fixed}`
-membuat kop menumpuk di tepi kiri atas); (b) crash `/admin`
-"Application error" = **bukan bug kode** — `npm run dev` berjalan
-bersamaan dengan `npm run start` dan menghapus chunk produksi di
-`.next/` → semua `/_next/static/*` dibalas 400. Task sebelumnya
-**struktur galeri PROGRAM → TAHUN → FOTO** sudah di-commit (`368d947` +
-`6accd2a`), ter-deploy & terverifikasi di
-`https://talentaciptakarya.com`.
+Task **visual galeri editorial/premium minimal** + **fix 2 bug review**
+(2026-09-28) **sudah selesai, di-commit, dan ter-deploy**:
+`c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
+(`graphify-out/`), keduanya ter-push ke `main` dan terverifikasi **live**
+di `https://talentaciptakarya.com` — 3 kop program `position: static`
+(docTop 3503/4767/5224, tanpa tumpang-tindih), 7 baris tahun (3 terbuka),
+chip aktif ada, tanpa horizontal overflow, **0 console error**.
+Task sebelumnya **struktur galeri PROGRAM → TAHUN → FOTO** (`368d947` +
+`6accd2a`) juga sudah live.
 
 Sisa pekerjaan non-kode (email & DNS):
 
@@ -379,15 +374,15 @@ Status verifikasi:
 
 ## Currently In Progress
 
-Task **visual galeri editorial/premium minimal + fix 2 bug hasil review
-user** selesai diverifikasi (tsc 0, build hijau, E2E gelap + terang
-dengan verifikasi posisi elemen, sapuan 4 halaman admin, regresi
-`/kelas/barista`, 0 console error selain React #418 pre-existing) tapi
-**BELUM di-commit** — menunggu persetujuan user (file:
-`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`,
-`AI_CONTEXT/*`). Task galeri `PROGRAM → TAHUN → FOTO` sudah di-commit
-(`368d947`, `6accd2a`), ter-push, dan terverifikasi live (lihat *Last
-Completed Work*).
+**Tidak ada task kode yang sedang dikerjakan.** Task **redesign galeri
+editorial + fix 2 bug hasil review** sudah **di-commit** (`c318627`
+source + `AGENTS.md` + `AI_CONTEXT/`, `b61d5c4` `graphify-out/`),
+**ter-push** ke `main`, dan **terverifikasi live** di
+`https://talentaciptakarya.com`: 3 kop program (`Pelatihan Barista`,
+`Artificial Intelligence`, `Kursus Komputer`) `position: static` dengan
+docTop 3503/4767/5224 (tanpa tumpang-tindih, `left:32px`), 7 baris tahun
+dengan 3 terbuka, chip aktif ada, tanpa horizontal overflow, **0 console
+error**. `git status` bersih.
 
 Catatan lingkungan:
 
@@ -850,13 +845,8 @@ konfigurasi luar: API key Resend dan record DNS.)
 
 ## Exact Next Step
 
-**Commit + push task visual galeri + fix 2 bug review** — source
-(`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`) **dan**
-`AI_CONTEXT/` dalam satu commit `feat:` (boleh juga dipisah `fix:` untuk
-perbaikan), `graphify-out/` menyusul commit `chore:` — **menunggu
-persetujuan user** (jangan commit tanpa izin). Setelah push: tunggu
-deploy Vercel → verifikasi `talentaciptakarya.com` (galeri mode gelap +
-terang, 0 console error).
+Tidak ada langkah kode yang tertunda. Sisa pekerjaan = **konfigurasi
+(butuh akses user)**:
 
 Langkah sesudahnya = pekerjaan non-kode:
 

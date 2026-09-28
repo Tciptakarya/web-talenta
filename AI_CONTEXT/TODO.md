@@ -2,8 +2,7 @@
 
 Disusun dari kondisi source code, konfigurasi, dokumentasi, dan riwayat git
 yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
-(HEAD `47908f5` ter-push; working tree = task visual galeri belum
-di-commit).
+(HEAD `b61d5c4` ter-push & live; working tree bersih).
 
 ## Critical
 
@@ -21,20 +20,14 @@ di-commit).
 
 ## In Progress
 
-- Task **visual galeri editorial/premium minimal** + **fix 2 bug hasil
-  review user** (2026-09-28) selesai diverifikasi, **belum di-commit** —
-  menunggu persetujuan user (lihat *Next*).
-- Task sebelumnya **struktur galeri PROGRAM → TAHUN → FOTO** sudah
-  di-commit & ter-push (`368d947` + `6accd2a`), live di production.
+- Tidak ada task kode yang sedang dikerjakan.
+- Task **redesign galeri editorial/premium minimal + fix 2 bug** sudah
+  **di-commit** (`c318627` + `b61d5c4`), ter-push, dan **terverifikasi
+  live** (0 console error). Task sebelumnya **struktur galeri PROGRAM →
+  TAHUN → FOTO** juga sudah live (`368d947` + `6accd2a`).
 
 ## Next
 
-- [ ] **Commit + push task visual galeri** — source
-      (`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`) +
-      `AI_CONTEXT/` dalam satu commit `feat:`, `graphify-out/` menyusul
-      `chore:`. **Hanya bila user menyetujui**; setelah push, tunggu
-      deploy Vercel & verifikasi live (galeri mode gelap + terang,
-      0 console error).
 - [ ] **Verifikasi fix modal pendaftaran di production** — buka
       `https://talentaciptakarya.com`, klik **Daftar** pada tabel jadwal:
       modal harus terpusat dan tidak menimpa tabel. (Sudah diverifikasi hanya

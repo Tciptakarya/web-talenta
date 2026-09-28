@@ -22,21 +22,17 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `47908f5` (2026-09-27) **sudah ter-push**; isi: docs sinkron
-  (`47908f5`), refresh graph (`6accd2a`), task **struktur galeri PROGRAM
-  → TAHUN → FOTO** (`368d947` source + `AI_CONTEXT/`). Ter-deploy &
-  terverifikasi live.
-- **Working tree (BELUM di-commit): task visual galeri editorial + fix 2
-  bug hasil review user** (2026-09-28) — `components/site/GalleryGrid.tsx`,
-  `app/globals.css`, `app/(public)/kelas/[slug]/page.tsx`, `AI_CONTEXT/*`,
-  `graphify-out/*`. Isi fix: (a) kop program `<header>` → `<div>` (rule
-  global navbar `header{position:fixed}` membuat kedua kop program
-  menumpuk di tepi kiri atas); (b) crash `/admin` "Application error"
-  **bukan bug kode** — `npm run dev` berjalan bersamaan dengan
-  `npm run start` dan menghapus chunk produksi di `.next/` → semua
-  `/_next/static/*` dibalas 400; sudah di-build ulang & diverifikasi.
-  tsc 0, build hijau, E2E kedua mode lolos; **menunggu persetujuan
-  commit user**.
+- HEAD `b61d5c4` **sudah ter-push & live**; isi: `chore:` refresh
+  `graphify-out/` (`b61d5c4`) dan task **redesign galeri editorial +
+  fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
+  Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
+  error).
+- **Working tree BERSIH** — tidak ada perubahan belum ter-commit.
+  Isi task yang baru selesai: (a) kop program galeri `<header>` → `<div>`
+  (rule global navbar `header{position:fixed}` membuat kop menumpuk di
+  tepi kiri atas); (b) crash `/admin` "Application error" **bukan bug
+  kode** — `npm run dev` berjalan bersamaan dengan `npm run start` dan
+  menghapus chunk produksi di `.next/`.
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
 - Server lokal **sedang berjalan** (port 3000) — `taskkill /F /IM node.exe`
   sebelum build. **Jangan jalankan `npm run dev` bersamaan** dengan
@@ -54,8 +50,8 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, BELUM di-commit — menunggu persetujuan
-user): fix 2 bug hasil review user** (2026-09-28) —
+**Task terbaru (source code, SUDAH ter-push `c318627` + `b61d5c4`, LIVE
+& terverifikasi 0 console error): fix 2 bug hasil review user** (2026-09-28) —
 
 1. **Kop program galeri tumpang-tindih di tepi kiri atas** — kop ditulis
    `<header className="gallery-program">` kena rule global tak-ber-layer
@@ -192,18 +188,16 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Task **visual galeri editorial/premium minimal + fix 2 bug review**
-(2026-09-28) **selesai diverifikasi** — tsc 0, build hijau (build ulang
-setelah insiden `.next/`), E2E mode gelap + terang (posisi kop + warna),
-verifikasi posisi elemen galeri, navigasi klien & sapuan 4 halaman
-admin, regresi `/kelas/barista`, 0 console error (React #418
-pre-existing hanya di `/admin/program`) — tetapi **BELUM di-commit**:
-`git status` akan menunjukkan `components/site/GalleryGrid.tsx`,
-`app/globals.css`, `app/(public)/kelas/[slug]/page.tsx`, `AI_CONTEXT/*`,
-`graphify-out/*`. **Menunggu persetujuan user** sebelum commit.
-**Operasi**: server lokal (`npm run start`, port 3000) berjalan —
+Tidak ada task kode yang sedang dikerjakan. Task **redesign galeri
+editorial + fix 2 bug** sudah **di-commit** (`c318627` + `b61d5c4`),
+**ter-push**, dan **terverifikasi live** di
+`https://talentaciptakarya.com` (3 kop program `position: static` tanpa
+tumpang-tindih, 7 baris tahun / 3 terbuka, tanpa overflow, 0 console
+error). `git status` bersih.
+
+**Operasi**: server lokal (`npm run start`, port 3000) boleh berjalan —
 **jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).
-Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
+Sisa pekerjaan berikutnya seluruhnya **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
 
@@ -319,23 +313,16 @@ Tanpa instruksi eksplisit dari user:
 
 ## NEXT ACTION
 
-**1. Commit + push task visual galeri + fix 2 bug review** — source
-(`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`) **dan**
-`AI_CONTEXT/` dalam satu commit `feat:` (perbaikan bug boleh dipisah
-commit `fix:`); `graphify-out/` menyusul commit `chore:`. **Hanya bila
-user menyetujui**; setelah push tunggu deploy Vercel lalu verifikasi
-live (galeri mode gelap + terang, 0 console error).
-
-**2. Pekerjaan non-kode (butuh akses user):** ganti `RESEND_API_KEY`
+**1. Pekerjaan non-kode (butuh akses user):** ganti `RESEND_API_KEY`
 (resend.com) di `.env` lokal dan di Vercel, lalu Redeploy → uji email
 reset password di `/admin/forgot-password` → email terkirim; isi form
 pendaftaran → `/admin/pendaftaran` → kolom `statusEmail = sent`; tambah
 MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend (Issue 3);
 sambil memverifikasi modal pendaftaran di live.
 
-*(Task galeri `PROGRAM → TAHUN → FOTO` selesai: commit `368d947` +
-`6accd2a`, sudah ter-push. Task visual galeri selesai diverifikasi,
-belum di-commit. Isi tahun 8 foto lama sudah terpantau beres.)*
+*(Task redesign galeri + fix 2 bug selesai: `c318627` + `b61d5c4`, sudah
+ter-push dan terverifikasi live. Task galeri `PROGRAM → TAHUN → FOTO`
+sebelumnya: `368d947` + `6accd2a`, juga live.)*
 
 ## VERIFICATION
 
