@@ -853,6 +853,25 @@ mentah. **`components/site/Header.tsx` adalah satu-satunya pemakai elemen
 `<header>` yang sah** — komponen lain (publik maupun admin) memakai
 `<div>`.
 
+**Perpanjangan 2026-09-28 (jebakan yang sama, dua kali):** aturan yang sama
+juga berlaku untuk elemen `<footer>`:
+
+```css
+footer{background:#0F1836; color:#8B98BE; padding:56px 0 28px;}
+```
+
+di `app/globals.css` (± baris 646) — disengaja untuk footer situs publik
+(`components/site/Footer.tsx`). Di panel detail Email Center
+(`components/admin/EmailCenter.tsx`) blok kop email ditulis `<header>` dan
+blok tombol bawah `<footer>` → keduanya kena rule publik:
+`<header>` meloncat jadi `position:fixed` `z-index:100` di `0,0` sehingga
+**menimpa sidebar admin** (teks "From:/To:/Received:/Status:" tergambar di
+atas menu) dan **menutupi form Tulis Email** saat halaman di-scroll; `<footer>`
+jadi **kotak navy gelap** yang tidak sesuai desain. Keduanya diperbaiki ke
+`<div>`. Jadi aturan praktis: **di dalam halaman/komponen, jangan pakai tag
+`header` maupun `footer`** — dua-duanya sudah "dimiliki" navbar/footer situs
+publik.
+
 ### Reason
 
 Kejadian 2026-09-28: kop program yang ditulis `<header
@@ -1134,3 +1153,206 @@ user tidak bisa pasti sedang di halaman mana.
 - Aturan `startsWith(href + "/")` sudah menangani route child di masa depan.
 - Jangan pakai `filter`/gradient untuk active state; warna sidebar tetap
   navy + overlay putih.
+
+## Decision: Email Center — Hostinger (inbound IMAP) + Resend (outbound), cache di database
+
+### Decision
+
+Pemisahan peran yang diminta user, tanpa mengganti provider yang sudah ada:
+
+1. **Hostinger / IMAP = email MASUK.** `info@talentaciptakarya.com` dibaca
+   lewat IMAP resmi (`MAIL_IMAP_*`). Tidak ada scraping webmail.
+2. **Resend = email KELUAR.** Tidak ada SMTP outgoing kedua, tidak ada
+   provider baru. Modul existing `lib/resend.ts` yang ditambah
+   `sendPanelEmail()` — bukan service email kedua.
+3. **Cache di database**, bukan query IMAP langsung tiap buka halaman:
+   - `EmailMessage` (inbound + log outbound) dan `EmailAttachment`
+     (metadata lampiran inbound).
+   - Sync IMAP → DB saat buka/refresh; UI hanya bicara dengan database
+     (tidak pernah IMAP dari browser).
+4. **Anti-duplikasi**: `messageId` (RFC 5322) `@unique`. Tanpa
+   Message-ID → kunci sintetis `imap:<folder>:<uid>`.
+5. **Reply threading sungguhan** (bukan sekadar awalan "Re:"): header
+   `In-Reply-To` + `References` diambil dari email asal lalu dikirim lewat
+   `headers` (didukung SDK Resend). Email Compose/Teruskan tidak mengirim
+   header threading.
+6. **Status email jujur**:
+   - `sent` = API Resend **menerima** permintaan (belum berarti sampai);
+   - `delivered` / `bounced` / `failed` **hanya** dari webhook Resend
+     (`/api/resend/webhook`, signature diverifikasi HMAC; route menolak
+     semua event bila `RESEND_WEBHOOK_SECRET` belum diisi);
+   - `skipped` bila API key kosong.
+   Tidak pernah mengklaim "delivered" hanya karena request API sukses.
+7. **HTML email tidak dipercaya**: disanitasi di **server** dengan
+   `sanitize-html` (allowlist ketat; buang `script`, `iframe`, `form`,
+   `on*`, `javascript:`, CSS berbahaya). Gambar `cid:` ditulis ulang ke
+   route lampiran terproteksi auth; `cid:` yang tak ketemu dibuang.
+8. **Route lampiran wajib auth sendiri**: `middleware.ts` hanya melindungi
+   `/admin/*`, jadi `/api/admin/email/attachment/[id]` memanggil `auth()`
+   dan mengembalikan 401 tanpa sesi. Isi file diambil dari IMAP saat
+   dipinta — kredensial tidak pernah sampai ke browser.
+9. **Dependensi baru (disetujui user 2026-09-28)**: `imapflow` (IMAP),
+   `mailparser` (MIME), `sanitize-html` (sanitasi HTML) + dua `@types`.
+10. **Kolom `direction` & `status` tetap `String` + validasi Zod** mengikuti
+    konvensi project (bukan Prisma `enum`).
+11. **Badge unread di sidebar** memakai angka unread aktual dari DB
+    (`adminNavCounts()` — sumber tunggal untuk semua badge admin).
+
+### Reason
+
+Permintaan user: "Lihat email masuk, baca, tandai read/unread, cari, balas,
+tulis, kirim, lihat terkirim, lampiran, dan status" — semuanya dari
+`/admin/email`, dengan Hostinger sebagai mailbox masuk dan Resend sebagai
+pengirim. Cache DB dipilih karena (a) halaman admin di Vercel tidak boleh
+menunggu koneksi IMAP tiap muat, (b) read/unread, search, dan badge unread
+menjadi murah dan konsisten, (c) anti-duplikasi terjamin lewat `messageId`.
+
+### Alternatives Considered
+
+- **Live IMAP tanpa cache** (ditolak): tiap buka Inbox = koneksi IMAP
+  (lambat & rapuh di serverless), dan read/unread harus bergantung pada
+  flag `\Seen` tanpa bisa dicari.
+- **Menyimpan isi lampiran di database** (ditolak): membengkakkan DB;
+  cukup metadata, isi diambil on-demand dari IMAP.
+- **Tampilan `<iframe sandbox>` untuk HTML email** (ditolak): menambah
+  dependensi sudah disetujui, dan `sanitize-html` memberi kontrol penuh
+  atas tag/atribut yang diizinkan.
+- **SMTP/HTTP API baru untuk outgoing** (ditolak): Resend sudah bekerja.
+- **Clone Gmail** (ditolak): memakai design system admin yang ada
+  (navy, kartu putih, border halus, radius existing).
+
+### Current Implementation
+
+- `lib/mail/imap.ts` (koneksi, fetch, flag `\Seen`, ambil lampiran),
+  `lib/mail/sync.ts` (sync + read/unread), `lib/mail/sanitize.ts`,
+  `lib/mail/outbound.ts` (compose/reply/teruskan + validasi lampiran).
+- `lib/resend.ts` → `sendPanelEmail()` + `panelResendKey()`.
+- `app/admin/(dashboard)/email/page.tsx` (server: query, sanitasi, pagination
+  20) + `components/admin/EmailCenter.tsx` (client: tab, cari, filter,
+  detail, form).
+- `app/api/admin/email/attachment/[id]/route.ts`,
+  `app/api/resend/webhook/route.ts`.
+- `app/admin/actions.ts` → `syncEmailInboxAction`, `setEmailReadAction`,
+  `sendEmailAction` (semua lewat `requireAdmin()`).
+- `lib/adminCounts.ts` (badge sidebar, termasuk unread email),
+  `components/admin/AdminNav.tsx` (menu "Email" + badge unread).
+
+### Important
+
+- **Kredensial hanya di environment** (`.env` lokal + Vercel), tidak pernah
+  di source code: `MAIL_IMAP_HOST`, `MAIL_IMAP_PORT`, `MAIL_IMAP_USER`,
+  `MAIL_IMAP_PASSWORD`, `MAIL_IMAP_SECURE`, `MAIL_IMAP_TIMEOUT_MS`,
+  `PANEL_RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`.
+- Tanpa `MAIL_IMAP_*` → Inbox nonaktif (UI menjelaskan), email keluar tetap
+  berfungsi. Tidak ada data palsu/mock.
+- **Status inbound vs outbound tidak dicampur**: `received` hanya untuk
+  email masuk.
+- Serverless: operasi IMAP dibatasi timeout (`MAIL_IMAP_TIMEOUT_MS`, default
+  20 detik) agar tidak menggantung.
+- Kalau nanti `direction`/`status` bertambah, tetap lewat Zod — jangan
+  mengarang enum database.
+- **Terbukti diuji (2026-09-28)**: inbound sync 22 email nyata, 0 duplikat
+  setelah 3× refresh, lampiran terunduh 200, flag `\Seen` bolak-balik,
+  reply memakai header threading asli, dan 3 email Resend ke `info@` masuk
+  kembali ke Inbox — jadi pemisahan Hostinger (inbound) / Resend (outbound)
+  terbukti bekerja pada mailbox sungguhan.
+
+## Decision: Email Center — draft, hapus, dan pencarian akurat
+
+### Decision
+
+1. **Draft** memakai tabel yang sama (`EmailMessage`) dengan
+   `direction: "draft"` dan `status: "draft"` — bukan model/tabel baru.
+   - Hanya **teks polos** yang disimpan (`textBody`); HTML dibangun ulang saat
+     kirim, sehingga draft tidak pernah menjadi sumber HTML yang belum
+     disanitasi.
+   - Disimpan lewat tombol **"Simpan Draft"** (bukan autosave) — pilihan
+     disengaja: admin tahu persis kapan email tersimpan, dan tidak ada draft
+     liar yang tersimpan karena satu ketikan tak sengaja.
+   - Membuka draft langsung menampilkan form berisi isinya (To/Cc/Bcc/Subjek/
+     Isi) dengan judul "Edit Draft"; `draftId` ikut terkirim dan **draft
+     dihapus otomatis setelah berhasil terkirim**.
+   - **Lampiran tidak disimpan di draft** (isi berkas tidak disimpan di
+     database). Kalau admin menekan Simpan Draft sambil ada lampiran, UI
+     memberi tahu agar tidak ada kejutan.
+   - Urutan tab: **Inbox · Terkirim · Draft**. Jumlah draft tampil di label
+     tab; tidak masuk ke badge sidebar (badge hanya untuk belum dibaca).
+2. **Hapus email** berbeda perlakuan menurut sumbernya:
+   - `inbound` → **disembunyikan** (`deletedAt`), bukan dihapus permanen.
+     Alasannya jujur: emailnya masih ada di mailbox Hostinger, jadi bila
+     dihapus permanen dari database, email itu **muncul lagi setiap kali
+     Inbox disegarkan**. `lib/mail/sync.ts` kini melewati (skip) baris yang
+     punya `deletedAt`, jadi email tersembunyi tidak pernah dibangkitkan lagi.
+   - `outbound` dan `draft` → **dihapus permanen** (lampiran ikut terhapus
+     lewat `onDelete: Cascade`).
+   - Semua query (daftar, detail, badge unread, tandai read/unread)
+     menyaring `deletedAt: null`.
+   - Tombol "Hapus" selalu meminta konfirmasi, dengan kalimat yang jujur
+     ("Sembunyikan email ini dari daftar?" vs "Hapus permanen?").
+3. **Pencarian akurat** (`lib/mail/search.ts`):
+   - Kata kunci dipecah per spasi dan digabung **AND**. Oriented utama:
+     "deployment vercel" dulu dicari sebagai satu frasa utuh sehingga **0
+     hasil**, kini menemukan email yang memuat kedua kata.
+   - Setiap kata boleh cocok di subjek, nama/alamat pengirim, **penerima
+     (To)**, Cc, Bcc, isi email, pratinjau, atau **nama lampiran**.
+   - Operator: `from:`, `to:`, `subjek:`/`subject:`, `dengan:lampiran`,
+     `lampiran:ya|tidak`. Nilai boleh berkutip (`subjek:"Permintaan pelatihan"`).
+   - Kata yang cocok **disorot** di daftar. Sorotan dibuat dengan elemen React
+     (`<mark>`), bukan `dangerouslySetInnerHTML` — teks dari internet tidak
+     pernah masuk HTML mentah.
+   - Batas: pencarian tetap `LIKE %…%` (tanpa index trigram), jadi pada
+     mailbox puluhan ribu email ini akan melambat. Index `pg_trgm` belum
+     dipasang (butuh ekstensi Postgres di luar `prisma db push`).
+
+### Reason
+
+Permintaan user: "draft seperti pada email lainnya", "opsi untuk delete
+email", dan "cari email lebih akurat". Ketiganya/domainnya berbeda:
+
+- Draft memakai tabel yang sama agar tidak menambah model baru dan tetap
+  ikut Hitung/meter. Menyimpan HTML mentah di draft justru membuka
+  celah baru (HTML yang belum disanitasi) tanpa ada gunanya.
+- Penghapusan email masuk **tidak bisa** jadi hard delete selama sync IMAP
+  masih berjalan. Tombstone adalah satu-satunya cara supaya "hapus" berarti
+  hilang dari daftar secara permanen, tanpa mengorbankan kemampuan refresh.
+- Pencarian lama memakai satu `OR` dengan `contains` atas seluruh string
+  query, sehingga frasa dua kata mustahil cocok. Memecah per kata +
+  operator + sorotan adalah peningkatan akurasi terbesar tanpa mengubah
+  skema.
+
+### Alternatives Considered
+
+- Autosave draft (ditolak — lihat alasan di atas; bisa ditambahkan nanti).
+- Tabel `EmailDraft` terpisah (ditolak — duplikasi kolom & aturan validasi
+  yang sama; `direction` sudah cukup).
+- Hard delete semua email termasuk inbound (ditolak — email akan muncul
+  kembali tiap refresh;dipilih user juga).
+- Menyorot kata dengan `<span dangerouslySetInnerHTML>` (ditolak — tidak
+  perlu, dan berisiko XSS dari teks email).
+- PostgreSQL full-text search / `pg_trgm` (ditolak untuk sekarang — perlu
+  ekstensi yang tidak dikelola `prisma db push`; cukup dicatat sebagai
+  catatan performa).
+
+### Current Implementation
+
+- `lib/mail/search.ts` (`parseSearchQuery`, `buildEmailWhere`,
+  `highlightTerms`), `lib/mail/drafts.ts` (`saveDraft`, `dropDraft`).
+- `app/admin/actions.ts` → `saveDraftAction`, `deleteEmailAction`
+  (keduanya lewat `requireAdmin()`).
+- `components/admin/EmailCenter.tsx` → tab Draft, tombol Simpan Draft
+  (`formAction` terpisah dari tombol Kirim pada form yang sama), konfirmasi
+  hapus, komponen `Highlight`.
+- `app/admin/(dashboard)/email/page.tsx` → `tab=draft`, `deletedAt: null`,
+  umpan kata untuk sorotan.
+- `prisma/schema.prisma` → `EmailMessage.deletedAt DateTime?`.
+
+### Important
+
+- Jangan mengubah `deletedAt` jadi hard delete untuk inbound tanpa
+  bersamaan mengubah `lib/mail/sync.ts` (email akan muncul lagi).
+- Draft tidak boleh mulai menyimpan HTML mentah; kalau nanti butuh format
+  kaya, HTML harus tetap dibangun saat kirim (`lib/mail/outbound.ts`).
+- Pencarian tetap case-insensitive di semua kolom; operator dan kata kunci
+  bisa digabung (`from:notifications deployment` = 2 syarat).
+- Sorotan hanya berlaku untuk kata kunci bebas, bukan nilai operator.
+

@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { blobEnabled } from "@/lib/storage";
+import { adminNavCounts } from "@/lib/adminCounts";
 import SignOutButton from "@/components/admin/SignOutButton";
 import AdminNav from "@/components/admin/AdminNav";
 import ThemeToggle from "@/components/site/ThemeToggle";
@@ -16,11 +16,8 @@ export default async function AdminLayout({
   const session = await auth();
   if (!session) redirect("/admin/login");
 
-  const [pesanCount, fotoCount, pendaftaranBaru] = await Promise.all([
-    prisma.contactMessage.count().catch(() => 0),
-    prisma.galleryImage.count().catch(() => 0),
-    prisma.pendaftaran.count({ where: { status: "baru" } }).catch(() => 0),
-  ]);
+  // Satu sumber angka badge (sidebar + halaman Email Center).
+  const counts = await adminNavCounts();
 
   return (
     <div className="min-h-screen md:min-h-0 md:h-dvh bg-paper text-ink flex md:overflow-hidden">
@@ -31,9 +28,10 @@ export default async function AdminLayout({
         </div>
         {/* Menu + active state ada di AdminNav (client, usePathname). */}
         <AdminNav
-          pesanCount={pesanCount}
-          fotoCount={fotoCount}
-          pendaftaranBaru={pendaftaranBaru}
+          pesanCount={counts.pesan}
+          fotoCount={counts.foto}
+          pendaftaranBaru={counts.pendaftaranBaru}
+          unreadEmail={counts.unreadEmail}
         />
         <div className="mt-auto shrink-0 space-y-3">
           <div className="flex items-center justify-between gap-2">
@@ -54,9 +52,10 @@ export default async function AdminLayout({
         <div className="md:hidden shrink-0 bg-navy text-white p-4 flex items-center gap-3 overflow-x-auto">
           <AdminNav
             variant="mobile"
-            pesanCount={pesanCount}
-            fotoCount={fotoCount}
-            pendaftaranBaru={pendaftaranBaru}
+            pesanCount={counts.pesan}
+            fotoCount={counts.foto}
+            pendaftaranBaru={counts.pendaftaranBaru}
+            unreadEmail={counts.unreadEmail}
           />
           <span className="ml-auto" />
           <ThemeToggle />

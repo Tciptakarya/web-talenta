@@ -112,6 +112,90 @@ export const ALLOWED_IMAGE_TYPES = [
 
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB sebelum kompresi
 
+/* ------------------------------ Email Center ------------------------------ */
+
+/** Batas lampiran email (Resend & diamankan di sisi server). */
+export const MAX_EMAIL_ATTACHMENT_BYTES = 8 * 1024 * 1024; // 8 MB per file
+export const MAX_EMAIL_ATTACHMENTS = 5;
+export const MAX_EMAIL_BODY_CHARS = 100_000;
+
+/** Ekstensi yang DITOLAK (bisa dieksekusi / phishing). */
+const BLOCKED_EMAIL_EXT = [
+  "exe", "bat", "cmd", "com", "scr", "msi", "msix", "pif", "vbs", "vbe",
+  "js", "mjs", "cjs", "jar", "sh", "bash", "ps1", "php", "phtml", "apk",
+  "dmg", "app", "hta", "reg", "lnk", "wsf", "wsh",
+];
+
+/** Nama file aman: buang path & karakter kontrol, batasi panjang. */
+export function safeEmailFilename(name: string): string {
+  const base = name.split(/[\\/]/).pop() ?? "lampiran";
+  const cleaned = base.replace(/[\u0000-\u001f\u007f]/g, "").trim();
+  return (cleaned || "lampiran").slice(0, 120);
+}
+
+/** True bila ekstensi file terlarang. */
+export function isBlockedEmailFilename(name: string): boolean {
+  const ext = safeEmailFilename(name).split(".").pop()?.toLowerCase() ?? "";
+  return BLOCKED_EMAIL_EXT.includes(ext);
+}
+
+const emailField = (label: string) =>
+  z
+    .string()
+    .optional()
+    .default("")
+    .transform((v) =>
+      v
+        .split(/[;,\n]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+    )
+    .refine((list) => list.every((a) => z.email().safeParse(a).success), {
+      message: `Format email ${label} tidak valid. Pisahkan dengan koma.`,
+    });
+
+export const emailSendSchema = z.object({
+  mode: z.enum(["compose", "reply", "forward"]),
+  to: emailField("penerima").refine((v) => v.length > 0, {
+    message: "Penerima wajib diisi.",
+  }),
+  cc: emailField("cc"),
+  bcc: emailField("bcc"),
+  subject: z
+    .string()
+    .trim()
+    .min(1, "Subjek wajib diisi.")
+    .max(300, "Subjek maksimal 300 karakter."),
+  body: z
+    .string()
+    .trim()
+    .min(1, "Isi email wajib diisi.")
+    .max(MAX_EMAIL_BODY_CHARS, "Isi email terlalu panjang."),
+  /** id email asal (untuk reply/teruskan → header threading asli) */
+  replyToId: z.coerce.number().int().positive().optional(),
+  /** id draft yang sedang diedit (dihapus setelah terkirim) */
+  draftId: z.coerce.number().int().positive().optional(),
+});
+
+export type EmailSendInput = z.infer<typeof emailSendSchema>;
+
+/**
+ * Draft — versi longgar dari `emailSendSchema`: penerima, subjek, dan isi
+ * boleh kosong (memang itu wrench draft yang belum selesai), tapi alamat tetap
+ * harus valid dan panjang dibatasi.
+ */
+export const emailDraftSchema = z.object({
+  to: emailField("penerima"),
+  cc: emailField("cc"),
+  bcc: emailField("bcc"),
+  subject: z.string().trim().max(300, "Subjek maksimal 300 karakter.").default(""),
+  body: z.string().max(MAX_EMAIL_BODY_CHARS, "Isi draft terlalu panjang.").default(""),
+  draftId: z.coerce.number().int().positive().optional(),
+  replyToId: z.coerce.number().int().positive().optional(),
+});
+
+export type EmailDraftInput = z.infer<typeof emailDraftSchema>;
+
 /* ------------------------------ Jadwal Pelatihan ------------------------------ */
 
 export const HARI_LIST = [

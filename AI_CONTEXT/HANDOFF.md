@@ -22,12 +22,24 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `b61d5c4` **sudah ter-push & live**; isi: `chore:` refresh
-  `graphify-out/` (`b61d5c4`) dan task **redesign galeri editorial +
-  fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
-  Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
-  error).
-- **Working tree berisi 2 task baru (BELUM di-commit):**
+- HEAD `64cd322` **sudah ter-push & live** (active state sidebar +
+  penghapusan plat putih footer). Task **redesign galeri editorial + fix 2
+  bug** & **anchor hash** juga sudah live (`c318627`/`19a2d3c`).
+- **Working tree berisi 3 task baru (BELUM di-commit):**
+  3. **Admin Email Center** (`/admin/email`) — `lib/mail/{imap,sync,sanitize,outbound}.ts`,
+     `lib/adminCounts.ts`, `components/admin/EmailCenter.tsx`,
+     `app/admin/(dashboard)/email/page.tsx`,
+     `app/api/admin/email/attachment/[id]/route.ts`,
+     `app/api/resend/webhook/route.ts`, `lib/resend.ts` + `sendPanelEmail()`,
+     `lib/schemas.ts` + `emailSendSchema`, 3 Server Action baru, 2 model
+     Prisma (`EmailMessage`, `EmailAttachment`), dependensi baru
+     `imapflow`/`mailparser`/`sanitize-html` (+2 `@types`),
+     `components/admin/AdminNav.tsx` (menu "Email" + badge unread),
+     `app/admin/(dashboard)/layout.tsx`, `.env.example`,
+     `AI_CONTEXT/`. **Outgoing terverifikasi nyata** (2 email terkirim via
+     Resend, `sent` + Ref, lampiran terkirim, `.exe` ditolak, 401 tanpa
+     sesi, 0 secret di bundle browser, mobile 390px aman).
+     **Inbox belum terverifikasi** — `MAIL_IMAP_*` belum diisi.
   1. **Active state menu sidebar admin** — `components/admin/AdminNav.tsx`
      (baru, client, `usePathname`), `app/admin/(dashboard)/layout.tsx`
      (menu + `Link` dihapus), `app/globals.css`. 9/9 route admin terverifikasi
@@ -67,7 +79,62 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, SUDAH ter-push `6cf75de` + `19a2d3c`, LIVE
+**Task terbaru: Admin Email Center** (2026-09-28, source BELUM di-commit) —
+`/admin/email` sesuai spesifikasi user: Inbox (Hostinger IMAP, cache DB),
+baca, tandai read/unread, cari, balas (dengan header `In-Reply-To`/
+`References` asli), teruskan, tulis email (To/Cc/Bcc), tab Terkirim, lampiran
+masuk (stream via route terproteksi) & keluar (serta validasi ukuran/MIME/
+nama/ekstensi), filter, pagination 20, refresh, badge unread di sidebar.
+Arsitektur: **Hostinger = inbound, Resend = outbound** (dipisah tegas, tanpa
+provider baru), cache `EmailMessage`/`EmailAttachment` di database dengan
+`messageId @unique` anti-duplikasi, sanitasi HTML email di server
+(`sanitize-html`, `cid:` ditulis ulang ke route auth), status jujur
+(`sent` = API diterima; `delivered`/`bounced` hanya dari webhook Resend yang
+signature-nya diverifikasi). Dependency baru disetujui user:
+`imapflow@2.1.0`, `mailparser@3.9.29`, `sanitize-html@2.17.7` (+2 `@types`).
+`tsc` 0, build hijau (24 routes), 0 console error. **Bug nyata ditemukan saat
+E2E & diperbaiki**: form compose tidak muncul di `?tab=compose` (state awal
+tak berlaku karena komponen tak remount) dan `email=1` terhapus dari URL
+(aturan reset `page=1` terlalu luas) → email pertama tidak bisa dibuka.
+**Outgoing terbukti nyata**: 2 email terkirim (compose + lampiran), status
+`sent` + Ref Resend, `virus.exe` ditolak, 401 tanpa sesi pada route lampiran,
+503 tanpa secret pada webhook, tidak ada secret di chunk browser, mobile
+390px tanpa overflow. **INBOUND juga terbukti setelah user mengisi
+`MAIL_IMAP_*`** (semua PASS): 22 email sync dari mailbox Hostinger, **0
+duplikat setelah 3× refresh** (anti-duplikasi `messageId` bekerja),
+`^ Refresh` mengUpdater, pencarian 4 hasil, **lampiran terunduh 200** dari
+IMAP (`Content-Disposition: attachment; filename="catatan-uji.txt"`, isi
+identik), **balas memakai header asli** (`inReplyTo`/`References`/`threadId`
+= Message-ID email asal, subjek `Re: ...`; compose tetap `null`), read/
+unread tersimpan di DB **dan** flag `\Seen` mailbox (badge 7 → 8, bertahan
+setelah refresh), **round trip**: 3 email Resend ke `info@` masuk kembali ke
+Inbox, dan sanitasi HTML email Vercel (8.186 karakter) menghasilkan 0
+script/iframe/form/on-handler dengan semua link dipaksa
+`rel="noopener noreferrer nofollow"`. Banner teks juga disederhanakan
+menjadi satu kalimat (tanpa nama variabel env).
+**Tambahan (permintaan user, 2026-09-28):** **draft** (tab Draft + tombol
+"Simpan Draft", tanpa autosave; draft terhapus setelah terkirim; lampiran
+tidak ikut disimpan), **hapus email** (keluar & draft permanen; masuk hanya
+disembunyikan via `deletedAt` + `sync.ts` melewatinya — terbukti tidak
+muncul lagi setelah Refresh), dan **pencarian akurat** (`lib/mail/search.ts`:
+AND per kata, To/Cc/Bcc + nama lampiran ikut dicari, operator
+`from:`/`to:`/`subjek:`/`dengan:lampiran`, sorotan `<mark>`; "deployment
+vercel" dari 0 → 5 hasil). Skema: `EmailMessage.deletedAt`.
+**Bug ke-3 yang dilaporkan user via screenshot juga sudah diperbaiki**:
+blok kop detail email
+(`<header>`) & blok tombol bawah (`<footer>`) kena rule elemen global
+`header{position:fixed…z-index:100}` / `footer{background:#0F1836…}`
+di `globals.css` milik navbar/footer situs publik → header menimpa sidebar
+dan menutupi form Tulis Email, footer jadi kotak navy. Diganti `<div>`;
+terverifikasi di 1920px (header `position:static`, footer transparan, 4
+kontrol form terdeteksi sebagai elemen teratas & bisa diketik). Lihat
+*IMPORTANT DECISIONS* 21 — jangan pakai tag `<header>`/`<footer>` lagi.
+**Catatan build**: semua tes ini lewat `next dev` milik user; `tsc` 0, dan
+`npm run build` perlu **diulang** sebelum commit/deploy karena `next dev`
+sekarang hidup (`next dev` menghapus `BUILD_ID` bila build dijalankan
+bersamaan — persis insiden yang sudah terdokumentasi di *Known Issues* 18).
+
+**Task sebelumnya (source code, SUDAH ter-push `6cf75de` + `19a2d3c`, LIVE
 & terverifikasi 0 console error): bersihkan fragment anchor dari address
 bar** (2026-09-28, keputusan user dari 3 opsi yang dibahas) — link section
 (`#visimisi`, `#galeri`, dst) tidak lagi menampilkan `#...` di address bar.
@@ -220,9 +287,16 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Dua task selesai diimplementasikan & diverifikasi, **keduanya BELUM
+Tiga task selesai diimplementasikan & diverifikasi, **ketiganya BELUM
 di-commit** — menunggu persetujuan user:
 
+0. **Admin Email Center** (`/admin/email`) — selesai & terverifikasi lokal
+   (outgoing nyata via Resend). **Menunggu `MAIL_IMAP_*`** untuk menguji
+   inbound. Ringkasan di *LAST COMPLETED*. Berkode di `lib/mail/*`,
+   `components/admin/EmailCenter.tsx`,
+   `app/admin/(dashboard)/email/page.tsx`,
+   `app/api/admin/email/attachment/[id]/route.ts`,
+   `app/api/resend/webhook/route.ts`, `lib/adminCounts.ts`.
 1. **Active state menu sidebar admin** (spesifikasi 12 bagian) —
    `components/admin/AdminNav.tsx` (baru) + `app/admin/(dashboard)/layout.tsx`
    + `app/globals.css`. `tsc` 0, build hijau 22 routes; logika 17/17 kasus;
@@ -247,13 +321,22 @@ Sisa pekerjaan berikutnya seluruhnya **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
 
-1. **`RESEND_API_KEY` tidak valid (401)** → semua email gagal. Data tetap
-   tersimpan (PRD §8); kolom `statusEmail` jadi `failed`. Perlu key baru di
-   `.env` lokal **dan** Vercel → Redeploy.
-2. **MX Titan belum di-add ulang di Vercel DNS** → email `info@` berisiko
-   tidak diterima setelah pindah nameserver.
-3. **Domain Resend belum terverifikasi** (record SPF/DKIM/DMARC belum ada di
-   Vercel DNS) → `CONTACT_EMAIL_FROM` `info@` belum boleh dipakai.
+1. **`RESEND_API_KEY` (notifikasi aplikasi) tidak valid (401)** → email
+   kontak/pendaftaran/reset password gagal terkirim. Data tetap tersimpan
+   (PRD §8); kolom `statusEmail` jadi `failed`. **Email Center sudah pakai
+   key sendiri** (`PANEL_RESEND_API_KEY`, valid) — jadi perbaiki hanya
+   bila notifikasi aplikasi perlu hidup lagi. Jangan lupa: key itu juga
+   harus disalin ke Vercel.
+2. ~~**`MAIL_IMAP_*` belum diisi**~~ — **TERISI** (user, 2026-09-28).
+   Inbox terbukti jalan: 22 email sync, 0 duplikat setelah 3× refresh,
+   lampiran terunduh 200, flag `\Seen` bolak-balik, reply threading asli.
+   **Sisa:** nilai yang sama harus disalin ke Vercel.
+3. **Domain Resend sudah `verified`** (2026-09-28, `GET /domains` → 200);
+   pengiriman nyata dari Email Center berhasil. MX Titan juga sudah ada
+   (`mx1/mx2.titan.email`). Though ada
+   `inbound-smtp.sa-east-1.amazonaws.com` (SES, **pref 9**) yang lebih dulu
+   dicoba, **round trip terproof**: 3 email Resend ke `info@` benar-benar
+   masuk ke mailbox Hostinger — jadi bukan blocker.
 4. **Fix modal belum diverifikasi di live** `talentaciptakarya.com`.
 5. **`BLOB_READ_WRITE_TOKEN` kosong** → foto masuk `public/uploads/`
    (di-gitignore) → berisiko hilang di Vercel.
@@ -309,6 +392,27 @@ Sisa pekerjaan berikutnya seluruhnya **konfigurasi (ops, bukan kode)**.
     cek `Get-Process node` + `Get-ChildItem .next\static\chunks -Recurse
     -File`. Detail: `DECISIONS.md` → *Hanya SATU server Next pada satu
     waktu*.
+19. **Status pengiriman email tidak boleh dikarang** — `sent` hanya berarti
+    API Resend menerima; `delivered`/`bounced` hanya dari webhook
+    (`RESEND_WEBHOOK_SECRET` + signature HMAC). Route webhook menolak semua
+    event bila secret belum diisi.
+20. **HTML email harus disanitasi server-side** sebelum masuk browser
+    (`sanitize-html`); `cid:` ditulis ulang ke route lampiran yang cek
+    `auth()` sendiri, karena `middleware.ts` hanya melindungi `/admin/*`.
+21. **Jangan pakai tag `<header>` maupun `<footer>` di dalam halaman/komponen**
+    (kecuali navbar/footer situs publik). `app/globals.css` punya rule
+    elemen global tanpa layer: `header{position:fixed;top:0;left:0;right:0;z-index:100}`
+    (± baris 131) dan `footer{background:#0F1836;padding:56px 0 28px}`
+    (± baris 646). Elemen `<header>` di dalam konten akan meloncat ke atas
+    layar & menutupi sidebar/form, dan `<footer>` akan jadi kotak navy.
+    Sudah menimpa dua kali: kop program galeri (`c318627`) dan blok detail
+    Email Center (2026-09-28). Detail: `DECISIONS.md` → *Kop program galeri
+    memakai `<div>*.
+22. **Email inbound tidak boleh di-hard-delete** selama sync IMAP hidup —
+    pakai `deletedAt` (sembunyi), dan `lib/mail/sync.ts` harus tetap
+    melewati baris itu. Draft hanya boleh menyimpan teks polos; HTML
+    dibangun saat kirim. Detail: `DECISIONS.md` → *draft, hapus, dan
+    pencarian akurat*.
 
 ## IMPORTANT DECISIONS
 
@@ -359,16 +463,34 @@ Tanpa instruksi eksplisit dari user:
 
 ## NEXT ACTION
 
-**1. Pekerjaan non-kode (butuh akses user):** ganti `RESEND_API_KEY`
-(resend.com) di `.env` lokal dan di Vercel, lalu Redeploy → uji email
-reset password di `/admin/forgot-password` → email terkirim; isi form
-pendaftaran → `/admin/pendaftaran` → kolom `statusEmail = sent`; tambah
-MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend (Issue 3);
-sambil memverifikasi modal pendaftaran di live.
+**1. Commit (menunggu persetujuan user):** source code Email Center +
+active state sidebar + logo/footer, lalu `graphify update .` (retry sampai
+exit 0) dan commit `chore:` untuk `graphify-out/`.
 
-*(Task redesign galeri + fix 2 bug selesai: `c318627` + `b61d5c4`, sudah
-ter-push dan terverifikasi live. Task galeri `PROGRAM → TAHUN → FOTO`
-sebelumnya: `368d947` + `6accd2a`, juga live.)*
+**2. Pekerjaan non-kode (butuh akses user) - urut dari yang paling membuka
+fitur:**
+
+1. **Hentikan `next dev`** lalu `taskkill /F /IM node.exe` →
+   `npm run build` (ulang, untuk penyederhanaan teks banner) →
+   `npx tsc --noEmit` → `npm run start` → cek ulang `/admin/email`.
+   (`next dev` + build bersamaan menghapus `BUILD_ID` - lihat
+   *Known Issues* 18.)
+2. Salin `PANEL_RESEND_API_KEY` **dan** `MAIL_IMAP_HOST` / `_PORT` /
+   `_USER` / `_PASSWORD` / `_SECURE` ke Vercel Environment Variables
+   (tanpa itu Email Center produksi tidak bisa mengirim maupun menarik
+   email) → Redeploy → cek `https://talentaciptakarya.com/admin/email`.
+3. Daftarkan webhook
+   `https://talentaciptakarya.com/api/resend/webhook` di dashboard Resend
+   + isi `RESEND_WEBHOOK_SECRET` agar status delivered/bounced tercatat
+   nyata.
+4. Isi `RESEND_API_KEY` yang valid → notifikasi aplikasi ikut jalan.
+5. Verifikasi modal pendaftaran di live.
+6. Keputusan: hapus atau pertahankan 3 email uji (2 compose + 1 balas) di
+   tab Terkirim beserta salinannya di Inbox.
+
+*(Task redesign galeri + fix 2 bug: `c318627` + `b61d5c4`, live. Anchor
+hash: `6cf75de` + `19a2d3c`, live. Active state sidebar + footer:
+`1426e01` + `64cd322`, live.)*
 
 ## VERIFICATION
 

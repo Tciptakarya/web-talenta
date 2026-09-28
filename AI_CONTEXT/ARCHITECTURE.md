@@ -69,13 +69,17 @@ app/
   (Animasi `Reveal` dipakai **di dalam tiap halaman / komponen**, bukan di
   layout — mis. `JadwalTerdekat.tsx`.)
 - `admin/(dashboard)/layout.tsx` → **satu-satunya** sumber sidebar untuk
-  seluruh 9 halaman admin (`Dashboard`, `Galeri`, `Testimoni`, `Program`,
+  seluruh 10 halaman admin (`Dashboard`, `Galeri`, `Email`, `Testimoni`, `Program`,
   `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`, `Pesan`). Tidak ada duplikat
   `<aside>` di file lain. Isinya:
   - **Sidebar navy** (`w-64`, `hidden md:flex flex-col`, `p-6`): brand →
-    **`<AdminNav>`** (menu + badge jumlah pesan/foto/pendaftaran) →
-    **account section** (`mt-auto shrink-0`: email admin + `ThemeToggle` +
-    `SignOutButton`).
+    **`<AdminNav>`** (menu + badge jumlah pesan/foto/pendaftaran/**email
+    belum dibaca**) → **account section**
+    (`mt-auto shrink-0`: email admin + `ThemeToggle` + `SignOutButton`).
+  - **Email Center** (`admin/(dashboard)/email/page.tsx` + `EmailCenter.tsx`):
+    server untuk query/sanitasi/pagination, client untuk tab, pencarian,
+    filter, detail, dan form kirim. `lib/adminCounts.ts` = sumber tunggal
+    angka badge (dipakai layout **dan** halaman Email).
   - **Menu & active state** (`components/admin/AdminNav.tsx`, client
     component): **sumber tunggal** menu admin untuk sidebar desktop **dan**
     nav mobile (`variant="mobile"`). Active state dihitung dari
@@ -122,7 +126,8 @@ components/
     │   MateriManager, PendaftaranList, PesanList, TestimoniManager
     ├── LoginForm, ForgotPasswordForm, ResetPasswordForm,
     │   GantiPasswordForm, SignOutButton, UploadForm,
-    │   AdminNav          # menu sidebar + active state (usePathname)
+    │   AdminNav          # menu sidebar + active state (usePathname),
+    │   EmailCenter       # /admin/email: inbox, terkirim, tulis, balas
 ```
 
 ### Hooks & State Management
@@ -157,6 +162,8 @@ components/
 | `app/api/contact/route.ts` | POST | publik | Simpan `ContactMessage` → email Resend (boleh gagal) |
 | `app/api/pendaftaran/route.ts` | POST | publik | Zod → cek jadwal+kuota → simpan `Pendaftaran` → email |
 | `app/api/upload/route.ts` | POST | session | Upload foto: pre-flight storage → sharp → Blob/`public/uploads` → `GalleryImage` |
+| `app/api/admin/email/attachment/[id]/route.ts` | GET | session (**cek `auth()` sendiri**) | Ambil lampiran email masuk dari IMAP → stream (kredensial tidak ke browser) |
+| `app/api/resend/webhook/route.ts` | POST | signature Resend | Status pengiriman nyata (`delivered`/`bounced`/`failed`); menolak event bila `RESEND_WEBHOOK_SECRET` kosong |
 
 ### Server Actions — `app/admin/actions.ts`
 
@@ -253,6 +260,8 @@ Dijelaskan per relasi:
 | | `statusEmail` = `sent\|failed\|skipped` | bukti email dicek setelah penyimpanan |
 | `ContactMessage` | `statusEmail` | pola sama: pesan tetap tersimpan walau email gagal (PRD §8) |
 | `MateriPelatihan` | `tipe` (`VIDEO\|MODUL CETAK\|PDF\|SLIDE`), `fileUrl?`, `linkUrl?` | wajib salah satu (upload **atau** link) |
+| `EmailMessage` | `messageId?` **@unique** (anti-duplikasi), `direction` (`inbound`\|`outbound`\|`draft`), `status` (String + Zod), `isRead`, `deletedAt?` (email masuk yang disembunyikan), `htmlBody?`, `resendId?` | cache email masuk (IMAP) + log email keluar (Resend) + draft; `status` **tidak** pernah diklaim `delivered` tanpa webhook; semua query menyaring `deletedAt: null` |
+| `EmailAttachment` | `filename`, `mimeType`, `size`, `partPath`, `contentId?` | metadata lampiran inbound saja; isi file diambil on-demand dari IMAP (tidak disimpan di DB) |
 | `PasswordResetToken` | `tokenHash @unique`, `expiresAt`, `usedAt?` | hanya hash tersimpan; 30 menit; sekali pakai |
 | `AdminUser` | `email @unique`, `passwordHash` | bcrypt |
 | `GalleryImage` | `year Int?` | tahun kegiatan foto → sub-grup TAHUN di galeri publik; `null` = foto lama belum diatur (grup "Tanpa Tahun") |

@@ -7,25 +7,105 @@
 
 ## Current Development Status
 
-Task **visual galeri editorial/premium minimal** + **fix 2 bug review**
-(2026-09-28) **sudah selesai, di-commit, dan ter-deploy**:
-`c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
-(`graphify-out/`), keduanya ter-push ke `main` dan terverifikasi **live**
-di `https://talentaciptakarya.com` — 3 kop program `position: static`
-(docTop 3503/4767/5224, tanpa tumpang-tindih), 7 baris tahun (3 terbuka),
-chip aktif ada, tanpa horizontal overflow, **0 console error**.
-Task sebelumnya **struktur galeri PROGRAM → TAHUN → FOTO** (`368d947` +
-`6accd2a`) juga sudah live.
+Task **Admin Email Center** (`/admin/email`, spesifikasi 23 bagian user,
+2026-09-28) **sudah diimplementasikan & diverifikasi lokal penuh, BELUM
+di-commit**: Hostinger IMAP = inbound, Resend = outbound, cache di database,
+sanitasi HTML server, route lampiran terproteksi auth, webhook status.
+**Inbound sudah terbukti jalan nyata** (user mengisi `MAIL_IMAP_*`):
+22 email masuk dari mailbox Hostinger, 0 duplikat setelah 3× sync, flag
+`\Seen` bolak-balik dengan mailbox, lampiran terunduh (200, isi identik),
+balas memakai `In-Reply-To`/`References` asli. Outgoing terbukti 3× kirim
+nyata.
+
+Task **active state menu sidebar admin** (2026-09-28) selesai &
+terverifikasi, **juga BELUM di-commit** (akan ikut commit yang sama):
+`components/admin/AdminNav.tsx` (baru, client, `usePathname`),
+`app/admin/(dashboard)/layout.tsx` (menu + `Link` dihapus),
+`app/globals.css` (`.admin-nav-link` / `.is-active`). `tsc` 0, build hijau;
+logika active state 17/17 kasus; **9/9 route admin** tepat 1 menu aktif yang
+benar + `aria-current="page"`; child route `/admin/galeri/edit/[id]` terbukti;
+nav mobile 390px benar; sidebar tetap fixed; 0 console error.
 
 Sisa pekerjaan non-kode (email & DNS):
 
-1. Mengganti `RESEND_API_KEY` yang tidak valid.
-2. Menambah ulang record MX Titan di Vercel DNS.
-3. Verifikasi fitur pendaftaran yang sudah di-push di production.
+1. Menyalin `PANEL_RESEND_API_KEY` **dan** `MAIL_IMAP_*` ke Vercel (produksi
+   butuh keduanya; lokal sudah diisi user).
+2. Mendaftarkan webhook Resend + isi `RESEND_WEBHOOK_SECRET` agar status
+   `delivered`/`bounced` tercatat nyata.
 
 ## Last Completed Work
 
-**Task terbaru (source code, BELUM di-commit): fix 2 bug hasil review
+**Task terbaru: Admin Email Center** (2026-09-28, source BELUM di-commit) —
+fitur `/admin/email` sesuai spesifikasi user: Inbox (Hostinger IMAP),
+balas/teruskan/tulis, tab Terkirim, cari, filter, read/unread, lampiran,
+dan status. Keputusan arsitektur di `DECISIONS.md` → *Email Center —
+Hostinger (inbound IMAP) + Resend (outbound), cache di database*.
+
+- **Baru**: `lib/mail/{imap,sync,sanitize,outbound}.ts`,
+  `lib/adminCounts.ts`, `components/admin/EmailCenter.tsx`,
+  `app/admin/(dashboard)/email/page.tsx`,
+  `app/api/admin/email/attachment/[id]/route.ts`,
+  `app/api/resend/webhook/route.ts`; `lib/resend.ts` + `sendPanelEmail()`;
+  `lib/schemas.ts` + `emailSendSchema`; 3 Server Action baru; 2 model
+  (`EmailMessage`, `EmailAttachment`; `prisma db push` additive, data aman).
+- **Dependensi** (disetujui user): `imapflow@2.1.0`, `mailparser@3.9.29`,
+  `sanitize-html@2.17.7`, + `@types/mailparser`, `@types/sanitize-html`.
+  `npm audit` tetap 5 vulnerability (tidak bertambah).
+- **Bug nyata ditemukan saat E2E & sudah diperbaiki**:
+  1. `?tab=compose` tidak menampilkan form (navigasi client-side tidak
+     remount → `useState` awal tak berlaku) → mode form sekarang di-derive
+     dari prop.
+  2. Parameter `email=1` ikut terhapus (aturan "reset `page=1`" memakai
+     nilai `1` untuk semua key) → email **pertama** di daftar tidak bisa
+     dibuka.
+- **Verifikasi lokal** (`npm run start` + sesi admin): `tsc` 0; build hijau
+  (24 routes); nav "Email" aktif + `aria-current`; `?tab=compose` berisi
+  form; kirim nyata → tab Terkirim, `Status: Terkirim · Ref
+  01a0e6be-8515-7e3e-b028-9a0ebb20067c`; lampiran `catatan-uji.txt`
+  terkirim (indikator 📎 muncul); `virus.exe` **ditolak** ("tipe berkas
+  berisiko", tidak terkirim); pencarian "lampiran" → 1 hasil, "zzz" → 0 +
+  pesan kosong; `/api/admin/email/attachment/1` → **401** tanpa sesi;
+  `/api/resend/webhook` → **503** tanpa secret; tidak ada pola
+  `re_*`/`PANEL_RESEND_API_KEY`/`MAIL_IMAP_PASSWORD` di chunk browser;
+  mobile 390px: tanpa horizontal overflow, nav mobile tampil, sidebar
+  tersembunyi; 0 console error.
+- **Verifikasi INBOUND setelah user mengisi `MAIL_IMAP_*`** (semua PASS):
+  - Sync menarik **22 email nyata** dari mailbox Hostinger (pengirim
+    `notifications@vercel.com`, `info@`, dst.), `messageId` unik semua
+    (**0 duplikat setelah 3× refresh**), 0 email tanpa Message-ID.
+  - **Lamparan inbound terunduh** dari IMAP: HTTP **200**,
+    `Content-Disposition: attachment; filename="catatan-uji.txt"`,
+    `text/plain`, isi identik dengan berkas yang diunggah.
+  - **Balas** otomatis terisi (To terkunci, subjek otomatis) dan terkirim
+    dengan header asli: `inReplyTo`, `referencesText`, `threadId` = Message-ID
+    email asal; subjek menjadi `Re: ...`; email compose punya
+    `inReplyTo = null` (tidak ada threading palsu).
+  - **Read/unread** tersimpan di DB **dan** flag `\Seen` di mailbox:
+    menandai "belum dibaca" → badge sidebar 7 → 8, dan setelah refresh
+    state tetap (artinya flag benar-benar tersinkron dua arah).
+  - **Round trip terproof**: 3 email yang saya kirim via Resend ke `info@`
+    **masuk kembali ke Inbox** (satu jadi inbound "Re: Tes Email Center
+    dengan lampiran") → outbound Resend → mailbox Hostinger benar-benar
+    diterima, kekhawatiran MX (Issue 2) tidak jadi blocker.
+  - **Sanitasi HTML email dunia nyata** (email Vercel, 8.186 karakter):
+    0 `<script>`, 0 `<iframe>`, 0 `<form>`, 0 handler `on*`, tanpa
+    `javascript:`, 0 `<style>`; 6 link dipaksa
+    `rel="noopener noreferrer nofollow" target="_blank"`.
+  - `↻ Refresh` → "Inbox diperbarui (20 email diproses)", 0 console error.
+- **Catatan verifikasi**: seluruh perubahan (termasuk draft/hapus/pencarian
+  & perbaikan tag `<header>`/`<footer>`) sudah melewati `npx tsc --noEmit`
+  = 0 dan `npm run build` **hijau (24 routes)** — build dijalankan setelah
+  `next dev` dihentikan. Server produksi lokal (`npm run start`, port 3000)
+  yang dipakai untuk E2E.
+- **Tambahan setelah itu (permintaan user)**: **draft** (tab Draft, tombol
+  "Simpan Draft" tanpa autosave, draft terhapus setelah terkirim, lampiran
+  tidak ikut disimpan), **hapus email** (keluar & draft permanen; masuk
+  disembunyikan lewat `deletedAt` + `sync.ts` melewatinya), **pencarian
+  akurat** (`lib/mail/search.ts`: AND per kata, To/Cc/Bcc + nama lampiran,
+  operator `from:`/`to:`/`subjek:`/`dengan:lampiran`, sorotan `<mark>`).
+  Semua terverifikasi di browser (lihat `CHANGELOG.md` → *Verified*).
+
+**Task sebelumnya (source code, BELUM di-commit): fix 2 bug hasil review
 user** (2026-09-28) —
 
 1. **Kop program galeri tumpang-tindih di tepi kiri atas** — kop
@@ -374,6 +454,11 @@ Status verifikasi:
 
 ## Currently In Progress
 
+Task **Admin Email Center** (2026-09-28) selesai diimplementasikan &
+diverifikasi lokal, **BELUM di-commit** (detail di *Last Completed Work*).
+Menunggu kredensial `MAIL_IMAP_*` untuk menguji Inbox secara nyata
+(syarat eksplisit user: tanpa mock/fake inbox).
+
 Task **active state menu sidebar admin** (2026-09-28, spesifikasi 12
 bagian user) selesai diimplementasikan & diverifikasi, **BELUM di-commit** —
 `components/admin/AdminNav.tsx` (baru, client, `usePathname`),
@@ -453,13 +538,18 @@ dashboard Resend.
 
 **Current Status**
 
-**Open.** Menunggu user membuat API key baru di resend.com.
+**Open, tapi Email Center sudah punya key valid sendiri.** User menambahkan
+env baru **`PANEL_RESEND_API_KEY`** (2026-09-28) yang dipakai khusus Admin
+Email Center; nilainya **terverifikasi valid** (`GET https://api.resend.com/domains`
+→ **HTTP 200**). `RESEND_API_KEY` yang lama masih ada dan masih tidak valid,
+jadi notifikasi aplikasi (kontak/pendaftaran/reset password) belum terkirim.
+`lib/resend.ts` memakai `PANEL_RESEND_API_KEY` → fallback `RESEND_API_KEY`.
 
 **Recommended Next Investigation**
 
-Bukan investigasi — aksi: ganti nilai di `.env` lokal **dan** di Vercel
-(Environment Variables) → restart server lokal / Redeploy → uji kirim email
-reset password dan email pendaftaran. Verifikasi `statusEmail` menjadi `sent`.
+Aksi (user): salin `PANEL_RESEND_API_KEY` yang sama ke Vercel Environment
+Variables (Email Center di produksi tidak bisa kirim tanpa itu), lalu isi
+`RESEND_API_KEY` dengan key valid agar notifikasi aplikasi ikut jalan.
 
 ### Issue 2 — Email `info@` belum tentu menerima mail (MX belum di-add ulang)
 
@@ -476,17 +566,31 @@ Zone DNS sekarang dikelola Vercel; record MX Titan (`mx1.titan.email`,
 
 **Investigation Already Done**
 
-Diketahui dari proses migrasi DNS (keputusan pindah ke Vercel, lihat
-`DECISIONS.md`). Belum diverifikasi ulang dari sisi Vercel Dashboard.
+Dicek langsung lewat DNS publik (2026-09-28):
+
+| Record | Nilai | Pref |
+| --- | --- | --- |
+| MX | `inbound-smtp.sa-east-1.amazonaws.com` (Amazon SES inbound) | **9** |
+| MX | `mx1.titan.email` | 10 |
+| MX | `mx2.titan.email` | 20 |
+
+Artinya **MX Titan sudah ada lagi** (Issue 2 sebagian tertutup), tetapi
+**pref 9 milik Amazon SES lebih 우선** → email masuk kemungkinan besar
+diterima **Amazon SES**, bukan langsung ke mailbox Hostinger.
 
 **Current Status**
 
-**Open**, menunggu akses dashboard Vercel oleh user.
+**Closed — bukan blocker.** Terbukti lewat percobaan nyata: 3 email yang
+dikirim Resend ke `info@talentaciptakarya.com` **benar-benar masuk ke
+mailbox Hostinger** (IMAP berhasil membacanya, termasuk salinan berisi
+lampiran). Jadi mail dari Resend diterima normal; kekhawatiran "inbox
+kosong" tidak terjadi. Record SES tetap perlu dicermati bila
+mailbox tiba-tiba kosong di kemudian hari.
 
 **Recommended Next Investigation**
 
-Buka Vercel → Domains → DNS Records, cek apakah MX Titan sudah ada; jika
-belum, tambahkan. Lalu kirim email uji ke `info@`.
+Tidak ada aksi wajib. Kalau suatu saat Inbox kosong padahal sync sukses,
+periksa kembali aturan inbound di AWS SES `sa-east-1`.
 
 ### Issue 3 — Domain pengirim Resend belum terverifikasi
 
@@ -502,16 +606,21 @@ Record verifikasi Resend belum ditambahkan di Vercel DNS.
 
 **Investigation Already Done**
 
-Status perekaman Resend belum dicek di dashboard Resend.
+Dicek langsung lewat API Resend memakai `PANEL_RESEND_API_KEY` (2026-09-28):
+`GET /domains` → **HTTP 200** dengan hasil
+`domain: talentaciptakarya.com | status: verified | created 2026-09-23`.
 
 **Current Status**
 
-**Open.** Terkait Issue 1 — keduanya harus beres agar email berfungsi penuh.
+**SELESAI / Closed.** Domain sudah **verified**, jadi
+`from: Talenta Cipta Karya <info@talentaciptakarya.com>` diterima Resend.
+Dikonfirmasi juga lewat pengiriman nyata dari Email Center (Ref
+`01a0e6be-8515-7e3e-b028-9a0ebb20067c`).
 
 **Recommended Next Investigation**
 
-Dashboard Resend → Domains → pilih talentaciptakarya.com → salin record yang
-diminta → tambahkan di Vercel DNS → tunggu status Verified.
+Tidak ada. Lanjut ke Email Center: isi `MAIL_IMAP_*` (Issue baru di bawah) dan
+`RESEND_WEBHOOK_SECRET` agar status delivered/bounced tercatat.
 
 ### Issue 4 — Verifikasi live production untuk perbaikan modal
 
@@ -791,6 +900,45 @@ Pilih: (a) turunkan batas ke ~4 MB + sesuaikan teks UI; (b) client-side
 upload langsung ke Vercel Blob agar body tidak lewat function; atau
 (c) biarkan 8 MB dengan pesan 413 yang sudah ada.
 
+### Issue 12 - `MAIL_IMAP_*` belum diisi (RESOLVED 2026-09-28)
+
+**Symptoms (sebelum diisi)**
+
+- `/admin/email` menampilkan banner "Email masuk belum aktif" dan daftar
+  Inbox kosong (bukan error).
+- Tombol `Refresh` nonaktif.
+- Tidak ada badge unread di sidebar.
+
+**Suspected Cause**
+
+Nilai kredensial IMAP Hostinger tidak pernah ada di project. Kode
+`lib/mail/imap.ts` mengembalikan `null` bila `MAIL_IMAP_HOST`/
+`MAIL_IMAP_USER`/`MAIL_IMAP_PASSWORD` kosong - itu perilaku yang disengaja,
+bukan crash.
+
+**Investigation Already Done**
+
+- Jalur **outgoing** sudah terverifikasi dengan key Resend nyata lebih dulu
+  (compose, lampiran, status `sent` + Ref).
+- Jalur **inbound** hanya bisa diuji bila mailbox bisa diakses; tidak ada
+  mock/fake data yang dibuat (dilarang di bagian 28 spesifikasi).
+- TCP ke `imap.hostinger.com:993` dan `:143` terbuka dari mesin ini,
+  jadi hanya kredensial yang kurang.
+
+**Current Status**
+
+**SOLVED.** User mengisi `MAIL_IMAP_*` di `.env` lokal (2026-09-28).
+Hasil: 22 email masuk berhasil di-sync, 0 duplikat setelah 3x refresh,
+lampiran terunduh (200), flag `\Seen` tersinkron dua arah, dan 3 email
+yang dikirim Resend ke `info@` masuk kembali ke Inbox. Detail hasil uji
+ada di *Last Completed Work*.
+
+**Catatan tersisa**
+
+- Nilai yang sama **wajib** disalin ke Vercel Environment Variables agar
+  Inbox berfungsi di produksi.
+- Password IMAP tidak boleh masuk source code/percakapan/commit.
+
 ### Catatan: `graphify label` tidak butuh API key
 
 Terdeteksi di environment ini:
@@ -852,32 +1000,53 @@ admin 1 · passwordResetToken 2 (sisa uji coba)
 
 ## Broken Features
 
-- **Kirim email (semua jenis)** — tidak berfungsi karena `RESEND_API_KEY`
-  tidak valid (Issue 1). *Penyimpanan data tidak terpengaruh* — fitur
-  pendaftaran/kontak tetap bekerja penuh, hanya notifikasi emailnya yang
-  hilang.
+- **Kirim email dari Email Center** — **berfungsi** (Resend, key
+  `PANEL_RESEND_API_KEY` valid, domain verified).
+- **Notifikasi email aplikasi** (kontak, pendaftaran, reset password) —
+  masih tidak berfungsi karena `RESEND_API_KEY` lama tidak valid
+  (Issue 1). *Penyimpanan data tidak terpengaruh* — fitur pendaftaran/kontak
+  tetap bekerja penuh, hanya notifikasi emailnya yang hilang.
+- **Inbox Email Center** — belum bisa diuji: `MAIL_IMAP_*` belum diisi
+  (Issue 12). UI menampilkan penjelasan, bukan data palsu.
 - **Upload foto ke Blob** — `BLOB_READ_WRITE_TOKEN` kosong, jadi foto jatuh ke
   `public/uploads/` (folder ini di-gitignore → foto hilang di produksi bila
   tidak dikonfigurasi). Secara lokal fiturnya jalan.
 
 ## Current Blockers
 
-**No known blockers.**
+**Tidak ada blokir kode atau kredensial.** `MAIL_IMAP_*` sudah diisi user di
+`.env` lokal dan seluruh jalur inbound sudah teruji.
 
-(Tidak ada yang menghalangi pengembangan kode. Issue di atas bersifat
-konfigurasi luar: API key Resend dan record DNS.)
+Sisa = **konfigurasi produksi** (butuh akses Vercel/Resend oleh user):
+
+```
+PANEL_RESEND_API_KEY     # sudah ada nilainya di lokal, belum di Vercel
+MAIL_IMAP_HOST / _PORT / _USER / _PASSWORD / _SECURE   # belum di Vercel
+RESEND_WEBHOOK_SECRET    # belum ada sama sekali
+```
+
+Plus satu kendala teknis yang **sudah teratasi**: `next dev` milik user
+telah dihentikan (2026-09-28) sehingga `prisma db push`, `tsc`, `build`, dan
+`npm run start` bisa berjalan normal. Aturannya tetap berlaku: jangan
+menjalankan `next dev` bersamaan dengan build/`next start`.
 
 ## Exact Next Step
 
-Tidak ada langkah kode yang tertunda. Sisa pekerjaan = **konfigurasi
-(butuh akses user)**:
-
-Langkah sesudahnya = pekerjaan non-kode:
-
-1. Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal **dan** Vercel →
-   Redeploy → uji reset password & `statusEmail = sent` (Issue 1).
-2. Tambah MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend
-   (Issue 3).
+1. **Commit** (menunggu persetujuan user): source Email Center (termasuk
+   draft/hapus/pencarian + perbaikan tag `<header>`/`<footer>`) + active
+   state sidebar + logo/footer, lalu `graphify update .` (retry sampai
+   exit 0) dan commit `chore:` untuk `graphify-out/`. *Sudah ada build
+   hijau (24 routes) & `tsc` 0 untuk seluruh perubahan ini — build
+   dijalankan 2026-09-28 setelah `next dev` dihentikan.*
+2. **Salin `PANEL_RESEND_API_KEY` + `MAIL_IMAP_*` ke Vercel** → Redeploy →
+   uji `/admin/email` di `https://talentaciptakarya.com/admin/email`.
+3. **Daftarkan webhook** `https://talentaciptakarya.com/api/resend/webhook`
+   di dashboard Resend + isi `RESEND_WEBHOOK_SECRET` agar status
+   delivered/bounced tercatat nyata.
+4. Isi `RESEND_API_KEY` yang valid → notifikasi aplikasi ikut jalan
+   (Issue 1).
+5. Opsional (sudah tercatat di `TODO.md`): index `pg_trgm` untuk
+   pencarian, blokir gambar eksternal (piksel pelacak Resend).
 3. ~~Opsional data: isi tahun 8 foto lama~~ — **terpantau selesai**
    (2026-09-28: galeri publik tak punya grup "Tanpa Tahun"; 30 foto
    semua bertahun).

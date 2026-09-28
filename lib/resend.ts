@@ -202,3 +202,129 @@ export async function sendPendaftaranNotification(input: {
 }
 
 export { siteUrl };
+
+/* =====================================================================
+   Email Center (Admin > Email) — outgoing & reply
+   Memakai PROVIDER & KONVESI YANG SAMA dengan notifikasi di atas
+   (tidak ada service email kedua).
+   ===================================================================== */
+
+export type PanelSendStatus = "sent" | "failed" | "skipped";
+
+export type PanelSendResult = {
+  status: PanelSendStatus;
+  /** id email dari Resend — dipakai untuk pelacakan status (webhook) */
+  resendId?: string;
+  /** pesan ramah untuk UI; tanpa secret/stack trace */
+  message?: string;
+};
+
+/**
+ * API key Email Center. `PANEL_RESEND_API_KEY` dipakai bila ada (dipisah dari
+ * notifikasi aplikasi agar Email Center bisa punya key sendiri), fallback ke
+ * `RESEND_API_KEY` supaya tidak ada email yang tiba-tiba gagal diam-diam.
+ */
+export function panelResendKey(): string | null {
+  return process.env.PANEL_RESEND_API_KEY?.trim() || process.env.RESEND_API_KEY?.trim() || null;
+}
+
+/** Pengirim Email Center — selalu "Nama <email>" agar konsisten. */
+function panelFrom(): string {
+  const raw = process.env.CONTACT_EMAIL_FROM?.trim() || "info@talentaciptakarya.com";
+  return raw.includes("<") ? raw : `Talenta Cipta Karya <${raw}>`;
+}
+
+export type PanelAttachment = {
+  filename: string;
+  contentType: string;
+  content: Buffer;
+};
+
+/**
+ * Kirim / balas / teruskan email dari Admin Email Center.
+ *
+ * Reply memakai header asli (`In-Reply-To` + `References`) sehingga Gmail,
+ * Outlook, dan email client lain mengenali email ini sebagai satu percakapan —
+ * bukan sekadar awalan "Re:" (spesifikasi §5).
+ */
+/** Versi teks polos dari HTML — dipakai bila admin hanya mengisi HTML. */
+function textFromHtml(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<\s*br\s*\/?\s*>/gi, "\n")
+    .replace(/<\/(p|div|tr|li|h[1-6])\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+export async function sendPanelEmail(input: {
+  to: string[];
+  cc?: string[];
+  bcc?: string[];
+  subject: string;
+  text?: string;
+  html?: string;
+  replyTo?: string[];
+  inReplyTo?: string;
+  references?: string;
+  attachments?: PanelAttachment[];
+}): Promise<PanelSendResult> {
+  const apiKey = panelResendKey();
+  if (!apiKey) {
+    console.warn("[resend] PANEL_RESEND_API_KEY/RESEND_API_KEY kosong — email Email Center dilewati.");
+    return { status: "skipped", message: "Email tidak dapat dikirim: API key belum dikonfigurasi." };
+  }
+  if (input.to.length === 0) {
+    return { status: "failed", message: "Email tidak dapat dikirim: penerima kosong." };
+  }
+
+  // Header threading hanya bila memang membalas email yang ada.
+  const headers: Record<string, string> = {};
+  if (input.inReplyTo) headers["In-Reply-To"] = input.inReplyTo;
+  if (input.references) headers.References = input.references;
+
+  // Selalu kirim versi teks (multipart): Resend mensyaratkan minimal satu
+  // format, dan email client lama lebih baik menerima teks polos.
+  const text = input.text?.trim() || (input.html ? textFromHtml(input.html) : "");
+
+  try {
+    const resend = new Resend(apiKey);
+    const { data, error } = await resend.emails.send({
+      from: panelFrom(),
+      to: input.to,
+      ...(input.cc?.length ? { cc: input.cc } : {}),
+      ...(input.bcc?.length ? { bcc: input.bcc } : {}),
+      ...(input.replyTo?.length ? { replyTo: input.replyTo } : {}),
+      subject: input.subject,
+      text,
+      ...(input.html ? { html: input.html } : {}),
+      ...(Object.keys(headers).length ? { headers } : {}),
+      ...(input.attachments?.length
+        ? {
+            attachments: input.attachments.map((a) => ({
+              filename: a.filename,
+              content: a.content,
+              content_type: a.contentType,
+            })),
+          }
+        : {}),
+    });
+
+    if (error) {
+      console.error("[resend] panel email gagal:", error);
+      return { status: "failed", message: "Email gagal dikirim." };
+    }
+    // Status "sent" = API Resend MENERIMA permintaan. Status delivered/bounced
+    // hanya diisi dari webhook Resend (tidak diklaim di sini).
+    return { status: "sent", resendId: data?.id };
+  } catch (err) {
+    console.error("[resend] panel email exception:", err);
+    return { status: "failed", message: "Email gagal dikirim." };
+  }
+}

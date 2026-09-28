@@ -8,12 +8,207 @@ Format: tanggal · isi · hash commit.
 
 ---
 
-## [2026-09-28]
+## [2026-09-28] — Admin Email Center (`/admin/email`)
 
-Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug) dan
-`6cf75de` + `19a2d3c` (bersihkan fragment anchor) — semuanya ter-push ke
-`main` & terverifikasi live di `https://talentaciptakarya.com`
-(0 console error).
+### Added
+
+- **Draft** — tab baru **Draft** (dengan jumlah draft di label), tombol
+  **"Simpan Draft"** pada form compose/reply/teruskan, dan **"Edit Draft"**
+  (membuka draft langsung mengisi form To/Cc/Bcc/Subjek/Isi). Draft
+  **dihapus otomatis setelah berhasil terkirim**. Draft hanya menyimpan
+  teks polos (HTML dibangun saat kirim) dan **tidak menyimpan lampiran** —
+  UI memberi tahu kalau ada lampiran saat draft disimpan. Tanpa autosave
+  (keputusan user).
+- **Hapus email** — tombol **Hapus** di panel detail dengan konfirmasi.
+  Email **masuk** hanya *disembunyikan* (`deletedAt`) karena aslinya masih
+  ada di mailbox; bila dihapus permanen, email itu muncul lagi setiap
+  Refresh. Email **keluar** & **draft** dihapus permanen (lampiran ikut
+  terhapus). `lib/mail/sync.ts` kini melewati baris yang punya `deletedAt`,
+  jadi email tersembunyi tidak pernah dibangkitkan lagi.
+- **Pencarian akurat** (`lib/mail/search.ts`) — kata kunci dipecah per spasi
+  dan digabung **AND** (dulu frasa utuh sehingga "deployment vercel" = 0
+  hasil); setiap kata boleh cocok di subjek, pengirim, **To/Cc/Bcc**, isi,
+  pratinjau, atau **nama lampiran**; operator `from:`, `to:`,
+  `subjek:`/`subject:`, `dengan:lampiran`, `lampiran:ya|tidak` (nilai boleh
+  berkutip); kata yang cocok **disorot** dengan elemen React `<mark>` (bukan
+  `dangerouslySetInnerHTML`); ringkasan jumlah hasil & bantuan operator
+  ditampilkan di bawah kolom cari.
+- `EmailMessage.deletedAt DateTime?` + index baru (additive).
+
+### Changed
+
+- Tab Email Center: Inbox · **Terkirim** · **Draft**; total per tab ikut
+  pencarian; pesan "Tidak ada email yang cocok" saat pencarian nihil.
+
+
+  detail email, tab **Terkirim**, form **Tulis Email** (To/Cc/Bcc/Subjek/
+  Lampiran), **Balas** (penerima + subjek `Re:` terisi otomatis), dan
+  **Teruskan**. Ditambah pencarian (pengirim, subjek, isi), filter
+  (Semua / Belum Dibaca / Sudah Dibaca; Semua / Berhasil / Gagal), pagination
+  20 per halaman, tombol `↻ Refresh`, dan penanda read/unread.
+- **Cache email masuk di database**: model `EmailMessage`
+  (`messageId` @unique anti-duplikasi, `direction`, `status`, `isRead`,
+  `htmlBody`, `resendId`, `referencesText`) + `EmailAttachment` (metadata
+  lampiran; isi file diambil on-demand dari IMAP, tidak disimpan di DB).
+  Sync IMAP → DB dengan batas 50, default 20 pesan.
+- **Lampiran**: masuk — download lewat route terproteksi auth yang
+  mengambil file dari IMAP; keluar — validasi jumlah (maks 5), ukuran
+  (maks 8 MB/berkas), nama file, dan ekstensi berisiko (`.exe`, `.bat`,
+  `.js`, `.apk`, dll. ditolak).
+- **Status pengiriman yang jujur**: `sent` = API Resend menerima;
+  `delivered`/`bounced`/`failed` hanya diisi dari webhook Resend
+  (`/api/resend/webhook`, verifikasi HMAC `resend-signature`).
+- **Route API terproteksi**: `/api/admin/email/attachment/[id]` (401 tanpa
+  sesi admin) dan `/api/resend/webhook` (503 bila secret belum diisi).
+- **Badge unread** pada menu "Email" di sidebar admin, bersumber dari
+  `lib/adminCounts.ts` (sumber tunggal untuk semua badge admin).
+- **Dependensi** (disetujui user): `imapflow@2.1.0`, `mailparser@3.9.29`,
+  `sanitize-html@2.17.7`, `@types/mailparser`, `@types/sanitize-html`.
+- Env baru didokumentasikan di `.env.example`: `PANEL_RESEND_API_KEY`,
+  `RESEND_WEBHOOK_SECRET`, `MAIL_IMAP_*`, `MAIL_IMAP_TIMEOUT_MS`.
+
+### Changed
+
+- `lib/resend.ts` — ditambah `sendPanelEmail()` (To/Cc/Bcc, attachment,
+  header `In-Reply-To`/`References` untuk threading sungguhan) memakai key
+  `PANEL_RESEND_API_KEY` → fallback `RESEND_API_KEY`. Modul email existing
+  dipakai ulang, tidak ada service/provider kedua.
+- `app/admin/actions.ts` — 3 Server Action baru: `syncEmailInboxAction`,
+  `setEmailReadAction`, `sendEmailAction` (semua lewat `requireAdmin()`).
+- `lib/schemas.ts` — `emailSendSchema` + batas lampiran + pembersihan nama
+  berkas.
+- `app/admin/(dashboard)/layout.tsx` & `components/admin/AdminNav.tsx` —
+  menu "Email" + badge unread; angka badge sekarang dari `adminNavCounts()`.
+- `prisma/schema.prisma` — 2 model baru (additive, `prisma db push` tanpa
+  kehilangan data).
+
+### Fixed
+
+- **Bug 1**: `?tab=compose` tidak menampilkan form compose — navigasi
+  client-side tidak me-remount komponen sehingga nilai `useState` awal tidak
+  berlaku. Mode form sekarang di-derive dari prop `tab`.
+- **Bug 2**: parameter `email=1` ikut terhapus dari URL (aturan "reset
+  `page=1`" ikut diterapkan ke semua key), sehingga email **pertama** di
+  daftar tidak bisa dibuka.
+- **Bug 3 (dilaporkan user via screenshot)**: panel detail email menimpa
+  sidebar admin dan form Tulis Email tidak bisa diketik. Penyebab: blok
+  kop email memakai `<header>` dan blok tombol bawah memakai `<footer>`,
+  yang keduanya kena rule elemen global di `app/globals.css`
+  (`header{position:fixed;top:0;left:0;right:0;z-index:100}` dan
+  `footer{background:#0F1836;padding:56px 0 28px}`) milik navbar/footer
+  situs publik. Akibatnya `<header>` melompat ke `0,0` selebar layar
+  (teks From/To/Received/Status tergambar di atas menu sidebar) dan
+  menutupi form saat di-scroll, sedangkan `<footer>` berubah jadi kotak navy
+  gelap. Keduanya diganti `<div>` + komentar penjelas. Terverifikasi pada
+  viewport 1920px: blok header `position:static` di dalam panel (tidak lagi
+  menimpa sidebar), footer transparan, dan keempat kontrol form
+  (`To`, `Subject`, `Message`, `Kirim`) terdeteksi sebagai elemen teratas di
+  titiknya (`elementFromPoint`) serta bisa diketik.
+
+### Verified (draft, hapus, pencarian)
+
+- **Draft**: "Simpan Draft" → pesan "Draft tersimpan", pindah ke tab Draft,
+  draft tampil dengan penerima+subjek benar; dibuka → form "Edit Draft"
+  terisi lengkap (To, Cc, Subjek, Isi, `draftId`); ditambah isi lalu
+  "Kirim Email" → terkirim, pindah ke tab Terkirim, dan **draft hilang**
+  (dihapus otomatis). Draft dengan lampiran → peringatan "Lampiran tidak
+  ikut tersimpan di draft".
+- **Hapus**: email terkirim → "Email terkirim dihapus dari daftar" (permanen);
+  draft → "Draft dihapus" + daftar kosong dengan pesan "Belum ada draft";
+  email masuk → "Email disembunyikan dari daftar" lalu **setelah Refresh
+  (20 email diproses) email itu tidak muncul lagi**.
+- **Pencarian**: "deployment vercel" → **5 hasil** + 19 kata tersorot
+  (sebelumnya 0); "mensch" → 0; `from:notifications` → 5;
+  `from:notifications deployment` → 4 (AND); `dengan:lampiran` → 1;
+  "catatan-uji" (nama lampiran) → 1; "zzzqqq" → 0 + pesan nihil.
+- **Regresi**: detail email tetap benar (header `DIV`/static, footer
+  transparan, tanpa overlap sidebar, tanpa horizontal overflow di 1920px),
+  tombol detail = Balas/Teruskan/Tandai/Hapus, badge unread = 6,
+  mobile 390px tanpa overflow dengan tombol Simpan Draft ada,
+  0 console error (kecuali 1 resource eksternal, lihat Known Issues).
+
+### Technical Notes
+
+- Arsitektur: **Hostinger = inbound (IMAP), Resend = outbound** — dipisah
+  tegas, tanpa provider baru dan tanpa SMTP kedua. Admin UI hanya bicara
+  dengan database, tidak pernah IMAP dari browser. Keputusan lengkap di
+  `DECISIONS.md`.
+- HTML email tidak dipercaya: disanitasi di **server** dengan
+  `sanitize-html` (buang `script`, `iframe`, `form`, `on*`,
+  `javascript:`, CSS berbahaya); gambar `cid:` ditulis ulang ke route
+  lampiran yang cek `auth()` sendiri karena `middleware.ts` hanya
+  melindungi `/admin/*`.
+- `middleware.ts` hanya melindungi `/admin/:path*`, jadi route
+  `/api/admin/email/*` melakukan cek `auth()` sendiri (terverifikasi 401).
+- Verifikasi lokal (`npm run start` + sesi admin): `tsc` 0; build hijau
+  (24 routes); 2 email terkirim nyata (`Status: Terkirim · Ref
+  01a0e6be-8515-7e3e-b028-9a0ebb20067c`); lampiran `catatan-uji.txt`
+  terkirim; `virus.exe` ditolak; pencarian benar; `PANEL_RESEND_API_KEY`
+  valid (`GET /domains` → 200) dan domain `talentaciptakarya.com`
+  **verified**; tidak ada pola `re_*`/`PANEL_RESEND_API_KEY`/
+  `MAIL_IMAP_PASSWORD` di chunk browser; mobile 390px tanpa horizontal
+  overflow; 0 console error.
+- **Belum terverifikasi**: ~~Inbox, read/unread, reply threading, dan
+  download lampiran inbound~~ — **SUDAH terverifikasi** setelah user mengisi
+  `MAIL_IMAP_*` (lihat di bawah). Tidak ada mock/fake data.
+
+### Verified (INBOUND, setelah kredensial IMAP diisi user)
+
+- **Sync nyata**: 22 email terbaca dari mailbox Hostinger
+  (`notifications@vercel.com`, `info@`, dst.). **0 duplikat setelah 3×
+  refresh** → `messageId` unik bekerja; 0 email tanpa Message-ID.
+- **Lampiran inbound terunduh** dari IMAP: HTTP **200**,
+  `Content-Disposition: attachment; filename="catatan-uji.txt"`,
+  `text/plain`, isi identik dengan berkas yang diunggah.
+- **Balas (reply)** terisi otomatis (To terkunci, subjek dari email asal) dan
+  terkirim dengan header threading **asli**: `inReplyTo`, `referencesText`,
+  dan `threadId` = Message-ID email asal; subjek menjadi `Re: ...`. Email
+  compose tetap `inReplyTo = null` (tidak ada threading palsu).
+- **Read/unread** tersimpan di database **dan** disinkronkan ke flag `\Seen`
+  mailbox: menandai "belum dibaca" menaikkan badge sidebar 7 → 8 dan state
+  bertahan setelah refresh.
+- **Round trip terproof**: 3 email yang dikirim lewat Resend ke
+  `info@talentaciptakarya.com` **masuk kembali ke Inbox** (salah satunya
+  menjadi inbound "Re: Tes Email Center dengan lampiran") → outgoing Resend
+  benar-benar diterima mailbox Hostinger, sehingga kekhawatiran MX
+  (`inbound-smtp.sa-east-1.amazonaws.com` pref 9) bukan blocker.
+- **Sanitasi HTML dunia nyata** (email notifikasi Vercel, 8.186 karakter):
+  0 `<script>`, 0 `<iframe>`, 0 `<form>`, 0 handler `on*`, tanpa
+  `javascript:`, 0 `<style>`; 6 link dipaksa
+  `rel="noopener noreferrer nofollow" target="_blank"`.
+- Pencarian "deployment" → 4 hasil; `↻ Refresh` → "Inbox diperbarui
+  (20 email diproses)"; 0 console error.
+- Banner "email masuk belum aktif" disederhanakan menjadi satu kalimat
+  (tanpa nama variabel env, tanpa pengulangan).
+
+### Known Issues (Email Center)
+
+- **Gambar eksternal di body email dimuat browser** — email yang dikirim
+  lewat Resend berisi piksel pelacak
+  (`https://tck.talentaciptakarya.com/CI0/...`); saat admin membuka detail,
+  browser mencoba memuatnya. Bila domain tersebut tidak terjangkau →
+  1 `ERR_CONNECTION_CLOSED` di console, dan secara teknis membocorkan IP +
+  waktu buka email ke pengirim. Belum diblokir (sengaja: belum diminta);
+  pilihan perbaikan = blokir `img` eksternal & tampilkan tautan "tampilkan
+  gambar".
+- Widget React #418 di `/admin/program` & `/admin/kategori` tetap
+  pre-existing, tidak terkait fitur ini.
+- Temuan DNS: MX `inbound-smtp.sa-east-1.amazonaws.com` (pref 9) lebih dulu
+  dicoba daripada MX Titan (pref 10/20) → perlu dipastikan ke mana email
+  masuk benar-benar mendarat.
+- `npm audit` tetap 5 vulnerability (tidak bertambah).
+
+Belum di-commit (menunggu persetujuan user).
+
+---
+
+## [2026-09-28] — Active state sidebar, logo, dan anchor hash
+
+Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug),
+`6cf75de` + `19a2d3c` (bersihkan fragment anchor),
+`1426e01` + `64cd322` (active state sidebar + plat putih footer) —
+semuanya ter-push ke `main` & terverifikasi live di
+`https://talentaciptakarya.com` (0 console error).
 
 ### Changed
 

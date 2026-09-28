@@ -26,6 +26,7 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/galeri", label: "Galeri" },
+  { href: "/admin/email", label: "Email" },
   { href: "/admin/testimoni", label: "Testimoni" },
   { href: "/admin/program", label: "Program" },
   { href: "/admin/jadwal", label: "Jadwal Pelatihan" },
@@ -40,11 +41,13 @@ export default function AdminNav({
   pesanCount = 0,
   fotoCount = 0,
   pendaftaranBaru = 0,
+  unreadEmail = 0,
 }: {
   variant?: "sidebar" | "mobile";
   pesanCount?: number;
   fotoCount?: number;
   pendaftaranBaru?: number;
+  unreadEmail?: number;
 }) {
   const pathname = usePathname() ?? "";
   // Normalisasi: buang garis miring di akhir supaya "/admin/" tetap mengenali
@@ -79,6 +82,11 @@ export default function AdminNav({
           aria-current={isActive(n.href) ? "page" : undefined}
         >
           <span className="admin-nav-label">{n.label}</span>
+          {n.href === "/admin/email" && unreadEmail > 0 && (
+            <span className="admin-nav-badge ml-2 inline-block rounded-full bg-gold text-navy text-xs font-bold px-2 py-0.5">
+              {unreadEmail}
+            </span>
+          )}
           {n.href === "/admin/pesan" && pesanCount > 0 && (
             <span className="admin-nav-badge ml-2 inline-block rounded-full bg-gold text-navy text-xs font-bold px-2 py-0.5">
               {pesanCount}

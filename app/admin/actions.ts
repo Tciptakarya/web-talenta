@@ -20,6 +20,8 @@ import {
   gantiPasswordSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  emailSendSchema,
+  emailDraftSchema,
 } from "@/lib/schemas";
 import { slugify, uniqueSlug } from "@/lib/slug";
 import { generateResetToken, hashToken } from "@/lib/passwordReset";
@@ -1028,4 +1030,194 @@ export async function deleteCategoryAction(formData: FormData) {
 
 export async function deleteProgramAction(formData: FormData) {
   await deleteProgram(undefined, formData);
+}
+
+/* ---------------------------------- Email Center ---------------------------------- */
+
+/**
+ * Actions Email Center. Semua lewat `requireAdmin()` (Server Action sudah
+ * otomatisRejected oleh Next bila dipanggil dari client tanpa sesi) dan
+ * TIDAK pernah menyentuh IMAP/Resend langsung — lewat `lib/mail/*`.
+ */
+
+/** Tarik email terbaru dari mailbox → database (cache). */
+export async function syncEmailInboxAction(): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const { syncInbox } = await import("@/lib/mail/sync");
+    const res = await syncInbox(20);
+    revalidatePath("/admin/email");
+    return { ok: res.ok, message: res.message };
+  } catch (err) {
+    console.error("[email] sync inbox gagal:", err);
+    return { ok: false, error: "Tidak dapat mengambil email saat ini." };
+  }
+}
+
+/** Tandai read / belum dibaca. */
+export async function setEmailReadAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const id = Number(formData.get("id"));
+    const isRead = formData.get("isRead") === "true";
+    if (!Number.isInteger(id) || id <= 0) {
+      return { ok: false, error: "Email tidak valid." };
+    }
+    const { setEmailRead } = await import("@/lib/mail/sync");
+    const res = await setEmailRead(id, isRead);
+    revalidatePath("/admin/email");
+    return { ok: res.ok, message: res.ok ? undefined : res.message };
+  } catch (err) {
+    console.error("[email] tandai read gagal:", err);
+    return { ok: false, error: "Gagal memperbarui status email." };
+  }
+}
+
+/** Kirim / balas / teruskan email. */
+export async function sendEmailAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+
+    const parsed = emailSendSchema.safeParse({
+      mode: formData.get("mode") ?? "compose",
+      to: formData.get("to") ?? "",
+      cc: formData.get("cc") ?? "",
+      bcc: formData.get("bcc") ?? "",
+      subject: formData.get("subject") ?? "",
+      body: formData.get("body") ?? "",
+      replyToId: formData.get("replyToId") ?? undefined,
+      draftId: formData.get("draftId") ?? undefined,
+    });
+    if (!parsed.success) {
+      return { ok: false, error: parsed.error.issues[0]?.message ?? "Data email tidak valid." };
+    }
+
+    // Lampiran (File) dari form — divalidasi ulang di lib/mail/outbound.
+    const files = formData.getAll("attachments").filter((f): f is File => f instanceof File && f.size > 0);
+    const attachments = await Promise.all(
+      files.map(async (f) => ({
+        filename: f.name,
+        type: f.type || "application/octet-stream",
+        size: f.size,
+        bytes: Buffer.from(await f.arrayBuffer()),
+      }))
+    );
+
+    const { sendFromPanel } = await import("@/lib/mail/outbound");
+    const res = await sendFromPanel(parsed.data, attachments);
+
+    // Draft yang baru saja dikirim tidak perlu disimpan lagi.
+    if (res.ok && parsed.data.draftId) {
+      const { dropDraft } = await import("@/lib/mail/drafts");
+      await dropDraft(parsed.data.draftId);
+    }
+
+    if (res.ok) {
+      revalidatePath("/admin/email");
+    }
+    return { ok: res.ok, message: res.ok ? res.message : undefined, error: res.ok ? undefined : res.message };
+  } catch (err) {
+    console.error("[email] kirim gagal:", err);
+    return { ok: false, error: "Email gagal dikirim." };
+  }
+}
+
+/**
+ * Simpan email sebagai draft (compose/reply/teruskan bisa disimpan kapan
+ * saja). Nilai balasan `message` dipakai UI; `draftId` baru dikembalikan
+ * lewat revalidasi daftar draft.
+ */
+export async function saveDraftAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+
+    const parsed = emailDraftSchema.safeParse({
+      to: formData.get("to") ?? "",
+      cc: formData.get("cc") ?? "",
+      bcc: formData.get("bcc") ?? "",
+      subject: formData.get("subject") ?? "",
+      body: formData.get("body") ?? "",
+      draftId: formData.get("draftId") ?? undefined,
+      replyToId: formData.get("replyToId") ?? undefined,
+    });
+    if (!parsed.success) {
+      return { ok: false, error: parsed.error.issues[0]?.message ?? "Draft tidak valid." };
+    }
+
+    const adaLampiran = formData
+      .getAll("attachments")
+      .some((f) => f instanceof File && f.size > 0);
+
+    const { saveDraft } = await import("@/lib/mail/drafts");
+    const res = await saveDraft(parsed.data, { hasAttachments: adaLampiran });
+    if (res.ok) revalidatePath("/admin/email");
+    return {
+      ok: res.ok,
+      message: res.ok ? res.message : undefined,
+      error: res.ok ? undefined : res.message,
+    };
+  } catch (err) {
+    console.error("[email] simpan draft gagal:", err);
+    return { ok: false, error: "Draft gagal disimpan." };
+  }
+}
+
+/**
+ * Hapus email.
+ *
+ * Email **masuk** hanya disembunyikan (`deletedAt`) karena aslinya masih ada
+ * di mailbox Hostinger — bila dihapus permanen, email itu akan muncul lagi
+ * setiap kali Inbox disegarkan. Email **keluar** dan **draft** dihapus
+ * permanen (lampiran ikut terhapus lewat `onDelete: Cascade`).
+ */
+export async function deleteEmailAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+
+    const id = Number(formData.get("id"));
+    if (!Number.isInteger(id) || id <= 0) {
+      return { ok: false, error: "Email tidak valid." };
+    }
+
+    const email = await prisma.emailMessage.findFirst({
+      where: { id, deletedAt: null },
+      select: { id: true, direction: true },
+    });
+    if (!email) return { ok: false, error: "Email tidak ditemukan." };
+
+    if (email.direction === "inbound") {
+      await prisma.emailMessage.update({
+        where: { id: email.id },
+        data: { deletedAt: new Date() },
+      });
+    } else {
+      await prisma.emailMessage.delete({ where: { id: email.id } });
+    }
+
+    revalidatePath("/admin/email");
+    return {
+      ok: true,
+      message:
+        email.direction === "inbound"
+          ? "Email disembunyikan dari daftar."
+          : email.direction === "draft"
+            ? "Draft dihapus."
+            : "Email terkirim dihapus dari daftar.",
+    };
+  } catch (err) {
+    console.error("[email] hapus gagal:", err);
+    return { ok: false, error: "Email gagal dihapus." };
+  }
 }

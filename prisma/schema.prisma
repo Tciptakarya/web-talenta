@@ -165,3 +165,68 @@ model MateriPelatihan {
 
   @@index([programId])
 }
+
+/// Email Center — cache email masuk (IMAP mailbox) + log email keluar (Resend).
+/// `direction` & `status` memakai String + validasi Zod (konvensi project,
+/// bukan Prisma enum). `messageId` unik → anti-duplikasi saat sync IMAP.
+model EmailMessage {
+  id             Int       @id @default(autoincrement())
+  messageId      String?   @unique // Message-ID RFC 5322 (kalau ada) — kunci anti-duplikasi
+  imapUid        String? // UID IMAP di mailbox (untuk ambil ulang attachment)
+  imapFolder     String? // folder mailbox asal, mis. "INBOX"
+  threadId       String?
+  inReplyTo      String?
+  referencesText String? // header References asli (untuk reply threading)
+  direction      String // "inbound" | "outbound" | "draft"
+  status         String // inbound: "received" | "sync-failed" | "hidden"
+  // draft: "draft"
+  // outbound: "sent" | "delivered" | "bounced" | "failed" | "skipped"
+  fromName       String?
+  fromEmail      String
+  toEmails       String // JSON string[] (dipakai juga sebagai reply-to bila 1)
+  ccEmails       String? // JSON string[]
+  bccEmails      String? // JSON string[]
+  replyToEmails  String? // JSON string[]
+  subject        String?
+  preview        String? // 1-2 baris untuk daftar inbox
+  textBody       String?
+  htmlBody       String? // HTML mentah; selalu disanitasi sebelum ditampilkan
+  hasAttachments Boolean  @default(false)
+  isRead         Boolean  @default(false)
+  /// Email inbound yang "dihapus" admin. Mailbox aslinya masih ada, jadi
+  /// isinya hanya disembunyikan (tidak muncul lagi setelah sync) —
+  /// lihat DECISIONS.md. Email keluar/draft dihapus permanen.
+  deletedAt      DateTime?
+  receivedAt     DateTime? // waktu email diterima (inbound)
+  sentAt         DateTime? // waktu email dikirim (outbound)
+  resendId       String? // id dari Resend (outbound) untuk pelacakan status
+  errorMessage   String? // pesan error untuk status failed/bounced (tanpa secret)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  attachments EmailAttachment[]
+
+  @@index([direction, isRead])
+  @@index([direction, receivedAt])
+  @@index([direction, sentAt])
+  @@index([status])
+  @@index([threadId])
+  @@index([direction, deletedAt])
+}
+
+/// Metadata lampiran email masuk. Isi file TIDAK disimpan di database —
+/// diambil on-demand dari IMAP lewat route admin yang dilindungi auth.
+model EmailAttachment {
+  id        Int          @id @default(autoincrement())
+  emailId   Int
+  email     EmailMessage @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  filename  String
+  mimeType  String
+  size      Int // byte
+  partPath  String // jalur bagian MIME di dalam pesan (untuk fetch ulang via IMAP)
+  contentId String?
+  isInline  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+
+  @@index([emailId])
+}

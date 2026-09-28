@@ -6,20 +6,46 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## Critical
 
+- [x] ~~Isi `MAIL_IMAP_*` (Hostinger) di `.env` lokal~~ — **SELESAI**
+      (user, 2026-09-28). Inbox terbukti: 22 email sync, 0 duplikat
+      setelah 3× refresh, lampiran terunduh 200, flag `\Seen` bolak-balik,
+      reply dengan header threading asli, dan 3 email Resend ke `info@`
+      masuk kembali ke Inbox.
+- [ ] **Salin `MAIL_IMAP_*` ke Vercel Environment Variables** — lokal sudah
+      diisi, produksi belum; tanpa itu Inbox tidak bisa sync di server
+      Vercel. Password tidak boleh masuk source/percakapan.
+- [ ] **Salin `PANEL_RESEND_API_KEY` ke Vercel** — key-nya valid & domain
+      sudah verified (terbukti email terkirim), tapi produksi tidak punya
+      key itu sehingga Email Center tidak bisa kirim dari Vercel.
+- [ ] **Daftarkan webhook Resend + isi `RESEND_WEBHOOK_SECRET`** — endpoint
+      `https://talentaciptakarya.com/api/resend/webhook`; tanpa ini status
+      email hanya `sent` (tidak pernah diklaim delivered/bounced).
+- [ ] **Index `pg_trgm` untuk pencarian** (bila mailbox tumbuh besar) —
+      pencarian masih `LIKE %…%` tanpa index; perlu ekstensi Postgres yang
+      tidak dikelola `prisma db push`.
+- [ ] **Blokir gambar eksternal di body email** (opsional) — email Resend
+      memuat piksel pelacak `tck.talentaciptakarya.com`; sekarang masih
+      dimuat browser (IP + waktu buka bocor ke pengirim).
 - [ ] **Ganti `RESEND_API_KEY` yang tidak valid** — di `.env` lokal **dan** di
-      Vercel Environment Variables, lalu Redeploy. Saat ini semua email
-      (reset password, notifikasi kontak & pendaftaran) gagal dengan
+      Vercel Environment Variables, lalu Redeploy. Saat ini notifikasi
+      aplikasi (reset password, kontak, pendaftaran) gagal dengan
       `401 API key is invalid`. Data tetap tersimpan, hanya notifikasinya
-      hilang. (`CURRENT_STATE.md` → Issue 1)
-- [ ] **Tambah ulang record MX Titan (`mx1.titan.email`, `mx2.titan.email`) di
-      Vercel DNS** — setelah pindah nameserver ke Vercel, email masuk ke
-      `info@` berisiko tidak diterima. (`CURRENT_STATE.md` → Issue 2)
-- [ ] **Selesaikan verifikasi domain Resend di Vercel DNS** (record
-      SPF/DKIM/DMARC) — syarat agar `CONTACT_EMAIL_FROM`
-      `info@talentaciptakarya.com` boleh dipakai. (`CURRENT_STATE.md` → Issue 3)
+      hilang. Email Center sudah pakai `PANEL_RESEND_API_KEY` sendiri.
+      (`CURRENT_STATE.md` → Issue 1)
+- [x] ~~Tentukan receiver inbound yang benar~~ — **TIDAK JADI MASALAH**:
+      mail Resend ke `info@` terbukti diterima mailbox Hostinger meski MX
+      SES (pref 9) lebih dulu dicoba. (`CURRENT_STATE.md` → Issue 2)
+- [x] ~~Tambah ulang record MX Titan~~ — sudah ada
+      (`mx1.titan.email`, `mx2.titan.email`). (2026-09-28)
+- [x] ~~Verifikasi domain Resend~~ — **SELESAI**: `talentaciptakarya.com`
+      status `verified`; pengiriman nyata berhasil. (2026-09-28)
 
 ## In Progress
 
+- Task **Admin Email Center** (`/admin/email`, 2026-09-28) selesai
+  diimplementasikan & diverifikasi **penuh** (outgoing + inbound nyata),
+  **belum di-commit** — menunggu persetujuan user. `npm run build` perlu
+  diulang sebelum commit karena `next dev` milik user sedang hidup.
 - Task **active state menu sidebar admin** (2026-09-28, spesifikasi 12
   bagian) selesai diimplementasikan & diverifikasi penuh (tsc 0, build
   hijau, logika 17/17 kasus, 9/9 route admin tepat 1 menu aktif, child
@@ -116,6 +142,38 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 ## Completed
 
 Berdasarkan history git (terverifikasi):
+
+- [x] **Admin Email Center — sisi outgoing** (2026-09-28) — compose/Tulis
+      Email (To/Cc/Bcc), Balas (penerima + subjek `Re:` otomatis), Teruskan,
+      tab **Terkirim** dengan status dari Resend, lampiran keluar (validasi
+      jumlah/ukuran/nama/ekstensi; `.exe` ditolak), Route API
+      `/api/admin/email/attachment/[id]` (401 tanpa sesi),
+      `/api/resend/webhook` (503 tanpa secret), badge unread di sidebar,
+      `PANEL_RESEND_API_KEY` (valid) dengan fallback `RESEND_API_KEY`.
+      Teruji: 2 email terkirim nyata (`sent` + Ref Resend), lampiran
+      terkirim, 0 console error, mobile 390px aman. *Sisi inbound masih
+      menunggu `MAIL_IMAP_*`.*
+- [x] **Sanitasi HTML email** — `sanitize-html` allowlist ketat di server;
+      `cid:` ditulis ulang ke route lampiran terproteksi auth. Teruji pada
+      email Vercel (8.186 karakter): 0 script/iframe/form/on-handler, semua
+      link `rel="noopener noreferrer nofollow"`.
+- [x] **Draft Email Center** (2026-09-28) — tab Draft + tombol "Simpan
+      Draft" (bukan autosave, sesuai keputusan user), form "Edit Draft"
+      terisi penuh saat draft dibuka, draft terhapus otomatis setelah terkirim,
+      lampiran tidak ikut tersimpan di draft (ada peringatan).
+- [x] **Hapus email** (2026-09-28) — email keluar & draft dihapus permanen;
+      email masuk hanya disembunyikan (`deletedAt`) supaya tidak muncul lagi
+      setelah Refresh; konfirmasi jujur di tombol.
+- [x] **Pencarian akurat** (2026-09-28) — AND per kata, kolom To/Cc/Bcc &
+      nama lampiran ikut dicari, operator `from:`/`to:`/`subjek:`/
+      `dengan:lampiran`/`lampiran:`, sorotan kata via `<mark>`.
+- [x] **Email Center — sisi INBOUND** (2026-09-28) — Inbox 22 email nyata,
+      anti-duplikasi `messageId` (0 duplikat setelah 3× refresh), pencarian,
+      filter unread/read, badge sidebar sesuai jumlah unread aktual, refresh
+      yang hanya menarik terbaru, pagination 20, read/unread tersinkron
+      dua arah dengan flag `\Seen` mailbox, download lampiran (200, isi
+      identik), reply memakai `In-Reply-To`/`References`/`threadId` asli,
+      sanitize HTML dunia nyata.
 
 - [x] **Fix 2 bug hasil review user** (2026-09-28, **belum di-commit**) —
       (1) kop program galeri tumpang-tindih di tepi kiri atas: elemen
