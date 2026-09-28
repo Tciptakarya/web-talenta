@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/CURRENT_STATE.md": {
-    "mtime": 1790553140.4560344,
-    "seen": 1790560014.9284146,
-    "ast_hash": "2866e259ce0427c9f049f9b11c771d53",
+    "mtime": 1790560092.6336849,
+    "seen": 1790560100.3656151,
+    "ast_hash": "cf251308f0cb06eb9ac7164304fbe7e9",
     "semantic_hash": ""
   },
   "AI_CONTEXT/DECISIONS.md": {
@@ -618,9 +618,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/HANDOFF.md": {
-    "mtime": 1790553164.3820171,
-    "seen": 1790560014.928419,
-    "ast_hash": "b7adc75027216d1d4131c585210f6f48",
+    "mtime": 1790560092.6336849,
+    "seen": 1790560100.3656204,
+    "ast_hash": "74956506033ba73195976d04fbe1ec23",
     "semantic_hash": ""
   },
   "AI_CONTEXT/PROJECT_CONTEXT.md": {

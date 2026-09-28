@@ -1,7 +1,7 @@
 # Graph Report - tciptakarya-main  (2026-09-28)
 
 ## Corpus Check
-- 84 files · ~184,223 words
+- 84 files · ~184,000 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c3186278`
+- Built from commit: `425efa10`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -83,12 +83,12 @@
   AI_CONTEXT/CHANGELOG.md → app/admin/actions.ts
 - `Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB` --references--> `pesanFromStatus()`  [INFERRED]
   AI_CONTEXT/CURRENT_STATE.md → components/admin/UploadForm.tsx
-- `Current Implementation` --references--> `refresh()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → app/admin/actions.ts
-- `Reason` --references--> `Reveal()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → components/site/Reveal.tsx
 - `IMPORTANT DECISIONS` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/HANDOFF.md → app/admin/actions.ts
+- `Reason` --references--> `Reveal()`  [INFERRED]
+  AI_CONTEXT/DECISIONS.md → components/site/Reveal.tsx
+- `Important Files` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
 
 ## Import Cycles
 - None detected.
@@ -288,7 +288,7 @@ Cohesion: 0.40
 Nodes (5): Current Implementation, Decision, Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`), Important, Reason
 
 ## Knowledge Gaps
-- **387 isolated node(s):** `Project`, `Before Making Changes`, `Database Rules`, `Testing Rules`, `Git Rules` (+382 more)
+- **387 isolated node(s):** `Changed`, `Fixed`, `Technical Notes`, `Added`, `Technical Notes` (+382 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 438 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -305,7 +305,7 @@ _Questions this graph is uniquely positioned to answer:_
   _`requireAdmin()` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `refresh()` (e.g. with `Form Handling & Validation` and `Current Implementation`) actually correct?**
   _`refresh()` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Project`, `Before Making Changes`, `Database Rules` to the rest of the system?**
+- **What connects `Changed`, `Fixed`, `Technical Notes` to the rest of the system?**
   _387 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `(public)/page.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06745098039215686 - nodes in this community are weakly interconnected._
