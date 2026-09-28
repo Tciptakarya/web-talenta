@@ -6,8 +6,8 @@
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 1028 nodes · 1873 edges · 72 communities (69 shown, 3 thin omitted)
-- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 187 edges (avg confidence: 0.94)
+- 1028 nodes · 1872 edges · 72 communities (69 shown, 3 thin omitted)
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 186 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -92,25 +92,25 @@
 1. `requireAdmin()` - 46 edges
 2. `Decisions` - 35 edges
 3. `next` - 29 edges
-4. `textOf()` - 26 edges
-5. `refresh()` - 26 edges
+4. `refresh()` - 26 edges
+5. `textOf()` - 26 edges
 6. `prisma` - 25 edges
 7. `react` - 23 edges
-8. `Services / Utilities — `lib/`` - 18 edges
-9. `Project Context` - 18 edges
+8. `Project Context` - 18 edges
+9. `Services / Utilities — `lib/`` - 17 edges
 10. `compilerOptions` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Services / Utilities — `lib/`` --references--> `isExpired()`  [INFERRED]
-  AI_CONTEXT/ARCHITECTURE.md → lib/passwordReset.ts
-- `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
-  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
 - `Important Files` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
 - `Important Decisions` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/CHANGELOG.md → app/admin/actions.ts
-- `Reason` --references--> `Reveal()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → components/site/Reveal.tsx
+- `IMPORTANT DECISIONS` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/HANDOFF.md → app/admin/actions.ts
+- `Authentication` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/PROJECT_CONTEXT.md → app/admin/actions.ts
 
 ## Import Cycles
 - None detected.
@@ -394,7 +394,7 @@ Cohesion: 0.20
 Nodes (9): API Routes (4), Architecture, Backend Architecture, File Structure, High Level Architecture, Important Files, Middleware & Authorization, Payment Architecture (+1 more)
 
 ## Knowledge Gaps
-- **484 isolated node(s):** `Project`, `Before Making Changes`, `Database Rules`, `Testing Rules`, `Git Rules` (+479 more)
+- **484 isolated node(s):** `Props`, `dynamic`, `revalidate`, `revalidate`, `metadata` (+479 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 536 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -402,16 +402,16 @@ Nodes (9): API Routes (4), Architecture, Backend Architecture, File Structure, H
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Decisions` connect `Decisions` to `siteContent.ts`, `Decision: Galeri publik memakai container & grid sendiri`, `upload/route.ts`, `outbound.ts`, `Decision: Galeri dikaitkan lewat relasi, bukan string kategori`, `email/page.tsx`, `Decision: Platform deploy`, `Decision: Versi Next.js & Prisma di-pin`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)`, `Decision: Seed idempoten, tidak pernah menimpa password admin`, `Decision: Tidak ada payment gateway`, `Decision: Database PostgreSQL (Neon), bukan SQLite`, `Decision: Prisma `db push` tanpa file migrasi`, `Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT``, `Decision: GitHub Pages dinonaktifkan untuk repo`, `Decision: Materi pelatihan disembunyikan dari publik`, `Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe`, `GaleriList.tsx`, `slugify`, `Decision: Kop program galeri memakai `<div>`, bukan `<header>``, `Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)`, `Decision: Modal pendaftaran di-portal ke `document.body``, `Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link``, `Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)`, `Decision: Halaman publik di-cache 60 detik (ISR), admin tetap real-time`, `Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)`, `Decision: Tidak ada lapisan auth/role selain Admin`, `Decision: Rate limit in-memory diterima`?**
-  _High betweenness centrality (0.209) - this node is a cross-community bridge._
+  _High betweenness centrality (0.226) - this node is a cross-community bridge._
 - **Why does `requireAdmin()` connect `requireAdmin` to `siteContent.ts`, `upload/route.ts`, `TestimoniManager.tsx`, `AI HANDOFF`, `JadwalManager.tsx`, `actions.ts`, `KategoriManager.tsx`, `Project Context`, `MateriManager.tsx`, `refresh`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `AGENTS.md`, `GaleriList.tsx`, `Changelog`, `sync.ts`, `ProgramManager.tsx`, `Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)`, `drafts.ts`, `ActionState`, `Architecture`?**
-  _High betweenness centrality (0.189) - this node is a cross-community bridge._
-- **Why does `next` connect `next` to `ActionState`, `siteContent.ts`, `(public)/page.tsx`, `upload/route.ts`, `reset-password/page.tsx`, `kelas/[slug]/page.tsx`, `LoginForm.tsx`, `package.json`, `GaleriList.tsx`, `requireAdmin`, `actions.ts`, `auth.ts`, `outbound.ts`, `sync.ts`, `webhook/route.ts`, `program/[slug]/page.tsx`, `JadwalTerdekat.tsx`, `app/layout.tsx`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
+  _High betweenness centrality (0.204) - this node is a cross-community bridge._
+- **Why does `Decision: Semua mutasi lewat Server Actions + `requireAdmin()`` connect `Decision: Semua mutasi lewat Server Actions + `requireAdmin()`` to `Decisions`, `requireAdmin`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `requireAdmin()` (e.g. with `Development Rules` and `Security Rules`) actually correct?**
   _`requireAdmin()` has 15 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 2 inferred relationships involving `textOf()` (e.g. with `Services / Utilities — `lib/`` and `Current Implementation`) actually correct?**
-  _`textOf()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `refresh()` (e.g. with `Form Handling & Validation` and `Current Implementation`) actually correct?**
   _`refresh()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Project`, `Before Making Changes`, `Database Rules` to the rest of the system?**
+- **Are the 2 inferred relationships involving `textOf()` (e.g. with `Services / Utilities — `lib/`` and `Current Implementation`) actually correct?**
+  _`textOf()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `Props`, `dynamic`, `revalidate` to the rest of the system?**
   _484 weakly-connected nodes found - possible documentation gaps or missing edges._

@@ -33513,18 +33513,6 @@
     },
     {
       "source": "ai_context_architecture_services_utilities_lib",
-      "target": "lib_data_sisakursi",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.95,
-      "context": "sisaKursi",
-      "source_file": "AI_CONTEXT/ARCHITECTURE.md",
-      "source_location": "L214",
-      "weight": 1.0
-    },
-    {
-      "source": "ai_context_architecture_services_utilities_lib",
       "target": "lib_slug_slugify",
       "relation": "references",
       "_origin": "ast",
