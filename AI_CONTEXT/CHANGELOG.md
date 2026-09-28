@@ -84,6 +84,25 @@ Format: tanggal · isi · hash commit.
 
 ### Fixed
 
+- **"Email gagal dikirim." tanpa penjelasan** (dilaporkan user via
+  screenshot, 2026-09-28) — semua kegagalan Resend (401/403/422/429)
+  sebelumnya ditampilkan sebagai kalimat generik yang sama, sehingga admin
+  tidak tahu harus memperbaiki apa. Sekarang `panelErrorMessage()` di
+  `lib/resend.ts` memberi pesan yang menunjuk perbaikannya (mis. "API key
+  Resend tidak valid. Perbarui `PANEL_RESEND_API_KEY`…" untuk 401, dan
+  "Alamat pengirim ditolak Resend. Ganti `CONTACT_EMAIL_FROM`…" untuk 403),
+  pesan asli tetap di-log server, dan alasannya tersimpan di
+  `EmailMessage.errorMessage`. Ditambah **peringatan sebelum kirim** di form
+  compose bila `CONTACT_EMAIL_FROM` masih `onboarding@resend.dev`
+  (pengirim uji yang hanya boleh mengirim ke email pemilik akun).
+  **Akar masalah di production (dibuktikan lewat uji API Resend):**
+  `from: onboarding@resend.dev` → **403** *"You can only send testing emails
+  to your own email address (info@…). …change the `from` address to an
+  email using this domain"*, dan `RESEND_API_KEY` lama → **401** *"API key
+  is invalid"*. Verifikasi lokal: banner muncul saat `CONTACT_EMAIL_FROM`
+  di-override ke `onboarding@resend.dev`; pesan 403 & 422 tampil spesifik;
+  setelah dikembalikan ke `info@…` banner hilang dan kirim nyata kembali
+  berhasil. 0 console error.
 - **Bug 1**: `?tab=compose` tidak menampilkan form compose — navigasi
   client-side tidak me-remount komponen sehingga nilai `useState` awal tidak
   berlaku. Mode form sekarang di-derive dari prop `tab`.

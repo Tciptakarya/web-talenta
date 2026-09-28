@@ -475,7 +475,10 @@ fitur:**
    `npx tsc --noEmit` → `npm run start` → cek ulang `/admin/email`.
    (`next dev` + build bersamaan menghapus `BUILD_ID` - lihat
    *Known Issues* 18.)
-2. Salin `PANEL_RESEND_API_KEY` **dan** `MAIL_IMAP_HOST` / `_PORT` /
+2. **Vercel: set `CONTACT_EMAIL_FROM` = `Talenta Cipta Karya
+   <info@talentaciptakarya.com>`** (langkah paling penting untuk email —
+   sekarang masih `onboarding@resend.dev` → Resend HTTP 403), lalu salin
+   `PANEL_RESEND_API_KEY` **dan** `MAIL_IMAP_HOST` / `_PORT` /
    `_USER` / `_PASSWORD` / `_SECURE` ke Vercel Environment Variables
    (tanpa itu Email Center produksi tidak bisa mengirim maupun menarik
    email) → Redeploy → cek `https://talentaciptakarya.com/admin/email`.

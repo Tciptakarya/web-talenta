@@ -169,5 +169,8 @@ export async function sendFromPanel(
   if (result.status === "skipped") {
     return { ok: false, message: result.message ?? "Email dilewati.", status: "skipped" };
   }
-  return { ok: false, message: "Email gagal dikirim.", status: "failed" };
+  // `result.message` sudah spesifik per penyebab (401/403/422/429) — lihat
+  // `panelErrorMessage()` di lib/resend.ts. Menampilkan "Email gagal dikirim."
+  // generik membuat admin tidak tahu harus memperbaiki apa.
+  return { ok: false, message: result.message ?? "Email gagal dikirim.", status: "failed" };
 }

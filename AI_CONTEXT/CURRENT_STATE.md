@@ -520,7 +520,20 @@ Catatan lingkungan:
 
 ## Current Problems
 
-### Issue 1 — `RESEND_API_KEY` tidak valid (401 "API key is invalid")
+### Issue 1 - `RESEND_API_KEY` tidak valid (401 "API key is invalid")
+
+> **Diketahui tambahan 2026-09-28 dari laporan user "kenapa saya gagal
+> mengirim email?":** di **production**, `CONTACT_EMAIL_FROM` masih
+> `onboarding@resend.dev` → Resend membalas **HTTP 403** (*"You can only send
+> testing emails to your own email address (info@…). …change the `from`
+> address to an email using this domain"*) dan `PANEL_RESEND_API_KEY` belum
+> ada di Vercel sehingga jatuh ke `RESEND_API_KEY` yang lama → **HTTP 401**.
+> Keduanya dulu tampil sebagai "Email gagal dikirim." yang sama; sekarang
+> pesannya spesifik (`DECISIONS.md` → *Kegagalan kirim email Resend harus
+> menampilkan penyebabnya*). **Perbaikan ada di dashboard Vercel, bukan
+> kode:** set `CONTACT_EMAIL_FROM` = `Talenta Cipta Karya
+> <info@talentaciptakarya.com>` + tambahkan `PANEL_RESEND_API_KEY`, lalu
+> Redeploy.
 
 **Symptoms**
 

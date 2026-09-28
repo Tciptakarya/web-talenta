@@ -234,6 +234,39 @@ function panelFrom(): string {
   return raw.includes("<") ? raw : `Talenta Cipta Karya <${raw}>`;
 }
 
+/**
+ * Pesan kegagalan Resend → kalimat yang bisa ditindaklanjuti admin.
+ *
+ * Sebelumnya semua kegagalan hanya jadi "Email gagal dikirim." sehingga
+ * admin tidak tahu harus memperbaiki apa (terbukti 2026-09-28: `from` masih
+ * `onboarding@resend.dev` → HTTP 403, dan `RESEND_API_KEY` lama → HTTP 401;
+ * keduanyaóvat tampil sama).
+ *
+ * Tidak pernah memuat API key, stack trace, atau isi respons mentah.
+ */
+function panelErrorMessage(err: unknown): string {
+  const e = err as { statusCode?: number; name?: string; message?: string } | null;
+  const code = e?.statusCode;
+  const msg = (e?.message ?? "").toLowerCase();
+
+  if (code === 401 || /api key is invalid|unauthorized/.test(msg)) {
+    return "API key Resend tidak valid. Perbarui PANEL_RESEND_API_KEY (atau RESEND_API_KEY) di environment server.";
+  }
+  if (code === 403 || /only send testing emails|onboarding/.test(msg)) {
+    return "Alamat pengirim ditolak Resend. Ganti CONTACT_EMAIL_FROM ke alamat domain yang sudah diverifikasi (mis. Talenta Cipta Karya <info@talentaciptakarya.com>).";
+  }
+  if (code === 429 || /rate limit|too many/.test(msg)) {
+    return "Batas kirim Resend terlampaui. Coba lagi beberapa saat lagi.";
+  }
+  if (code === 422 || /validation/.test(msg)) {
+    const detail = (e?.message ?? "").replace(/\s+/g, " ").slice(0, 180);
+    return `Data email ditolak Resend: ${detail || "periksa penerima, subjek, dan lampiran."}`;
+  }
+  return code
+    ? `Email gagal dikirim (Resend HTTP ${code}).`
+    : "Email gagal dikirim. Periksa log server untuk detail.";
+}
+
 export type PanelAttachment = {
   filename: string;
   contentType: string;
@@ -318,13 +351,13 @@ export async function sendPanelEmail(input: {
 
     if (error) {
       console.error("[resend] panel email gagal:", error);
-      return { status: "failed", message: "Email gagal dikirim." };
+      return { status: "failed", message: panelErrorMessage(error) };
     }
     // Status "sent" = API Resend MENERIMA permintaan. Status delivered/bounced
     // hanya diisi dari webhook Resend (tidak diklaim di sini).
     return { status: "sent", resendId: data?.id };
   } catch (err) {
     console.error("[resend] panel email exception:", err);
-    return { status: "failed", message: "Email gagal dikirim." };
+    return { status: "failed", message: panelErrorMessage(err) };
   }
 }

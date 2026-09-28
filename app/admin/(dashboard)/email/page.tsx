@@ -181,6 +181,17 @@ export default async function AdminEmailPage({
     adminNavCounts(),
   ]);
 
+  const fromLabel = process.env.CONTACT_EMAIL_FROM?.includes("<")
+    ? process.env.CONTACT_EMAIL_FROM
+    : `Talenta Cipta Karya <${process.env.CONTACT_EMAIL_FROM ?? "info@talentaciptakarya.com"}>`;
+
+  // `onboarding@resend.dev` HANYA boleh mengirim ke email pemilik akun
+  // (Resend membalas HTTP 403 untuk penerima lain — terverifikasi 2026-09-28).
+  // Jadi beri tahu admin SEBELUM mencoba kirim, bukan setelah gagal.
+  const fromWarning = /onboarding@resend\.dev/i.test(fromLabel)
+    ? "Alamat pengirim masih onboarding@resend.dev. Email hanya bisa terkirim ke email pemilik akun; Resend menolak penerima lain (HTTP 403). Perbaiki CONTACT_EMAIL_FROM di environment server menjadi alamat domain yang sudah diverifikasi, contoh: Talenta Cipta Karya <info@talentaciptakarya.com>."
+    : null;
+
   return (
     <EmailCenter
       tab={tab}
@@ -195,11 +206,8 @@ export default async function AdminEmailPage({
       unreadTotal={counts.unreadEmail}
       imapConfigured={Boolean(cfg)}
       mailto={process.env.CONTACT_EMAIL_TO ?? "info@talentaciptakarya.com"}
-      fromLabel={
-        process.env.CONTACT_EMAIL_FROM?.includes("<")
-          ? process.env.CONTACT_EMAIL_FROM
-          : `Talenta Cipta Karya <${process.env.CONTACT_EMAIL_FROM ?? "info@talentaciptakarya.com"}>`
-      }
+      fromLabel={fromLabel}
+      fromWarning={fromWarning}
     />
   );
 }

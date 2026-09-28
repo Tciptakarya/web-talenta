@@ -1450,3 +1450,78 @@ Hasil setelah perubahan (lokal, `npm run start`):
   dapat respons cepat walau render ulang sedang berjalan; itu disengaja.
 - Perbaikan sisanya (region fungsi Vercel → `sin1`) **bukan** kode; lihat
   `CURRENT_STATE.md` → Issue 13.
+
+## Decision: Kegagalan kirim email Resend harus menampilkan penyebabnya
+
+### Decision
+
+`lib/resend.ts` gained `panelErrorMessage()`: setiap kegagalan Resend
+dipetakan ke kalimat yang **menunjuk perbaikannya**, dan pesan itu ikut
+disimpan di `EmailMessage.errorMessage` ( tampil di panel detail + baris
+"Terkirim"). Pesan resmi (401/403/422/429) tetap di `console.error` di server.
+
+Peta kesalahan:
+
+| HTTP | Pesan ke admin |
+| --- | --- |
+| 401 | "API key Resend tidak valid. Perbarui `PANEL_RESEND_API_KEY` (atau `RESEND_API_KEY`) di environment server." |
+| 403 / `onboarding@resend.dev` | "Alamat pengirim ditolak Resend. Ganti `CONTACT_EMAIL_FROM` ke alamat domain yang sudah diverifikasi (mis. `Talenta Cipta Karya <info@talentaciptakarya.com>`)." |
+| 429 | "Batas kirim Resend terlampaui. Coba lagi beberapa saat lagi." |
+| 422 | "Data email ditolak Resend: \<pesan Resend dipotong 180 karakter\>" |
+| lainnya | "Email gagal dikirim (Resend HTTP &lt;code&gt;)." |
+
+Ditambah **peringatan sebelum kirim**: kalau `CONTACT_EMAIL_FROM` masih
+`onboarding@resend.dev`, form compose menampilkan banner kuning yang
+menjelaskan aturannya. `onboarding@resend.dev` **hanya boleh mengirim ke email
+pemilik akun** — itu batas Resend, bukan bug.
+
+### Reason
+
+User melaporkan "kenapa saya gagal mengirim email?" dengan screenshot yang
+menunjukkan `From: Talenta Cipta Karya <onboarding@resend.dev>` dan pesan
+generik "Email gagal dikirim."
+
+Ditelusuri dengan uji API nyata (2026-09-28), ada **dua** penyebab di
+production, keduanya nyata:
+
+```
+POST /emails  from=onboarding@resend.dev
+→ 403 "You can only send testing emails to your own email address
+        (info@talentaciptakarya.com). ... change the `from` address to an
+        email using this domain."
+
+POST /emails  with RESEND_API_KEY lama
+→ 401 "API key is invalid"
+```
+
+Kode sebelumnya menggabungkan keduanya menjadi kalimat yang sama, sehingga admin
+tidak punya petunjuk apa yang harus diperbaiki. Itu kelalaian ours, bukan
+keterbatasan Resend.
+
+### Alternatives Considered
+
+- Menampilkan pesan mentah dari Resend (ditolak — memuat detail internal dan
+  tidak selalu actionable; dipotong 180 karakter & diterjemahkan).
+- Menampilkan stack trace di browser (ditolak — bocor, juga bertentangan
+  dengan aturan "jangan tampilkan stack trace").
+- Hanya banner tanpa pesan error (ditolak — banner hanya muncul kalau
+  `onboarding@resend.dev`; 401 karena key tidak valid tetap butuh penjelasan).
+
+### Current Implementation
+
+- `lib/resend.ts` → `panelErrorMessage()` dipakai `sendPanelEmail()`.
+- `lib/mail/outbound.ts` → meneruskan `result.message` (tidak lagi
+  menimpanya dengan "Email gagal dikirim.").
+- `app/admin/(dashboard)/email/page.tsx` → menghitung `fromWarning`.
+- `components/admin/EmailCenter.tsx` → menampilkan banner itu di form.
+
+### Important
+
+- Jangan pernah mengembalikan pesan generik untuk kegagalan Resend.
+- `onboarding@resend.dev` **bukan** email yang bisa dipakai untuk email
+  sungguhan; hanya untuk menguji ke email pemilik akun.
+- Env yang decides pengirim: `CONTACT_EMAIL_FROM` (untuk semua email keluar,
+  termasuk notifikasi kontak/pendaftaran/reset password).
+- Kredensial yang dipakai Email Center: `PANEL_RESEND_API_KEY`, fallback ke
+  `RESEND_API_KEY`.
+

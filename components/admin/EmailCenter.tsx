@@ -135,6 +135,7 @@ export default function EmailCenter({
   imapConfigured,
   mailto,
   fromLabel,
+  fromWarning,
 }: {
   tab: string;
   q: string;
@@ -149,6 +150,7 @@ export default function EmailCenter({
   imapConfigured: boolean;
   mailto: string;
   fromLabel: string;
+  fromWarning: string | null;
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -410,6 +412,12 @@ export default function EmailCenter({
             <span className="text-xs font-semibold text-mist">From</span>
             <span className="rounded-lg border border-line bg-paper px-3 py-2 text-sm">{fromLabel}</span>
           </label>
+
+          {fromWarning && (
+            <p className="rounded-lg border border-[#F0D9A8] bg-[#FDF6E6] px-3 py-2 text-sm text-[#7A5A12]">
+              {fromWarning}
+            </p>
+          )}
 
           <input type="hidden" name="mode" value={formMode === "reply" ? "reply" : "compose"} />
           {formMode === "reply" && selected && <input type="hidden" name="replyToId" value={selected.id} />}

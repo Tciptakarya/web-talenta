@@ -14,9 +14,17 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 - [ ] **Salin `MAIL_IMAP_*` ke Vercel Environment Variables** — lokal sudah
       diisi, produksi belum; tanpa itu Inbox tidak bisa sync di server
       Vercel. Password tidak boleh masuk source/percakapan.
+- [ ] **Set `CONTACT_EMAIL_FROM` di Vercel menjadi
+      `Talenta Cipta Karya <info@talentaciptakarya.com>`** — **INI YANG BIKIN
+      EMAIL GAGAL DI PRODUKSI.** Nilai sekarang masih
+      `Talenta Cipta Karya <onboarding@resend.dev>`, dan Resend hanya
+      mengizinkan pengirim itu untuk email pemilik akun (HTTP 403, dibuktikan
+      2026-09-28). Setelah diubah + Redeploy, kirim dari
+      `/admin/email` harus berhasil.
 - [ ] **Salin `PANEL_RESEND_API_KEY` ke Vercel** — key-nya valid & domain
       sudah verified (terbukti email terkirim), tapi produksi tidak punya
-      key itu sehingga Email Center tidak bisa kirim dari Vercel.
+      key itu sehingga Email Center jatuh ke `RESEND_API_KEY` yang lama →
+      HTTP 401 "API key is invalid".
 - [ ] **Daftarkan webhook Resend + isi `RESEND_WEBHOOK_SECRET`** — endpoint
       `https://talentaciptakarya.com/api/resend/webhook`; tanpa ini status
       email hanya `sent` (tidak pernah diklaim delivered/bounced).
