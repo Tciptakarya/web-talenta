@@ -72,9 +72,9 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790109276.8180573,
-    "seen": 1790232965.0097687,
-    "ast_hash": "121c66b66338104fa95c91bc65c38b48",
+    "mtime": 1790569797.9744575,
+    "seen": 1790569915.4681673,
+    "ast_hash": "20b7f46229478b19dce5c4a87898bacf",
     "semantic_hash": ""
   },
   "components/admin/GaleriList.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "components/site/Footer.tsx": {
-    "mtime": 1790268798.5964332,
-    "seen": 1790269136.5777214,
-    "ast_hash": "68d36a2e346571ac9ed5bdea2d684dc1",
+    "mtime": 1790566454.2584648,
+    "seen": 1790566548.8367925,
+    "ast_hash": "d938f3544a744e8f9e6110789540e2ba",
     "semantic_hash": ""
   },
   "components/site/GalleryGrid.tsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "components/site/Header.tsx": {
-    "mtime": 1790524328.9907894,
-    "seen": 1790526240.2782037,
-    "ast_hash": "10dca9db5779ce796defc4a866d571c2",
+    "mtime": 1790566445.9062412,
+    "seen": 1790566548.8367968,
+    "ast_hash": "a300a7ed689a22e05247907ed108efd3",
     "semantic_hash": ""
   },
   "components/site/HeroAbout.tsx": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "app/icon.png": {
-    "mtime": 1790091229.0897796,
-    "seen": 1790232965.0098107,
-    "ast_hash": "273068a55acf63fd724638478c819f5c",
+    "mtime": 1790569786.6385753,
+    "seen": 1790569915.4683013,
+    "ast_hash": "fd62b04ce10152ee6726ba6074d825ff",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-01.jpeg": {
@@ -336,9 +336,9 @@
     "semantic_hash": ""
   },
   "public/favicon.png": {
-    "mtime": 1790091229.0897796,
-    "seen": 1790232965.0098166,
-    "ast_hash": "273068a55acf63fd724638478c819f5c",
+    "mtime": 1790569786.6385753,
+    "seen": 1790569915.4683187,
+    "ast_hash": "fd62b04ce10152ee6726ba6074d825ff",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-01.jpg": {
@@ -414,9 +414,9 @@
     "semantic_hash": ""
   },
   "public/logo.png": {
-    "mtime": 1790091229.0927794,
-    "seen": 1790232965.0098276,
-    "ast_hash": "273068a55acf63fd724638478c819f5c",
+    "mtime": 1790566406.8993368,
+    "seen": 1790566548.8368564,
+    "ast_hash": "c5eb7bbacce6694312bd04055b194059",
     "semantic_hash": ""
   },
   "app/(public)/kelas/[slug]/page.tsx": {
@@ -588,33 +588,33 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/ARCHITECTURE.md": {
-    "mtime": 1790563283.2175095,
-    "seen": 1790563856.715161,
-    "ast_hash": "7aaf54153776e0091400a5f139765798",
+    "mtime": 1790566567.2097697,
+    "seen": 1790569915.468277,
+    "ast_hash": "5c3b643a543826fcc1dff422b5de5f84",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CHANGELOG.md": {
-    "mtime": 1790564496.3699563,
-    "seen": 1790564504.6274385,
-    "ast_hash": "cd217bbde09bc6200aed53d57ce28c14",
+    "mtime": 1790569886.6103792,
+    "seen": 1790569915.4682796,
+    "ast_hash": "2eab39614f50a6cb5e72390171f69640",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CURRENT_STATE.md": {
-    "mtime": 1790564457.8945887,
-    "seen": 1790564504.6274402,
-    "ast_hash": "afba0bfe424c88c1dc4c3f92a707a997",
+    "mtime": 1790569894.2911634,
+    "seen": 1790569915.4682813,
+    "ast_hash": "beeeb34e5b139a2b02eee0788d63f43e",
     "semantic_hash": ""
   },
   "AI_CONTEXT/DECISIONS.md": {
-    "mtime": 1790563304.0154786,
-    "seen": 1790563856.7151651,
-    "ast_hash": "7d3a991a7599d8538ba639f3ffe378d8",
+    "mtime": 1790569863.3396592,
+    "seen": 1790569915.468284,
+    "ast_hash": "66fb843186af5ea8d65154edac26d439",
     "semantic_hash": ""
   },
   "AI_CONTEXT/HANDOFF.md": {
-    "mtime": 1790564448.9877622,
-    "seen": 1790564504.6274421,
-    "ast_hash": "f8a68c25dd45cb4c378c4b88d1421c37",
+    "mtime": 1790569903.4959395,
+    "seen": 1790569915.4682858,
+    "ast_hash": "69b71c39e3f601a3c31e1422084385b8",
     "semantic_hash": ""
   },
   "AI_CONTEXT/PROJECT_CONTEXT.md": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/TODO.md": {
-    "mtime": 1790564457.8945887,
-    "seen": 1790564504.627444,
-    "ast_hash": "68fc76b011b77add6f797bbf9edd457d",
+    "mtime": 1790569894.2911634,
+    "seen": 1790569915.4682903,
+    "ast_hash": "d815e93ce271c372f92c32efc72dc171",
     "semantic_hash": ""
   },
   "prisma/backfill-gallery-year.ts": {
@@ -645,6 +645,18 @@
     "mtime": 1789307866.8406153,
     "seen": 1790564187.9969528,
     "ast_hash": "f833ac6967a12d67137d354b65c1ae3b",
+    "semantic_hash": ""
+  },
+  "public/logo-inverse.png": {
+    "mtime": 1790566406.8993368,
+    "seen": 1790566548.8368554,
+    "ast_hash": "1adfed238cdb9d02b182a18b24ab1c35",
+    "semantic_hash": ""
+  },
+  "public/apple-touch-icon.png": {
+    "mtime": 1790569786.696096,
+    "seen": 1790569915.468316,
+    "ast_hash": "da95b5bc0516f2aec8e9d4a2dd2cc11c",
     "semantic_hash": ""
   }
 }
