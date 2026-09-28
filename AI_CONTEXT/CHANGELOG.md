@@ -12,6 +12,18 @@ Format: tanggal · isi · hash commit.
 
 ### Added
 
+- **`AI_CONTEXT/PRD_DESIGN_MIGRASI.md`** — kontrak desain untuk pembaruan
+  tampilan berikutnya. Isinya: design system saat ini **terukur dari kode**
+  (12 token warna, Fraunces + Plus Jakarta Sans, 2 sistem styling berdampingan,
+  breakpoint yang dipakai), **empat masalah nyata** yang harus diperbaiki
+  (jebakan CSS global tanpa `@layer` yang sudah merusak halaman 2×, token
+  ukuran yang belum ada, gaya tersebar, dark mode parsial), 6 prinsip desain,
+  **rencana migrasi 5 tahap** (aman → polish), 7 aturan wajib saat migrasi,
+  dan checklist *definisi selesai*. Dihubungkan dari `README.md` (sekalian
+  menutup doc drift: README sebelumnya merujuk `PRD-Talenta-Cipta-Karya.md`
+  yang tidak ada di repo), `AGENTS.md` (wajib dibaca sebelum kerja tampilan),
+  dan `ARCHITECTURE.md`.
+
 - **Admin > Tampilan Website** (`/admin/konten`) — seluruh **teks statis
   website publik** bisa diedit dari panel admin tanpa menyentuh kode.
   10 bagian / **68 field**: Hero, Tentang Kami, Visi & Misi, Layanan, Jadwal,

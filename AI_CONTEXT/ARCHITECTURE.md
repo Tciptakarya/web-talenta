@@ -69,6 +69,12 @@ app/
     └── upload/                # POST (butuh session)
 ```
 
+### Design System & Halaman
+
+- Kontrak desain ada di **AI_CONTEXT/PRD_DESIGN_MIGRASI.md** (token, jebakan
+  CSS global, rencana migrasi bertahap). Baca itu sebelum mengubah
+  tampilan. Wireframe disimpan di mockups/.
+
 ### Pages & Layout
 
 - `(public)/layout.tsx` → `Header`, anchor `<div id="top" />`, konten halaman,

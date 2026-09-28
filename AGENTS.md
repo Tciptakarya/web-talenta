@@ -20,13 +20,16 @@ Spesifikasi lengkap (stack, env, dependensi): `AI_CONTEXT/PROJECT_CONTEXT.md`.
 AI agent WAJIB:
 
 1. Baca `AGENTS.md` (file ini).
-2. Baca `AI_CONTEXT/PROJECT_CONTEXT.md`.
-3. Baca `AI_CONTEXT/ARCHITECTURE.md`.
-4. Baca `AI_CONTEXT/CURRENT_STATE.md`.
-5. Baca `AI_CONTEXT/DECISIONS.md`.
-6. Baca `AI_CONTEXT/TODO.md`.
-7. Inspeksi file source yang relevan sebelum memodifikasinya.
-8. Untuk pertanyaan codebase, jalankan `graphify query "<pertanyaan>"` lebih
+2. **Kalau menyangkut tampilan/UI: baca `AI_CONTEXT/PRD_DESIGN_MIGRASI.md`**
+   (design system, jebakan CSS, rencana migrasi) — dan cari wireframe/mockup
+   yang relevan di `mockups/`.
+3. Baca `AI_CONTEXT/PROJECT_CONTEXT.md`.
+4. Baca `AI_CONTEXT/ARCHITECTURE.md`.
+5. Baca `AI_CONTEXT/CURRENT_STATE.md`.
+6. Baca `AI_CONTEXT/DECISIONS.md`.
+7. Baca `AI_CONTEXT/TODO.md`.
+8. Inspeksi file source yang relevan sebelum memodifikasinya.
+9. Untuk pertanyaan codebase, jalankan `graphify query "<pertanyaan>"` lebih
    dulu (lihat bagian graphify di bawah).
 
 ## Development Rules

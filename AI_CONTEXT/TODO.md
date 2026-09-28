@@ -86,6 +86,14 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## Planned
 
+- [ ] **Migrasi desain bertahap** (panduan: AI_CONTEXT/PRD_DESIGN_MIGRASI.md) —
+      1) amankan CSS global (header/ooter/h1..h6 -> .site-header/
+      .site-footer + @layer base), 2) token ukuran (--radius-*,
+      --space-*, --text-*, --shadow-*), 3) primitif UI (btn/card/badge/
+      field), 4) rapikan panel admin, 5) polish visual. Masing-masing boleh
+      dikirim terpisah; wajib 	sc 0 + build hijau + cek light/dark &
+      desktop/mobile.
+
 - [ ] **Batas upload 4,5 MB di Vercel** — request body lewat serverless
       function, jadi file 4,5–8 MB **selalu ditolak platform** (413
       `FUNCTION_PAYLOAD_TOO_LARGE`) walau UI mengizinkan 8 MB. Belum

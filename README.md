@@ -1,8 +1,12 @@
 # Website Talenta Cipta Karya — v2.1 (Next.js)
 
-Implementasi sesuai **PRD-Talenta-Cipta-Karya.md v2.1**: frontend Next.js (App
-Router, TypeScript, Tailwind) + backend ringan di codebase yang sama (API Routes
-& Server Actions) — tanpa server terpisah.
+Implementasi sesuai PRD v2.1 (dokumen asli tidak ada di repo ini): frontend
+Next.js (App Router, TypeScript, Tailwind) + backend ringan di codebase yang
+sama (API Routes & Server Actions) — tanpa server terpisah.
+
+> **Untuk perubahan tampilan**: baca **`AI_CONTEXT/PRD_DESIGN_MIGRASI.md`**
+> lebih dulu — berisi design system saat ini, jebakan CSS yang sudah terbukti
+> merusak halaman, dan rencana migrasi bertahap.
 
 | PRD | Status |
 |---|---|
