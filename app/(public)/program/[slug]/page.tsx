@@ -23,6 +23,15 @@ interface Props {
 
 // formatTanggalYmd dipakai bersama dari "@/lib/data" (hindari duplikasi).
 
+/**
+ * Sama seperti `kelas/[slug]`: `force-static` diperlukan agar
+ * `revalidate = 60` benar-benar dipakai (tanpa itu Next 15 mengirim
+ * `no-store` untuk rute on-demand). Halaman ini tidak membaca
+ * `cookies()`/`headers()`/`searchParams()`.
+ */
+export const dynamic = "force-static";
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const program = await getProgramBySlug(slug);

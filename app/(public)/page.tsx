@@ -15,7 +15,22 @@ import {
 } from "@/lib/data";
 
 // Selalu render dari DB terbaru supaya hasil edit dashboard langsung terlihat.
-export const dynamic = "force-dynamic";
+/**
+ * Halaman publik di-cache 60 detik (keputusan eksplisit user 2026-09-28).
+ *
+ * Sebelumnya `force-dynamic` → tiap pengunjung memicu render + query DB,
+ * dan karena fungsi Vercel berjalan di US East sementara DB Neon di Singapura,
+ * tiap render itu mahal (TTFB 1,3–2 detik).
+ *
+ * 60 detik chosen karena data publik berubah hanya lewat Admin, dan
+ * `app/admin/actions.ts` sudah memanggil `revalidatePath("/", "layout")` pada
+ * SETIAP perubahan admin — jadi begitu Anda menyimpan perubahan, cache
+ * langsung dibuang dan pengunjung berikutnya dapat data terbaru. Jendela
+ * basi hanya berlaku bila tidak ada perubahan admin sama sekali.
+ *
+ * Halaman `/admin/*` tetap `force-dynamic` (butuh real-time).
+ */
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [programs, testimonials, gallery, categories, upcomingJadwal] =

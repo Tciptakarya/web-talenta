@@ -27,6 +27,19 @@ interface Props {
 
 // formatTanggalYmd dipakai bersama dari "@/lib/data" (hindari duplikasi).
 
+/**
+ * Halaman ini sepenuhnya bergantung pada `params` + isi database, tidak
+ * membaca `cookies()`/`headers()`/`searchParams()` (sudah diverifikasi), jadi
+ * aman dikunci sebagai static.
+ *
+ * `force-static` WAJIB menyertai `revalidate` di sini: tanpa itu, Next 15
+ * merender rute `[slug]` secara on-demand dan mengirim `no-store`
+ * (terverifikasi lewat header sebelum/sesudah). `revalidatePath()` dari admin
+ * tetap membuat halaman ini di-regenerate saat ada perubahan.
+ */
+export const dynamic = "force-static";
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);

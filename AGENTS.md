@@ -45,10 +45,16 @@ AI agent WAJIB:
 - Pertahankan pola yang sudah ada: mutasi admin = Server Action di
   `app/admin/actions.ts` dengan `requireAdmin()`; validasi = Zod dari
   `lib/schemas.ts`; email tidak boleh memblokir penyimpanan data (PRD §8).
-- Halaman publik dirender per-request (`export const dynamic = "force-dynamic"`
-  di `/` dan `/kelas`; `/kelas/[slug]` & `/program/[slug]` dinamis via segmen
-  `[slug]` tanpa `generateStaticParams`) — jangan menambah ISR/`revalidate`
-  yang membuat data basi tanpa keputusan eksplisit.
+- Halaman publik memakai **ISR 60 detik** (`export const revalidate = 60`),
+  dan rute `[slug]` juga memakai `dynamic = "force-static"` — keduanya WAJIB
+  berpasangan, kalau tidak Next 15 tetap mengirim `no-store`. `/admin/*`
+  tetap `force-dynamic` (butuh real-time). **Jangan mengubah angka 60 atau
+  mengembalikan `force-dynamic` tanpa keputusan eksplisit**: data basi
+  maksimum 60 detik, dan `revalidatePath("/", "layout")` di
+  `app/admin/actions.ts` sudah membuang cache setiap ada perubahan admin, jadi
+  perubahan dari Admin tetap langsung terlihat. Alasan & pengukuran ada di
+  `DECISIONS.md` → *Halaman publik di-cache 60 detik* dan
+  `CURRENT_STATE.md` → Issue 13.
 
 ## Database Rules
 

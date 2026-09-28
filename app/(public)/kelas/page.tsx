@@ -1,7 +1,8 @@
 import { getActiveCategories } from "@/lib/data";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+/** Cache 60 detik — alasan & garansi segar-berturut see DECISIONS.md. */
+export const revalidate = 60;
 export const metadata = {
   title: "Program Kelas | Talenta Cipta Karya",
   description: "Daftar semua kategori program pelatihan di Talenta Cipta Karya.",

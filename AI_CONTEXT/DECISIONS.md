@@ -1356,3 +1356,97 @@ email", dan "cari email lebih akurat". Ketiganya/domainnya berbeda:
   bisa digabung (`from:notifications deployment` = 2 syarat).
 - Sorotan hanya berlaku untuk kata kunci bebas, bukan nilai operator.
 
+
+## Decision: Halaman publik di-cache 60 detik (ISR), admin tetap real-time
+
+### Decision
+
+Empat halaman publik — `/`, `/kelas`, `/kelas/[slug]`, `/program/[slug]` —
+sekarang memakai:
+
+```ts
+export const revalidate = 60;                    // semua 4 halaman
+export const dynamic = "force-static";           // HANYA pada 2 rute [slug]
+```
+
+`/admin/*` **tetap** `force-dynamic` (butuh data real-time).
+
+**`force-static` pada rute `[slug]` itu wajib, bukan pilihan.** Dibuktikan
+lewat header: hanya dengan `revalidate = 60`, Next 15 tetap merender rute
+`[slug]` on-demand dan mengirim `Cache-Control: private, no-cache, no-store`.
+Setelah `force-static` ditambahkan, header berubah menjadi
+`s-maxage=60, stale-while-revalidate=31535940` dan `x-nextjs-cache: HIT`.
+Halaman ini tidak membaca `cookies()`/`headers()`/`searchParams()` (sudah
+dicek), jadi pemnatakan static tidak mengubah perilakunya.
+
+**Ke-basahan data dijamin oleh kode yang sudah ada**, bukan olehkesepakatan:
+`app/admin/actions.ts` memanggil `revalidatePath("/", "layout")` (fungsi
+`refresh()`) pada **setiap** mutasi admin. Jadi begitu Anda menyimpan
+perubahan di Admin, cache langsung dibuang dan pengunjung berikutnya
+mendapat data terbaru. Jendela basi 60 detik hanya berlaku bila **tidak ada
+perubahan admin sama sekali** selama jendela itu.
+
+### Reason
+
+Permintaan user: "website saya terasa lama untuk loadingnya, padahal internet
+saya cukup kencang. apa yang mempengaruhinya?" - dan user menyetujui cache
+setelah melihat datanya.
+
+Pengukuran (2026-09-28, produksi vs lokal dengan kode yang sama):
+
+| | Produksi | Lokal |
+| --- | --- | --- |
+| Homepage TTFB | 1,26 – 2,18 s | 0,13 – 0,19 s |
+
+Selisih ±1–2 detik itu **bukan** bandwidth, bukan database (20 ms), dan bukan
+image optimizer (273 rujukan `_next/image` itu `srcSet`, bukan 273 request).
+Penyebabnya: fungsi Vercel di `iad1` (US East) sementara Neon di Singapura
+(`X-Vercel-Id: sin1::iad1::…`), ditambah nol cache karena `force-dynamic`.
+
+Cache ini menutup bagian yang bisa ditutup dari sisi kode; bagian sisanya
+(region fungsi) hanya bisa diperbaiki di dashboard Vercel.
+
+Hasil setelah perubahan (lokal, `npm run start`):
+
+| Rute | Sebelum | Sesudah |
+| --- | --- | --- |
+| `/` | 130–190 ms | **3,5 ms** (`x-nextjs-cache: HIT`) |
+| `/kelas/barista` | 520 ms (generate) | **5,5 ms** |
+
+### Alternatives Considered
+
+- `revalidate = 0` / `force-dynamic` (ditolak — itu kondisi lama yang jadi
+  sumber masalah).
+- Jendela 5 menit (ditolak — terasa lama saat admin baru mengubah data;
+  konsisten dengan 60 detik karena `revalidatePath` sudah menutup jalur
+  "perubahan admin").
+- `generateStaticParams` untuk seluruh slug (ditolak untuk sekarang —
+  menambah perilaku build; `force-static` + `revalidate` sudah cukup).
+- Cache penuh di edge (`s-maxage` besar tanpa ISR) (ditolak — data bisa basi
+  jauh lebih lama tanpa ada penanda basi).
+- Optimasi gambar (menangkas foto galeri, `sizes`) ditolak - pengukuran
+  menunjukkan ini tidak memperbaiki TTFB, dan memangkas konten hanya
+  mengorbankan isi tanpa manfaat nyata).
+
+### Current Implementation
+
+- `app/(public)/page.tsx`, `app/(public)/kelas/page.tsx`:
+  `revalidate = 60` (menggantikan `force-dynamic`).
+- `app/(public)/kelas/[slug]/page.tsx`,
+  `app/(public)/program/[slug]/page.tsx`: `force-static` + `revalidate = 60`.
+- `app/admin/(dashboard)/layout.tsx`: tetap `force-dynamic`.
+- Header hasil: `Cache-Control: s-maxage=60, stale-while-revalidate=31535940`
+  dan `x-nextjs-cache: HIT | STALE | MISS`.
+
+### Important
+
+- **Jangan** menghapus `force-static` dari rute `[slug]` — tanpa itu caching
+  lenyap total (terbukti lewat header).
+- **Jangan** menaikkan angka 60 tanpa memberitahu user: itu batas data basi
+  yang akan dia setujui.
+- Halaman publik **tidak boleh** mulai membaca `cookies()`/`searchParams()`/
+  `headers()` tanpaputable ulang keputusannya — itu akan mematikan cache-nya.
+- `stale-while-revalidate` yang sangat panjang berarti pengunjung selalu
+  dapat respons cepat walau render ulang sedang berjalan; itu disengaja.
+- Perbaikan sisanya (region fungsi Vercel → `sin1`) **bukan** kode; lihat
+  `CURRENT_STATE.md` → Issue 13.

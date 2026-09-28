@@ -25,12 +25,21 @@ Application Layer
 └───────────────────────────┴──────────────────────────────┘
 ```
 
-Karakteristik: **server-side rendering, data selalu segar dari database**
-(tidak ada ISR/`revalidate` periodik):
+Karakteristik: **server-side rendering dengan ISR 60 detik** (sebelumnya
+`force-dynamic` tanpa cache — lihat `DECISIONS.md` → *Halaman publik di-cache
+60 detik*):
 
-- `/` dan `/kelas` → `export const dynamic = "force-dynamic"`.
-- `/kelas/[slug]` dan `/program/[slug]` → dinamis on-demand karena segmen
-  `[slug]` **tanpa** `generateStaticParams` (juga tidak ada `revalidate`).
+- `/` dan `/kelas` → `export const revalidate = 60` (di-prerender saat build,
+  `initialRevalidateSeconds: 60`).
+- `/kelas/[slug]` dan `/program/[slug]` → `export const dynamic =
+  "force-static"` **plus** `revalidate = 60`. `force-static` itu wajib:
+  tanpanya Next 15 merender rute `[slug]` on-demand dan tetap mengirim
+  `Cache-Control: no-store` (terverifikasi lewat header).
+- Header respons: `Cache-Control: s-maxage=60,
+  stale-while-revalidate=31535940` + `x-nextjs-cache: HIT | STALE | MISS`.
+- Kesegaran dijamin `revalidatePath("/", "layout")` di
+  `app/admin/actions.ts`: setiap perubahan admin langsung membuang cache.
+- `/admin/*` tetap `force-dynamic` (butuh real-time).
 
 ## Frontend Architecture
 

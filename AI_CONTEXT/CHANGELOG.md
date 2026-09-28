@@ -140,8 +140,27 @@ Format: tanggal · isi · hash commit.
   **1,26–2,18 s** vs lokal **0,13–0,19 s** dengan kode yang sama. Yang
   **bukan** penyebab: bandwidth pengunjung, database itu sendiri (20 ms), dan
   "banyak request image optimizer" (273 rujukan `_next/image` itu `srcSet`,
-  bukan 273 request). Perbaikannya di dashboard Vercel (set region fungsi ke
-  `sin1`), bukan di kode.
+  bukan 273 request). Sisa perbaikannya di dashboard Vercel (set region fungsi
+  ke `sin1`), bukan di kode.
+
+### Performance — cache 60 detik untuk halaman publik
+
+- Empat halaman publik (`/`, `/kelas`, `/kelas/[slug]`, `/program/[slug]`)
+  sekarang memakai `export const revalidate = 60`; dua rute `[slug]` juga
+  memakai `dynamic = "force-static"` — **tanpa itu Next 15 tetap mengirim
+  `no-store`** (terbukti lewat header sebelum/sesudah). `/admin/*` tetap
+  `force-dynamic`.
+- **Hasil (lokal)**: `/` 130–190 ms → **3,5 ms** (`x-nextjs-cache: HIT`);
+  `/kelas/barista` 520 ms → **5,5 ms**. Header:
+  `s-maxage=60, stale-while-revalidate=31535940`.
+- **Data tetap segar**: `revalidatePath("/", "layout")` di
+  `app/admin/actions.ts` sudah dipanggil pada setiap mutasi admin, jadi
+  perubahan dari Admin langsung membuang cache. Basi hanya mungkin bila tidak
+  ada perubahan admin selama 60 detik.
+- Verifikasi: 404 untuk slug ngawur tetap 404 di kedua rute; 4 halaman
+  publik benar di browser (judul, header/footer, galeri, jadwal, tanpa
+  horizontal overflow) dan **0 console error**; hanya rute publik yang masuk
+  `prerender-manifest`, rute admin tidak.
 
 ### Technical Notes
 

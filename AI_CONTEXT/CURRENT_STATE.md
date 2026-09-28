@@ -92,6 +92,12 @@ Hostinger (inbound IMAP) + Resend (outbound), cache di database*.
     `javascript:`, 0 `<style>`; 6 link dipaksa
     `rel="noopener noreferrer nofollow" target="_blank"`.
   - `↻ Refresh` → "Inbox diperbarui (20 email diproses)", 0 console error.
+- **Perubahan kecepatan (2026-09-28, setelah user menyetujui)**: 4 halaman
+  publik (`/`, `/kelas`, `/kelas/[slug]`, `/program/[slug]`) memakai
+  `revalidate = 60`; 2 rute `[slug]` juga `force-static`. `AGENTS.md`,
+  `DECISIONS.md` (→ *Halaman publik di-cache 60 detik*), dan
+  `ARCHITECTURE.md` sudah diperbarui. Admin tetap `force-dynamic`. Header
+  produksi **belum** menunjukkan ini sampai Vercel redeploy.
 - **Catatan verifikasi**: seluruh perubahan (termasuk draft/hapus/pencarian
   & perbaikan tag `<header>`/`<footer>`) sudah melewati `npx tsc --noEmit`
   = 0 dan `npm run build` **hijau (24 routes)** — build dijalankan setelah
@@ -980,7 +986,15 @@ ada cache sama sekali.
 
 **Current Status**
 
-**Open — menunggu tindakan di dashboard Vercel (user).**
+**Separuh sudah tertutup dari sisi kode**: 4 halaman publik kini ISR 60 detik
+(`revalidate = 60`, dan `force-static` pada 2 rute `[slug]` — tanpa
+`force-static` Next 15 tetap mengirim `no-store`, terbukti lewat header).
+Hasil lokal: `/` 130–190 ms → **3,5 ms** (`x-nextjs-cache: HIT`),
+`/kelas/barista` 520 ms → **5,5 ms**; header jadi
+`s-maxage=60, stale-while-revalidate=31535940`. `/admin/*` tetap real-time.
+
+**Sisa = region fungsi Vercel (`iad1` → `sin1`), menunggu tindakan di
+dashboard Vercel oleh user.**
 
 **Recommended Next Investigation / Action**
 
