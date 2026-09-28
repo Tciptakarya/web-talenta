@@ -40,12 +40,25 @@ export default function Header() {
     <header id="siteHeader" className={scrolled ? "is-scrolled" : undefined}>
       <div className="wrap">
         <a href="/#top" className="brand">
+          {/* Dua varian logo: teks gelap (latar terang) & teks putih
+              (latar gelap). Ditukar lewat CSS di globals.css — jangan
+              pakai satu gambar untuk dua latar, teksnya jadi tak
+              terbaca. */}
           <Image
             src="/logo.png"
             alt="Talenta Cipta Karya"
-            width={449}
-            height={437}
+            width={805}
+            height={800}
+            className="logo-on-light"
             priority
+          />
+          <Image
+            src="/logo-inverse.png"
+            alt=""
+            width={805}
+            height={800}
+            className="logo-on-dark"
+            loading="lazy"
           />
         </a>
         <nav className={`main-nav${open ? " open" : ""}`} id="mainNav">

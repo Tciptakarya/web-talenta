@@ -17,11 +17,13 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer-top">
           <div className="footer-brand">
+            {/* Footer selalu latar navy (#0F1836) di kedua mode → pakai
+                varian logo berteks putih. */}
             <Image
-              src="/logo.png"
+              src="/logo-inverse.png"
               alt="Talenta Cipta Karya"
-              width={449}
-              height={437}
+              width={805}
+              height={800}
             />
           </div>
           <nav className="footer-nav">

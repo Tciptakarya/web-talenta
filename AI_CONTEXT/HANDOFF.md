@@ -27,12 +27,14 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
   Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
   error).
-- **Working tree BERSIH** — task **bersihkan fragment anchor dari
-  address bar** sudah **di-commit & ter-push**: `6cf75de` (source +
-  `AGENTS.md` + `AI_CONTEXT/`) dan `19a2d3c` (`graphify-out/`), lalu
-  terverifikasi **live**: 6 link nav (`Tentang Kami`, `Visi & Misi`,
-  `Layanan`, `Galeri`, `Lokasi`, `Testimoni`) → hash kosong, URL tetap
-  `/`, tiap section mendarat **170px** dari atas, **0 console error**.
+- **Working tree berisi 1 task baru (BELUM di-commit): ganti logo ke
+  artwork baru** — `public/logo.png` (teks gelap) +
+  `public/logo-inverse.png` (teks putih), `Header` (2 varian + tukar
+  CSS), `Footer` (varian inverse), `favicon.png` + `app/icon.png`
+  (feather saja 512×512), `apple-touch-icon.png` (180×180 latar putih),
+  `app/layout.tsx` (icons.apple), `globals.css`, `ARCHITECTURE.md` &
+  `DECISIONS.md`. Bug lama ikut tertutup: logo berteks hitam dulu
+  nyaris tak terlihat di footer navy & header mode gelap.
 - Task sebelumnya (sudah ter-push & live): **redesign galeri editorial +
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`,
   `b61d5c4` `graphify-out/`) — terverifikasi live 0 console error.
@@ -213,14 +215,17 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Tidak ada task kode yang sedang dikerjakan. Task terakhir **bersihkan
-fragment anchor dari address bar** sudah **di-commit** (`6cf75de` +
-`19a2d3c`), **ter-push**, dan **terverifikasi live** di
-`https://talentaciptakarya.com` (6 link nav → hash kosong, URL tetap `/`,
-tiap section 170px dari atas, 0 console error). Task **redesign galeri
-editorial + fix 2 bug** juga sudah live (`c318627` + `b61d5c4`: 3 kop
-program `position: static` tanpa tumpang-tindih, 7 baris tahun / 3
-terbuka). `git status` bersih.
+Task **ganti logo ke artwork baru** (2026-09-28) selesai
+diimplementasikan & diverifikasi, **BELUM di-commit** — menunggu
+persetujuan commit. `tsc` 0, build hijau 22 routes, E2E kedua mode
+(tinggi header tetap 240px, logo 201×200, 0 console error), keenam aset
+logo/favicon 200 dengan link tag ikon benar. Task **bersihkan fragment
+anchor** sudah **di-commit & ter-push** (`6cf75de` + `19a2d3c`) dan
+**terverifikasi live** di `https://talentaciptakarya.com` (6 link nav →
+hash kosong, URL tetap `/`, tiap section 170px dari atas, 0 console
+error). Task **redesign galeri editorial + fix 2 bug** juga sudah live
+(`c318627` + `b61d5c4`: 3 kop program `position: static` tanpa
+tumpang-tindih, 7 baris tahun / 3 terbuka).
 
 **Operasi**: server lokal (`npm run start`, port 3000) boleh berjalan —
 **jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).

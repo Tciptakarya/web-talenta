@@ -374,21 +374,24 @@ Status verifikasi:
 
 ## Currently In Progress
 
-**Tidak ada task kode yang sedang dikerjakan.** Task terakhir **bersihkan
-fragment anchor dari address bar** sudah **di-commit & ter-push**
-(`6cf75de` source + `AGENTS.md` + `AI_CONTEXT/`, `19a2d3c`
-`graphify-out/`) dan **terverifikasi live** di
-`https://talentaciptakarya.com`: 6 link nav (`Tentang Kami`, `Visi &
-Misi`, `Layanan`, `Galeri`, `Lokasi`, `Testimoni`) → hash kosong, URL
-tetap `/`, tiap section mendarat **170px** dari atas, **0 console error**;
-deep-link `/#galeri` tetap berfungsi, tombol Back memulihkan posisi.
-Task sebelumnya (redesign galeri + fix 2 bug) juga sudah live
-(`c318627`, `b61d5c4`). `git status` bersih.
+Task **ganti logo ke artwork baru** (2026-09-28) selesai
+diimplementasikan & diverifikasi, **BELUM di-commit** — `public/logo.png`
+(teks gelap) + `public/logo-inverse.png` (teks putih), `Header` merender
+2 varian + tukar CSS, `Footer` memakai varian inverse, `favicon.png` +
+`app/icon.png` feather saja 512×512, plus `apple-touch-icon.png` 180×180
+latar putih. `tsc` 0, build hijau 22 routes, E2E kedua mode (tinggi
+header tetap 240px, logo 201×200, sampel piksel wordmark 83 terang / 151
+gelap, 0 overflow, 0 console error), kelima aset ikon/logo 200 dengan
+link tag benar. Keputusan & aturan regenerasi varian ada di
+`DECISIONS.md` → *Logo dipakai dalam 2 varian*.
 
-Catatan investigasi: klaim lama "cache AST = penyebab crash
-`graphify update`" **terbantah** oleh eksperimen 16 run (crash ~37% dengan
-dan tanpa cache, ~33% tanpa hook) — penyebab belum teridentifikasi,
-workaround = retry. Lihat *Issue 9*.
+Tidak ada task kode lain yang sedang dikerjakan. Task **bersihkan
+fragment anchor dari address bar** sudah **di-commit & ter-push**
+(`6cf75de` + `19a2d3c`) dan **terverifikasi live** di
+`https://talentaciptakarya.com`: 6 link nav → hash kosong, URL tetap `/`,
+tiap section 170px dari atas, **0 console error**; deep-link tetap
+berfungsi, tombol Back memulihkan posisi. Task sebelumnya (redesign galeri
++ fix 2 bug) juga sudah live (`c318627`, `b61d5c4`).
 
 Catatan lingkungan:
 

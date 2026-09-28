@@ -27,7 +27,10 @@ export const metadata: Metadata = {
     "Depok",
     "Talenta Cipta Karya",
   ],
-  icons: { icon: "/favicon.png", apple: "/favicon.png" },
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Talenta Cipta Karya — Temukan Talenta, Ciptakan Karya",
     description:

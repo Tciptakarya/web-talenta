@@ -17,6 +17,30 @@ Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug) dan
 
 ### Changed
 
+- **Logo situs diganti ke artwork baru (2 varian)** — `public/logo.png`
+  (wordmark **teks gelap**, untuk latar terang) dan
+  `public/logo-inverse.png` (wordmark **teks putih** + biru di-*mixing* 40%
+  ke putih, untuk latar gelap). Keduanya 805×800 PNG transparan, ±80 KB,
+  dari sumber `Downloads/Logo Talenta/Logo no background.png`
+  (5226×5226, sudah ada alpha) → `trim` → `resize({height: 800})`.
+  `Header` merender keduanya lalu menukar via CSS
+  (`.logo-on-light` / `.logo-on-dark` + `:root.dark`); `Footer` memakai
+  varian inverse karena footer selalu navy `#0F1836` di kedua mode.
+  **Bug lama ikut tertutup**: sebelumnya logo berteks hampir hitam
+  nyaris tak terlihat di footer navy (dan di header saat mode gelap),
+  karena `header` transparan di atas latar gelap. Terverifikasi: mode
+  terang → `logo.png` (sampel piksel wordmark 83), mode gelap →
+  `logo-inverse.png` (sampel 151), footer → inverse; tinggi header tetap
+  240px (tanpa layout shift), 201×200 px, tanpa overflow, 0 console
+  error.
+  **Favicon ikut diperbarui** (keputusan user): `public/favicon.png` +
+  `app/icon.png` → 512×512 transparan berisi **feather saja** (potongan
+  atas artwork; lockup penuh tidak terbaca di 32px), dan
+  `public/apple-touch-icon.png` → 180×180 **latar putih opak** untuk iOS
+  (tidak mendukung transparan), dipakai lewat `icons.apple` di
+  `app/layout.tsx`. Kelima aset terverifikasi 200 dari server lokal
+  (`/favicon.png`, `/apple-touch-icon.png`, `/logo.png`,
+  `/logo-inverse.png`, `/icon.png`) dan link tag ikon di HTML benar.
 - **Fragment anchor dibersihkan dari address bar** — klik link section
   (`#visimisi`, `#galeri`, dst) tidak lagi menampilkan `#...` di address
   bar; URL tetap `https://talentaciptakarya.com`. Keputusan user; detail

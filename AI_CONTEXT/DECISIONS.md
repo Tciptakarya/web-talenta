@@ -986,3 +986,69 @@ publik: nav header, nav footer, tombol hero, CTA "Hubungi Kami", dan logo
 - Kalau nanti ada halaman dengan section yang URL-nya **memang perlu**
   bertanda, guard `pathname` sudah melewatinya; verifikasi ulang bahwa
   `replaceState` tidak ikut terpakai di sana.
+
+## Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)
+
+### Decision
+
+1. **Dua aset logo**, keduanya 805×800 PNG transparan:
+   - `public/logo.png` — wordmark **teks gelap** → untuk **latar terang**.
+   - `public/logo-inverse.png` — wordmark **teks putih** + biru di-*mixing*
+     40% ke putih → untuk **latar gelap** (mode gelap & footer).
+2. `components/site/Header.tsx` merender **keduanya** dan menukar lewat
+   CSS (`.logo-on-light` / `.logo-on-dark` + blok `:root.dark`);
+   `components/site/Footer.tsx` memakai varian **inverse** saja karena
+   footer selalu navy (`#0F1836`) di kedua mode.
+3. Cara menghasilkan varian inverse dari sumber (sharp, pixel-level):
+   - `spread = max(r,g,b) - min(r,g,b) <= 40` (warna netral) → **putih**
+   - selain itu (biru) → `c + (255 - c) * 0.4` (tetap biru, kontras ≥3:1)
+   - alpha tidak diubah, jadi tepi anti-alias tetap halus.
+4. Aset berasal dari sumber **di luar repo**:
+   `Downloads/Logo Talenta/Logo no background.png` (5226×5226, sudah
+   alpha) → `trim()` → `resize({height: 800})` (4× tinggi CSS terbesar
+   200px) → ±80 KB. Padding abu-abu **sudah hilang di sumber** (sudah
+   alpha), jadi tidak perlu proses *remove background*.
+5. **Favicon = feather saja** (keputusan user 2026-09-28):
+   `public/favicon.png` + `app/icon.png` = 512×512 transparan dengan
+   feather terpusat (potongan atas artwork, wordmark dibuang — di 32px
+   lockup penuh tidak terbaca). Ditambah `public/apple-touch-icon.png`
+   180×180 **latar putih opak** karena iOS tidak mendukung transparan;
+   `app/layout.tsx` → `icons.apple` diarahkan ke sana.
+
+### Reason
+
+Artwork logo memakai teks **hampir hitam** (`rgb(0,0,0)`, 24,5% piksel) di
+atas feather biru. `header` transparan, jadi:
+
+- mode gelap (body `#0E1322`) → teks logo **nyaris tak terlihat**;
+- footer selalu navy `#0F1836` → **nyaris tak terlihat di kedua mode**
+  (bug lama, sudah ada sebelum task ini).
+
+Satu berkas tidak bisa sekaligus terbaca di latar putih dan navy, dan
+`next/image` tidak offers gradient/dual-tone → dua varian + tukar CSS
+adalah solusi paling sederhana dan tidak mengubah struktur data.
+
+### Alternatives Considered
+
+- `filter: invert(1) hue-rotate(180deg)` pada logo di mode gelap — nol
+  byte tambahan, tetapi warna brand berubah jadi cyan/terang dan teks
+  jadi putih penuh (kehilangan gradasi).
+- Satu varian putih saja — wordmark hilang di mode terang.
+- Menaruh logo di atas plat putih/navy (kotak) — merusak desain header.
+
+### Current Implementation
+
+`public/logo.png`, `public/logo-inverse.png`, `components/site/Header.tsx`
+(2 `<Image>`), `components/site/Footer.tsx` (inverse),
+`app/globals.css` (`.brand img.logo-on-dark` / `:root.dark …`).
+
+### Important
+
+- **Bila logo diganti lagi, buat KEDUA varian** dengan aturan di atas;
+  mengunggah satu file saja akan mengembalikan bug "logo tak terlihat".
+- Varian gelap memakai `loading="lazy"` supaya tidak terunduh di mode
+  terang (hanya ±80 KB, tapi tetap).
+- `alt=""` pada varian yang disembunyikan — yang terlihat tetap punya
+  `alt` (a11y).
+- Jangan andalkan `filter` CSS untuk kontras logo: teks logo sudah
+  berwarna, bukan mask.

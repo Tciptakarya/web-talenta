@@ -20,13 +20,16 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## In Progress
 
-- Tidak ada task kode yang sedang dikerjakan. Task terakhir **bersihkan
-  fragment anchor dari address bar** sudah **di-commit & ter-push**
-  (`6cf75de` + `19a2d3c`) dan **terverifikasi live** (6 link nav hash
-  kosong, section 170px dari atas, 0 console error). Task **redesign
-  galeri editorial + fix 2 bug** juga sudah live (`c318627` +
-  `b61d5c4`), begitu pula **struktur galeri PROGRAM → TAHUN → FOTO**
-  (`368d947` + `6accd2a`).
+- Task **ganti logo ke artwork baru** (2026-09-28) selesai
+  diimplementasikan & diverifikasi (tsc 0, build hijau, E2E kedua mode,
+  tinggi header tetap 240px, 0 console error, keenam aset 200), **belum
+  di-commit** — menunggu persetujuan user.
+- Task **bersihkan fragment anchor dari address bar** sudah **di-commit &
+  ter-push** (`6cf75de` + `19a2d3c`) dan **terverifikasi live** (6 link nav
+  hash kosong, section 170px dari atas, 0 console error). Task **redesign
+  galeri editorial + fix 2 bug** juga sudah live (`c318627` + `b61d5c4`),
+  begitu pula **struktur galeri PROGRAM → TAHUN → FOTO** (`368d947` +
+  `6accd2a`).
 
 ## Next
 

@@ -398,7 +398,9 @@ Penyedia: **Resend** (`lib/resend.ts`). Semua mengembalikan
 │   ├── migrate-categories.ts   # skrip migrasi manual (sekali jalan)
 │   └── dev.db              # SISA SQLite lama — sudah tidak dipakai
 ├── middleware.ts           # proteksi /admin/*
-├── public/                 # aset statis (+ uploads/ bila blob mati)
+├── public/                 # aset statis: logo.png + logo-inverse.png (2 varian,
+│                          #   lihat DECISIONS.md), favicon.png, images/,
+│                          #   uploads/ hanya bila blob mati
 ├── assets/                 # gambar sumber
 ├── legacy/                 # situs statis v1 (CNAME, index.html) — arsip
 ├── mockups/                # wireframe HTML (mis. pendaftaran-wireframe.html)

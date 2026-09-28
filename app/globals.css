@@ -142,6 +142,13 @@
   }
   .brand{display:flex; align-items:center; gap:10px;}
   .brand img{height:200px; width:auto; transition:height .35s var(--ease); display:block;}
+  /* Logo 2 varian: `.logo-on-light` (teks gelap) untuk latar terang,
+     `.logo-on-dark` (teks putih) untuk mode gelap. Header transparan →
+     logo gelap akan hilang di atas navy. Spesifikitas di bawah sengaja
+     lebih tinggi dari `.brand img` di atas. */
+  .brand img.logo-on-dark{display:none;}
+  :root.dark .brand img.logo-on-light{display:none;}
+  :root.dark .brand img.logo-on-dark{display:block;}
   header.is-scrolled .brand img{height:130px;}
   nav.main-nav{display:flex; align-items:center; gap:34px;}
   nav.main-nav a{
