@@ -42,6 +42,10 @@ export default function MapFrame() {
           width={900}
           height={480}
           unoptimized
+          // Peta ada di bawah lipatan: jangan ikut menempati jalur render awal.
+          // Sumbernya kadang tidak terjangkau (ERR_CONNECTION_CLOSED) —
+          // `onError` lalu menampilkan kartu alamat di bawah.
+          loading="lazy"
           onError={() => setFailed(true)}
         />
       ) : (

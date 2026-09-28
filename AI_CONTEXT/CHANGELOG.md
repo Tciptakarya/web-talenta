@@ -127,6 +127,22 @@ Format: tanggal · isi · hash commit.
   mobile 390px tanpa overflow dengan tombol Simpan Draft ada,
   0 console error (kecuali 1 resource eksternal, lihat Known Issues).
 
+### Performance
+
+- Peta lokasi (`components/site/Lokasi.tsx`) diberi `loading="lazy"` — sebelumnya
+  request ke `staticmap.openstreetmap.de` berada di jalur render awal padahal
+  petanya ada di bawah lipatan; sekarang tidak menghambat render dan tetap
+  jatuh ke kartu alamat + "Buka di Maps" bila gagal dimuat.
+- **Hasil investigasi kecepatan situs** (diukur, bukan dugaan; detail di
+  `CURRENT_STATE.md` → Issue 13): penyebab sebenarnya adalah **fungsi Vercel
+  berjalan di `iad1` (US East) sementara database Neon berada di Singapura**,
+  jadi setiap query database melintasi samudra. Bukti: TTFB homepage produksi
+  **1,26–2,18 s** vs lokal **0,13–0,19 s** dengan kode yang sama. Yang
+  **bukan** penyebab: bandwidth pengunjung, database itu sendiri (20 ms), dan
+  "banyak request image optimizer" (273 rujukan `_next/image` itu `srcSet`,
+  bukan 273 request). Perbaikannya di dashboard Vercel (set region fungsi ke
+  `sin1`), bukan di kode.
+
 ### Technical Notes
 
 - Arsitektur: **Hostinger = inbound (IMAP), Resend = outbound** — dipisah

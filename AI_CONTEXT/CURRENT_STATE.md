@@ -939,6 +939,64 @@ ada di *Last Completed Work*.
   Inbox berfungsi di produksi.
 - Password IMAP tidak boleh masuk source code/percakapan/commit.
 
+### Issue 13 - Website terasa lambat: fungsi Vercel di region jauh dari database
+
+**Symptoms**
+
+- Halaman utama terasa lambat dibuka, padahal koneksi internet pengunjungnya
+  cepat. `/kelas` lebih cepat daripada homepage.
+
+**Investigation Already Done (diukur 2026-09-28, produksi + lokal)**
+
+| Yang diukur | Produksi | Lokal (bandwidth & DB dekat) |
+| --- | --- | --- |
+| Homepage: byte pertama | **1,26 – 2,18 s** | **0,13 – 0,19 s** |
+| `/kelas`: byte pertama | 0,59 s | — |
+| HTML homepage | 149,6 KB (72 KB payload RSC + 77,6 KB markup) | — |
+| CSS / JS | 15 KB / 9 chunk 207 ms (ringan) | — |
+| Cache | `Cache-Control: no-store`, `X-Vercel-Cache: MISS` | — |
+| Header region | `X-Vercel-Id: sin1::iad1::…` → **fungsi di US East** | — |
+| Database | Neon **`ap-southeast-1` (Singapura)** | — |
+| Query DB (`SELECT 1`) | — | **20 ms** |
+| Query `program` + relasi | — | 163 ms |
+
+**Suspected Cause — terkonfirmasi**
+
+Fungsi serverless berjalan di **iad1 (US East)** sementara database Neon berada
+di **Singapura**, jadi setiap query database melintasi samudra. Selisih TTFB
+produksi vs lokal (±1–2 detik) tersebut persis sebesar penalti lintasan
+tersebut. Ditambah semua halaman publik memakai `force-dynamic` sehingga tidak
+ada cache sama sekali.
+
+**Yang BUKAN penyebab (sudah diukur, jadi jangan dituding)**
+
+- Kecepatan internet pengunjung (CSS 15 KB, JS ringan).
+- Database itu sendiri (20 ms dari dekat).
+- "Terlalu banyak request image optimizer" — 273 rujukan `/_next/image` itu
+ sebenarnya `srcSet`, bukan 273 request; hanya ~2 yang benar-benar dimuat karena
+  `loading="lazy"` sudah bekerja. Gambar sudah diberi `sizes` & `priority`
+  yang benar.
+- Ukuran aset di repo (foto 130–317 KB) hanya masalah bila `sizes` salah.
+
+**Current Status**
+
+**Open — menunggu tindakan di dashboard Vercel (user).**
+
+**Recommended Next Investigation / Action**
+
+1. **Vercel → Project `web-talenta` → Settings → Functions → Region → `sin1`**
+   (atau `sin1` + `hnd1`), lalu **Redeploy**. Tidak ada kode yang perlu diubah;
+   ini perbaikan paling besar (±0,5–1 detik).
+2. Kalau masih lambat, pertimbangkan `revalidate` (60 detik) untuk `/` dan
+   `/kelas` — **ini mengubah keputusan "jangan sampai data basi"** yang
+   tercatat di `AGENTS.md`/`DECISIONS.md`, jadi perlu persetujuan user dulu.
+3. Peta lokasi memakai `staticmap.openstreetmap.de` yang saat ini **tidak
+   terjangkau** (HTTP 000 dari jaringan uji; tile resmi `tile.openstreetmap.org`
+   masih 200). Sudah diberi `loading="lazy"` agar tidak memblokir render awal,
+   dan menampilkan kartu alamat + "Buka di Maps" bila gagal. Belum ada
+   pengganti yang bisa diverifikasi — jangan menukar ke layanan peta lain
+   tanpa mengujinya dulu.
+
 ### Catatan: `graphify label` tidak butuh API key
 
 Terdeteksi di environment ini:
