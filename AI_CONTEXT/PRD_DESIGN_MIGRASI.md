@@ -66,7 +66,22 @@ Semua angka di bawah **diukur dari kode**, bukan perkiraan.
 Dark mode memakai **kelas** (`:root.dark`, Tailwind `@custom-variant dark`),
 bukan `prefers-color-scheme`. Tombol ThemeToggle menulis kelas itu ke `<html>`.
 
-### 3.2 Tipografi
+### 3.2 Ikon & favicon
+
+- `app/favicon.ico` — konvensi Next.js, tersaji di `/favicon.ico`. **WAJIB
+  ada**: mesin pencari (Google) mengambil favicon lewat `/favicon.ico` di root
+  domain, bukan lewat `<link rel="icon">`. Tanpa file ini, hasil pencarian
+  menampilkan **ikon globe generik** (insiden 2026-09-28).
+- `app/icon.png` + `public/favicon.png` (512×512, feather) — untuk tab browser
+  modern.
+- `public/apple-touch-icon.png` (180×180, latar putih) — untuk iOS.
+- Ukuran dalam `.ico`: 16/32/48/256.
+- **Known issue**: artwork feather terlalu tipis sehingga praktis tak terbaca
+  pada 16×16. Perbaikannya butuh **artwork favicon khusus ukuran kecil**
+  (mis. latar navy + feather putih, atau silhouette yang lebih tebal) — belum
+  dikerjakan karena menyangkut keputusan brand.
+
+### 3.3 Tipografi
 
 - Display/judul: **Fraunces** (`--font-display`, variable `--font-fraunces`)
 - Body/UI: **Plus Jakarta Sans** (`--font-sans`, variable `--font-jakarta`)
@@ -75,7 +90,7 @@ bukan `prefers-color-scheme`. Tombol ThemeToggle menulis kelas itu ke `<html>`.
 - Skala judul utama: `clamp()` — contoh `.section-head h2`
   `clamp(30px, 3.6vw, 44px)` (`globals.css:258`).
 
-### 3.3 Struktur & pola
+### 3.4 Struktur & pola
 
 - **Dua sistem styling berjalan berdampingan:**
   - Halaman publik: ~125 selector kelas buatan sendiri di `globals.css`

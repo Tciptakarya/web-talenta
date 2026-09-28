@@ -10,6 +10,23 @@ Format: tanggal · isi · hash commit.
 
 ## [2026-09-28] — Admin Email Center (`/admin/email`)
 
+### Fixed
+
+- **Ikon globe generik di hasil pencarian Google** (dilaporkan user via
+  screenshot) — penyebabnya bukan gambar logo: **`/favicon.ico` di domain
+  mengembalikan 404** karena tidak pernah ada file `.ico`. Mesin pencari
+  mengambil favicon lewat jalur `/favicon.ico` di root domain (bukan lewat
+  `<link rel="icon">`), lalu jatuh ke ikon default. `public/favicon.png`
+  sendiri sehat (200, `image/png`).
+  Perbaikan: `app/favicon.ico` (konvensi Next.js → tersaji di `/favicon.ico`),
+  dibuat dari `public/favicon.png` dengan 4 ukuran (16/32/48/256, PNG di dalam
+  ICO). Verifikasi lokal: `/favicon.ico` → **200 `image/x-icon` 12,5 KB**, dan
+  Next menyuntik `<link rel="icon" href="/favicon.ico" sizes="16x16">`.
+  **Catatan jujur**: feather nyaris tak terbaca pada 16×16 (tipis) — sudah
+  dipakai sebagai alasan untuk membuat artwork favigan khusus ukuran kecil.
+  Perubahan ini baru terlihat di hasil pencarian setelah Google meng-crawl
+  ulang (biasanya beberapa hari–minggu), bukan seketika.
+
 ### Added
 
 - **`AI_CONTEXT/PRD_DESIGN_MIGRASI.md`** — kontrak desain untuk pembaruan
