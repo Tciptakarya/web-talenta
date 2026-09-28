@@ -594,15 +594,15 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/CHANGELOG.md": {
-    "mtime": 1790564036.5816388,
-    "seen": 1790564187.9970636,
-    "ast_hash": "be1d94430862d5e3dda8fe5ed0258e04",
+    "mtime": 1790564496.3699563,
+    "seen": 1790564504.6274385,
+    "ast_hash": "cd217bbde09bc6200aed53d57ce28c14",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CURRENT_STATE.md": {
-    "mtime": 1790564009.0271976,
-    "seen": 1790564187.9970646,
-    "ast_hash": "dde94159ed145c2db4fe29f418abe4eb",
+    "mtime": 1790564457.8945887,
+    "seen": 1790564504.6274402,
+    "ast_hash": "afba0bfe424c88c1dc4c3f92a707a997",
     "semantic_hash": ""
   },
   "AI_CONTEXT/DECISIONS.md": {
@@ -612,9 +612,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/HANDOFF.md": {
-    "mtime": 1790564021.6971085,
-    "seen": 1790564187.9970665,
-    "ast_hash": "ff6025e761858664f3a21680342d7cbb",
+    "mtime": 1790564448.9877622,
+    "seen": 1790564504.6274421,
+    "ast_hash": "f8a68c25dd45cb4c378c4b88d1421c37",
     "semantic_hash": ""
   },
   "AI_CONTEXT/PROJECT_CONTEXT.md": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/TODO.md": {
-    "mtime": 1790564021.6971085,
-    "seen": 1790564187.997068,
-    "ast_hash": "dde95e95ba8c93c8e986ec467517f9f7",
+    "mtime": 1790564457.8945887,
+    "seen": 1790564504.627444,
+    "ast_hash": "68fc76b011b77add6f797bbf9edd457d",
     "semantic_hash": ""
   },
   "prisma/backfill-gallery-year.ts": {

@@ -6,8 +6,8 @@
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 807 nodes · 1353 edges · 49 communities (47 shown, 2 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 116 edges (avg confidence: 0.94)
+- 807 nodes · 1355 edges · 48 communities (46 shown, 2 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 115 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -25,7 +25,7 @@
 - AI HANDOFF
 - script.js
 - package.json
-- auth.ts
+- Pages & Layout
 - data.ts
 - JadwalManager.tsx
 - 🚀 Panduan Publish — Hostinger Web Apps + Resend
@@ -59,8 +59,7 @@
 - AGENTS.md
 - Decision: Galeri dikaitkan lewat relasi, bukan string kategori
 - GaleriList.tsx
-- Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)
-- Decision: Tidak ada lapisan auth/role selain Admin
+- Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)
 - Decision: Kop program galeri memakai `<div>`, bukan `<header>`
 - Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)
 - ActionState
@@ -71,32 +70,32 @@
 3. `refresh()` - 25 edges
 4. `next` - 24 edges
 5. `react` - 21 edges
-6. `Project Context` - 18 edges
-7. `prisma` - 18 edges
+6. `prisma` - 18 edges
+7. `Project Context` - 18 edges
 8. `compilerOptions` - 16 edges
 9. `Last Completed Work` - 14 edges
-10. `Services / Utilities — `lib/`` - 13 edges
+10. `Current Problems` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Development Rules` --references--> `requireAdmin()`  [INFERRED]
   AGENTS.md → app/admin/actions.ts
-- `Services / Utilities — `lib/`` --references--> `isExpired()`  [INFERRED]
-  AI_CONTEXT/ARCHITECTURE.md → lib/passwordReset.ts
-- `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
-  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
 - `Important Files` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
 - `Important Decisions` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/CHANGELOG.md → app/admin/actions.ts
+- `IMPORTANT DECISIONS` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/HANDOFF.md → app/admin/actions.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (49 total, 2 thin omitted)
+## Communities (48 total, 2 thin omitted)
 
 ### Community 0 - "(public)/page.tsx"
-Cohesion: 0.06
-Nodes (39): Pages & Layout, Alternatives Considered, Alternatives Considered, Current Implementation, Current Implementation, Decision, Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B), Decision: Modal pendaftaran di-portal ke `document.body` (+31 more)
+Cohesion: 0.09
+Nodes (28): Alternatives Considered, Current Implementation, Decision: Modal pendaftaran di-portal ke `document.body`, Important, Reason, dynamic, buildGroups(), GalleryGrid() (+20 more)
 
 ### Community 1 - "compilerOptions"
 Cohesion: 0.11
@@ -112,11 +111,11 @@ Nodes (13): API Routes (4), Architecture, Backend Architecture, Database Archite
 
 ### Community 4 - "upload/route.ts"
 Cohesion: 0.11
-Nodes (37): Services / Utilities — `lib/`, Changed, Fixed, Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong), Last Completed Work, Alternatives Considered, Current Implementation, Decision (+29 more)
+Nodes (38): Services / Utilities — `lib/`, Fixed, Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong), Last Completed Work, Alternatives Considered, Alternatives Considered, Current Implementation, Current Implementation (+30 more)
 
 ### Community 5 - "prisma.ts"
-Cohesion: 0.08
-Nodes (18): gantiPassword(), dynamic, metadata, CARDS, dynamic, dynamic, metadata, dynamic (+10 more)
+Cohesion: 0.05
+Nodes (29): gantiPassword(), dynamic, metadata, CARDS, dynamic, dynamic, metadata, dynamic (+21 more)
 
 ### Community 6 - "AI HANDOFF"
 Cohesion: 0.15
@@ -130,9 +129,9 @@ Nodes (16): form, header, lightbox, lightboxCaption, lightboxClose, lightboxImag
 Cohesion: 0.04
 Nodes (46): allowScripts, esbuild@0.28.2, prisma@6.19.3, @prisma/client@6.19.3, @prisma/engines@6.19.3, dependencies, bcryptjs, next (+38 more)
 
-### Community 9 - "auth.ts"
-Cohesion: 0.14
-Nodes (11): metadata, LoginForm(), authConfig, credentialsSchema, handlers, signIn, signOut, { auth } (+3 more)
+### Community 9 - "Pages & Layout"
+Cohesion: 0.12
+Nodes (16): Pages & Layout, Changed, Alternatives Considered, Current Implementation, Decision, Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B), Important, Reason (+8 more)
 
 ### Community 10 - "data.ts"
 Cohesion: 0.06
@@ -196,7 +195,7 @@ Nodes (8): deletePendaftaran(), updateStatusPendaftaran(), AdminPendaftaran, EMA
 
 ### Community 27 - "Decisions"
 Cohesion: 0.20
-Nodes (9): Current Implementation, Decision, Decision, Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token), Decision: `tsconfig.json` `jsx: "preserve"` di-commit, Decisions, Important, Important (+1 more)
+Nodes (9): Decision, Decision, Decision: Tidak ada lapisan auth/role selain Admin, Decision: `tsconfig.json` `jsx: "preserve"` di-commit, Decisions, Important, Important, Reason (+1 more)
 
 ### Community 28 - "Decision: Platform deploy"
 Cohesion: 0.33
@@ -262,13 +261,9 @@ Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: 
 Cohesion: 0.08
 Nodes (24): File Upload Architecture (galeri & materi), Galeri publik — PROGRAM → TAHUN → FOTO (2026-09-27), Alternatives Considered, Current Implementation, Decision, Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO, Important, Reason (+16 more)
 
-### Community 44 - "Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)"
-Cohesion: 0.33
-Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`), Important, Reason
-
-### Community 45 - "Decision: Tidak ada lapisan auth/role selain Admin"
+### Community 44 - "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)"
 Cohesion: 0.50
-Nodes (4): Decision, Decision: Tidak ada lapisan auth/role selain Admin, Important, Reason
+Nodes (4): Current Implementation, Decision, Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token), Important
 
 ### Community 46 - "Decision: Kop program galeri memakai `<div>`, bukan `<header>`"
 Cohesion: 0.33
@@ -283,7 +278,7 @@ Cohesion: 0.18
 Nodes (11): Components, Form Handling & Validation, Frontend Architecture, Hooks & State Management, Routing, ActionState, createProgram(), updateProgram() (+3 more)
 
 ## Knowledge Gaps
-- **391 isolated node(s):** `Project`, `Before Making Changes`, `Database Rules`, `Testing Rules`, `Git Rules` (+386 more)
+- **391 isolated node(s):** `Props`, `dynamic`, `metadata`, `dynamic`, `Props` (+386 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 443 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -291,16 +286,16 @@ Nodes (11): Components, Form Handling & Validation, Frontend Architecture, Hooks
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `requireAdmin()` connect `requireAdmin` to `Architecture`, `upload/route.ts`, `prisma.ts`, `AI HANDOFF`, `AGENTS.md`, `JadwalManager.tsx`, `actions.ts`, `KategoriManager.tsx`, `moveGalleryImage`, `ActionState`, `MateriManager.tsx`, `Project Context`, `PendaftaranList.tsx`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``?**
-  _High betweenness centrality (0.236) - this node is a cross-community bridge._
-- **Why does `Decisions` connect `Decisions` to `(public)/page.tsx`, `Decision: Galeri publik memakai container & grid sendiri`, `upload/route.ts`, `moveGalleryImage`, `Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai`, `Decision: Platform deploy`, `Decision: Versi Next.js & Prisma di-pin`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)`, `Decision: Seed idempoten, tidak pernah menimpa password admin`, `Decision: Tidak ada payment gateway`, `Decision: Database PostgreSQL (Neon), bukan SQLite`, `Decision: Prisma `db push` tanpa file migrasi`, `Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT``, `Decision: GitHub Pages dinonaktifkan untuk repo`, `Decision: Rate limit in-memory diterima`, `Decision: Materi pelatihan disembunyikan dari publik`, `Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe`, `Decision: Galeri dikaitkan lewat relasi, bukan string kategori`, `GaleriList.tsx`, `Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)`, `Decision: Tidak ada lapisan auth/role selain Admin`, `Decision: Kop program galeri memakai `<div>`, bukan `<header>``, `Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)`?**
+  _High betweenness centrality (0.235) - this node is a cross-community bridge._
+- **Why does `Decisions` connect `Decisions` to `(public)/page.tsx`, `Decision: Galeri publik memakai container & grid sendiri`, `upload/route.ts`, `Pages & Layout`, `moveGalleryImage`, `Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai`, `Decision: Platform deploy`, `Decision: Versi Next.js & Prisma di-pin`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)`, `Decision: Seed idempoten, tidak pernah menimpa password admin`, `Decision: Tidak ada payment gateway`, `Decision: Database PostgreSQL (Neon), bukan SQLite`, `Decision: Prisma `db push` tanpa file migrasi`, `Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT``, `Decision: GitHub Pages dinonaktifkan untuk repo`, `Decision: Rate limit in-memory diterima`, `Decision: Materi pelatihan disembunyikan dari publik`, `Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe`, `Decision: Galeri dikaitkan lewat relasi, bukan string kategori`, `GaleriList.tsx`, `Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)`, `Decision: Kop program galeri memakai `<div>`, bukan `<header>``, `Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)`?**
   _High betweenness centrality (0.233) - this node is a cross-community bridge._
 - **Why does `Decision: Semua mutasi lewat Server Actions + `requireAdmin()`` connect `Decision: Semua mutasi lewat Server Actions + `requireAdmin()`` to `Decisions`, `requireAdmin`?**
-  _High betweenness centrality (0.134) - this node is a cross-community bridge._
+  _High betweenness centrality (0.133) - this node is a cross-community bridge._
 - **Are the 11 inferred relationships involving `requireAdmin()` (e.g. with `Development Rules` and `Security Rules`) actually correct?**
   _`requireAdmin()` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `refresh()` (e.g. with `Form Handling & Validation` and `Current Implementation`) actually correct?**
   _`refresh()` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Project`, `Before Making Changes`, `Database Rules` to the rest of the system?**
+- **What connects `Props`, `dynamic`, `metadata` to the rest of the system?**
   _391 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `(public)/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08771929824561403 - nodes in this community are weakly interconnected._

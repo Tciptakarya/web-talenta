@@ -43,7 +43,8 @@
   "41": "AGENTS.md",
   "42": "Decision: Galeri dikaitkan lewat relasi, bukan string kategori",
   "43": "GaleriList.tsx",
-  "44": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+  "44": "auth.ts",
+  "45": "Decision: Tidak ada lapisan auth/role selain Admin",
   "46": "Decision: Kop program galeri memakai `<div>`, bukan `<header>`",
   "48": "Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)",
   "51": "ActionState"

@@ -2688,6 +2688,42 @@
       "source_location": "L78"
     },
     {
+      "id": "app_admin_login_page_adminloginpage",
+      "label": "AdminLoginPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "adminloginpage()",
+      "source_file": "app/admin/login/page.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "components_admin_loginform_loginform",
+      "label": "LoginForm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "loginform()",
+      "source_file": "components/admin/LoginForm.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "components_admin_loginform_loginform_onsubmit",
+      "label": "onSubmit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "onsubmit()",
+      "source_file": "components/admin/LoginForm.tsx",
+      "source_location": "L14"
+    },
+    {
       "id": "app_admin_actions_gantipassword",
       "label": "gantiPassword()",
       "_callable": true,
@@ -2760,18 +2796,6 @@
       "source_location": "L7"
     },
     {
-      "id": "app_admin_login_page_adminloginpage",
-      "label": "AdminLoginPage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "adminloginpage()",
-      "source_file": "app/admin/login/page.tsx",
-      "source_location": "L5"
-    },
-    {
       "id": "components_admin_gantipasswordform_gantipasswordform",
       "label": "GantiPasswordForm()",
       "_callable": true,
@@ -2781,30 +2805,6 @@
       "file_type": "code",
       "norm_label": "gantipasswordform()",
       "source_file": "components/admin/GantiPasswordForm.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "components_admin_loginform_loginform",
-      "label": "LoginForm()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "loginform()",
-      "source_file": "components/admin/LoginForm.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "components_admin_loginform_loginform_onsubmit",
-      "label": "onSubmit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "onsubmit()",
-      "source_file": "components/admin/LoginForm.tsx",
       "source_location": "L14"
     },
     {
@@ -3178,6 +3178,18 @@
       "norm_label": "reason",
       "source_file": "AI_CONTEXT/DECISIONS.md",
       "source_location": "L249"
+    },
+    {
+      "id": "ai_context_handoff_current_state",
+      "label": "CURRENT STATE",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "(public)/page.tsx",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "current state",
+      "source_file": "AI_CONTEXT/HANDOFF.md",
+      "source_location": "L23"
     },
     {
       "id": "tsconfig",
@@ -4459,7 +4471,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-09-23]",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L420"
+      "source_location": "L423"
     },
     {
       "id": "ai_context_changelog_2026_09_24",
@@ -4471,7 +4483,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-09-24]",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L411"
+      "source_location": "L414"
     },
     {
       "id": "ai_context_changelog_2026_09_25",
@@ -4483,7 +4495,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-09-25]",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L375"
+      "source_location": "L378"
     },
     {
       "id": "ai_context_changelog_2026_09_26",
@@ -4495,7 +4507,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-09-26]",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L250"
+      "source_location": "L253"
     },
     {
       "id": "ai_context_changelog_2026_09_27",
@@ -4507,7 +4519,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-09-27]",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L181"
+      "source_location": "L184"
     },
     {
       "id": "ai_context_changelog_2026_09_28",
@@ -4531,10 +4543,10 @@
       "node_kind": "heading",
       "norm_label": "added",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L183"
+      "source_location": "L186"
     },
     {
-      "id": "ai_context_changelog_added_252",
+      "id": "ai_context_changelog_added_255",
       "label": "Added",
       "_origin": "ast",
       "community": 19,
@@ -4543,10 +4555,10 @@
       "node_kind": "heading",
       "norm_label": "added",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L252"
+      "source_location": "L255"
     },
     {
-      "id": "ai_context_changelog_added_377",
+      "id": "ai_context_changelog_added_380",
       "label": "Added",
       "_origin": "ast",
       "community": 19,
@@ -4555,10 +4567,10 @@
       "node_kind": "heading",
       "norm_label": "added",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L377"
+      "source_location": "L380"
     },
     {
-      "id": "ai_context_changelog_added_422",
+      "id": "ai_context_changelog_added_425",
       "label": "Added",
       "_origin": "ast",
       "community": 19,
@@ -4567,7 +4579,7 @@
       "node_kind": "heading",
       "norm_label": "added",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L422"
+      "source_location": "L425"
     },
     {
       "id": "ai_context_changelog_changed",
@@ -4582,7 +4594,7 @@
       "source_location": "L18"
     },
     {
-      "id": "ai_context_changelog_changed_308",
+      "id": "ai_context_changelog_changed_311",
       "label": "Changed",
       "_origin": "ast",
       "community": 19,
@@ -4591,10 +4603,10 @@
       "node_kind": "heading",
       "norm_label": "changed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L308"
+      "source_location": "L311"
     },
     {
-      "id": "ai_context_changelog_changed_399",
+      "id": "ai_context_changelog_changed_402",
       "label": "Changed",
       "_origin": "ast",
       "community": 19,
@@ -4603,10 +4615,10 @@
       "node_kind": "heading",
       "norm_label": "changed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L399"
+      "source_location": "L402"
     },
     {
-      "id": "ai_context_changelog_changed_413",
+      "id": "ai_context_changelog_changed_416",
       "label": "Changed",
       "_origin": "ast",
       "community": 19,
@@ -4615,10 +4627,10 @@
       "node_kind": "heading",
       "norm_label": "changed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L413"
+      "source_location": "L416"
     },
     {
-      "id": "ai_context_changelog_changed_430",
+      "id": "ai_context_changelog_changed_433",
       "label": "Changed",
       "_origin": "ast",
       "community": 19,
@@ -4627,7 +4639,7 @@
       "node_kind": "heading",
       "norm_label": "changed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L430"
+      "source_location": "L433"
     },
     {
       "id": "ai_context_changelog_changelog",
@@ -4654,7 +4666,7 @@
       "source_location": "L64"
     },
     {
-      "id": "ai_context_changelog_fixed_393",
+      "id": "ai_context_changelog_fixed_396",
       "label": "Fixed",
       "_origin": "ast",
       "community": 19,
@@ -4663,7 +4675,7 @@
       "node_kind": "heading",
       "norm_label": "fixed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L393"
+      "source_location": "L396"
     },
     {
       "id": "ai_context_changelog_important_decisions",
@@ -4675,7 +4687,7 @@
       "node_kind": "heading",
       "norm_label": "important decisions",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L439"
+      "source_location": "L442"
     },
     {
       "id": "ai_context_changelog_technical_notes",
@@ -4690,7 +4702,7 @@
       "source_location": "L114"
     },
     {
-      "id": "ai_context_changelog_technical_notes_223",
+      "id": "ai_context_changelog_technical_notes_226",
       "label": "Technical Notes",
       "_origin": "ast",
       "community": 19,
@@ -4699,10 +4711,10 @@
       "node_kind": "heading",
       "norm_label": "technical notes",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L223"
+      "source_location": "L226"
     },
     {
-      "id": "ai_context_changelog_technical_notes_352",
+      "id": "ai_context_changelog_technical_notes_355",
       "label": "Technical Notes",
       "_origin": "ast",
       "community": 19,
@@ -4711,10 +4723,10 @@
       "node_kind": "heading",
       "norm_label": "technical notes",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L352"
+      "source_location": "L355"
     },
     {
-      "id": "ai_context_changelog_technical_notes_404",
+      "id": "ai_context_changelog_technical_notes_407",
       "label": "Technical Notes",
       "_origin": "ast",
       "community": 19,
@@ -4723,7 +4735,7 @@
       "node_kind": "heading",
       "norm_label": "technical notes",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L404"
+      "source_location": "L407"
     },
     {
       "id": "ai_context_decisions_alternatives_considered_545",
@@ -4891,7 +4903,7 @@
       "node_kind": "heading",
       "norm_label": "broken features",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L840"
+      "source_location": "L837"
     },
     {
       "id": "ai_context_current_state_catatan_graphify_label_tidak_butuh_api_key",
@@ -4903,7 +4915,7 @@
       "node_kind": "heading",
       "norm_label": "catatan: `graphify label` tidak butuh api key",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L781"
+      "source_location": "L778"
     },
     {
       "id": "ai_context_current_state_current_blockers",
@@ -4915,7 +4927,7 @@
       "node_kind": "heading",
       "norm_label": "current blockers",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L850"
+      "source_location": "L847"
     },
     {
       "id": "ai_context_current_state_current_development_status",
@@ -4927,7 +4939,7 @@
       "node_kind": "heading",
       "norm_label": "current development status",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L9"
+      "source_location": "L8"
     },
     {
       "id": "ai_context_current_state_current_problems",
@@ -4939,7 +4951,7 @@
       "node_kind": "heading",
       "norm_label": "current problems",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L417"
+      "source_location": "L414"
     },
     {
       "id": "ai_context_current_state_current_state",
@@ -4963,7 +4975,7 @@
       "node_kind": "heading",
       "norm_label": "currently in progress",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L376"
+      "source_location": "L375"
     },
     {
       "id": "ai_context_current_state_exact_next_step",
@@ -4975,7 +4987,7 @@
       "node_kind": "heading",
       "norm_label": "exact next step",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L857"
+      "source_location": "L854"
     },
     {
       "id": "ai_context_current_state_issue_11_batas_4_5_mb_vercel_vs_ui_yang_menulis_8_mb",
@@ -4987,7 +4999,7 @@
       "node_kind": "heading",
       "norm_label": "issue 11 \u2014 batas 4,5 mb vercel vs ui yang menulis 8 mb",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L752"
+      "source_location": "L749"
     },
     {
       "id": "ai_context_current_state_issue_1_resend_api_key_tidak_valid_401_api_key_is_invalid",
@@ -4999,7 +5011,7 @@
       "node_kind": "heading",
       "norm_label": "issue 1 \u2014 `resend_api_key` tidak valid (401 \"api key is invalid\")",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L419"
+      "source_location": "L416"
     },
     {
       "id": "ai_context_current_state_issue_2_email_info_belum_tentu_menerima_mail_mx_belum_di_add_ulang",
@@ -5011,7 +5023,7 @@
       "node_kind": "heading",
       "norm_label": "issue 2 \u2014 email `info@` belum tentu menerima mail (mx belum di-add ulang)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L451"
+      "source_location": "L448"
     },
     {
       "id": "ai_context_current_state_issue_3_domain_pengirim_resend_belum_terverifikasi",
@@ -5023,7 +5035,7 @@
       "node_kind": "heading",
       "norm_label": "issue 3 \u2014 domain pengirim resend belum terverifikasi",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L478"
+      "source_location": "L475"
     },
     {
       "id": "ai_context_current_state_issue_4_verifikasi_live_production_untuk_perbaikan_modal",
@@ -5035,7 +5047,7 @@
       "node_kind": "heading",
       "norm_label": "issue 4 \u2014 verifikasi live production untuk perbaikan modal",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L503"
+      "source_location": "L500"
     },
     {
       "id": "ai_context_current_state_issue_5_dokumentasi_menyimpang_dari_kondisi_sebenarnya_doc_drift",
@@ -5047,7 +5059,7 @@
       "node_kind": "heading",
       "norm_label": "issue 5 \u2014 dokumentasi menyimpang dari kondisi sebenarnya (doc drift)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L527"
+      "source_location": "L524"
     },
     {
       "id": "ai_context_current_state_issue_6_warning_ekstraksi_graphify_pada_2_file_di_teks_jsx",
@@ -5059,7 +5071,7 @@
       "node_kind": "heading",
       "norm_label": "issue 6 \u2014 warning ekstraksi graphify pada 2 file (`&` di teks jsx)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L557"
+      "source_location": "L554"
     },
     {
       "id": "ai_context_current_state_issue_7_5_vulnerability_di_npm_audit_sengaja_dibiarkan",
@@ -5071,7 +5083,7 @@
       "node_kind": "heading",
       "norm_label": "issue 7 \u2014 5 vulnerability di `npm audit` (sengaja dibiarkan)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L598"
+      "source_location": "L595"
     },
     {
       "id": "ai_context_current_state_issue_8_kredensial_git_pernah_terekspos_di_percakapan",
@@ -5083,7 +5095,7 @@
       "node_kind": "heading",
       "norm_label": "issue 8 \u2014 kredensial git pernah terekspos di percakapan",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L622"
+      "source_location": "L619"
     },
     {
       "id": "ai_context_current_state_issue_9_graphify_update_crash_0xc0000005_penyebab_belum_teridentifikasi_intermiten_37",
@@ -5095,7 +5107,7 @@
       "node_kind": "heading",
       "norm_label": "issue 9 \u2014 `graphify update .` crash `0xc0000005` \u2014 penyebab belum teridentifikasi (intermiten ~37%)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L645"
+      "source_location": "L642"
     },
     {
       "id": "ai_context_current_state_working_features",
@@ -5107,7 +5119,7 @@
       "node_kind": "heading",
       "norm_label": "working features",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L802"
+      "source_location": "L799"
     },
     {
       "id": "components_admin_materimanager",
@@ -5628,7 +5640,7 @@
       "node_kind": "heading",
       "norm_label": "bugs",
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L64"
+      "source_location": "L62"
     },
     {
       "id": "ai_context_todo_completed",
@@ -5640,7 +5652,7 @@
       "node_kind": "heading",
       "norm_label": "completed",
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L111"
+      "source_location": "L109"
     },
     {
       "id": "ai_context_todo_critical",
@@ -5676,7 +5688,7 @@
       "node_kind": "heading",
       "norm_label": "next",
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L33"
+      "source_location": "L31"
     },
     {
       "id": "ai_context_todo_planned",
@@ -5688,7 +5700,7 @@
       "node_kind": "heading",
       "norm_label": "planned",
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L48"
+      "source_location": "L46"
     },
     {
       "id": "ai_context_todo_technical_debt",
@@ -5700,7 +5712,7 @@
       "node_kind": "heading",
       "norm_label": "technical debt",
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L96"
+      "source_location": "L94"
     },
     {
       "id": "ai_context_todo_todo",
@@ -5771,6 +5783,18 @@
       "source_location": "L1"
     },
     {
+      "id": "ai_context_decisions_current_implementation_666",
+      "label": "Current Implementation",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "Decisions",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "current implementation",
+      "source_file": "AI_CONTEXT/DECISIONS.md",
+      "source_location": "L666"
+    },
+    {
       "id": "ai_context_decisions_decision_394",
       "label": "Decision",
       "_origin": "ast",
@@ -5783,7 +5807,7 @@
       "source_location": "L394"
     },
     {
-      "id": "ai_context_decisions_decision_412",
+      "id": "ai_context_decisions_decision_645",
       "label": "Decision",
       "_origin": "ast",
       "community": 27,
@@ -5792,19 +5816,19 @@
       "node_kind": "heading",
       "norm_label": "decision",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L412"
+      "source_location": "L645"
     },
     {
-      "id": "ai_context_decisions_decision_tidak_ada_lapisan_auth_role_selain_admin",
-      "label": "Decision: Tidak ada lapisan auth/role selain Admin",
+      "id": "ai_context_decisions_decision_tools_graphify_dipakai_untuk_navigasi_codebase_dengan_disiplin_token",
+      "label": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
       "_origin": "ast",
       "community": 27,
       "community_name": "Decisions",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "decision: tidak ada lapisan auth/role selain admin",
+      "norm_label": "decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L410"
+      "source_location": "L643"
     },
     {
       "id": "ai_context_decisions_decision_tsconfig_json_jsx_preserve_di_commit",
@@ -5843,7 +5867,7 @@
       "source_location": "L404"
     },
     {
-      "id": "ai_context_decisions_important_420",
+      "id": "ai_context_decisions_important_675",
       "label": "Important",
       "_origin": "ast",
       "community": 27,
@@ -5852,7 +5876,7 @@
       "node_kind": "heading",
       "norm_label": "important",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L420"
+      "source_location": "L675"
     },
     {
       "id": "ai_context_decisions_reason_399",
@@ -5865,18 +5889,6 @@
       "norm_label": "reason",
       "source_file": "AI_CONTEXT/DECISIONS.md",
       "source_location": "L399"
-    },
-    {
-      "id": "ai_context_decisions_reason_416",
-      "label": "Reason",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "Decisions",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "reason",
-      "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L416"
     },
     {
       "id": "ai_context_decisions_alternatives_considered",
@@ -6975,7 +6987,7 @@
       "source_location": "L174"
     },
     {
-      "id": "ai_context_changelog_fixed_265",
+      "id": "ai_context_changelog_fixed_268",
       "label": "Fixed",
       "_origin": "ast",
       "community": 4,
@@ -6984,7 +6996,7 @@
       "node_kind": "heading",
       "norm_label": "fixed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L265"
+      "source_location": "L268"
     },
     {
       "id": "ai_context_current_state_issue_10_upload_foto_mustahil_di_production_blob_read_write_token_kosong",
@@ -6996,7 +7008,7 @@
       "node_kind": "heading",
       "norm_label": "issue 10 \u2014 upload foto mustahil di production (`blob_read_write_token` kosong)",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L699"
+      "source_location": "L696"
     },
     {
       "id": "ai_context_current_state_last_completed_work",
@@ -7008,7 +7020,7 @@
       "node_kind": "heading",
       "norm_label": "last completed work",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L27"
+      "source_location": "L26"
     },
     {
       "id": "ai_context_decisions_alternatives_considered_446",
@@ -7164,7 +7176,7 @@
       "node_kind": "heading",
       "norm_label": "last completed",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L59"
+      "source_location": "L61"
     },
     {
       "id": "ai_context_decisions_alternatives_considered_800",
@@ -7726,52 +7738,228 @@
       "source_location": "L713"
     },
     {
-      "id": "ai_context_decisions_current_implementation_666",
-      "label": "Current Implementation",
+      "id": "app_admin_login_page",
+      "label": "login/page.tsx",
       "_origin": "ast",
       "community": 44,
-      "community_name": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "current implementation",
-      "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L666"
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "login/page.tsx",
+      "source_file": "app/admin/login/page.tsx",
+      "source_location": "L1"
     },
     {
-      "id": "ai_context_decisions_decision_645",
-      "label": "Decision",
+      "id": "app_admin_login_page_metadata",
+      "label": "metadata",
       "_origin": "ast",
       "community": 44,
-      "community_name": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "metadata",
+      "source_file": "app/admin/login/page.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "app_api_auth_nextauth_route",
+      "label": "[...nextauth]/route.ts",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "[...nextauth]/route.ts",
+      "source_file": "app/api/auth/[...nextauth]/route.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "components_admin_loginform",
+      "label": "LoginForm.tsx",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "loginform.tsx",
+      "source_file": "components/admin/LoginForm.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_auth",
+      "label": "auth.ts",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "auth.ts",
+      "source_file": "lib/auth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_auth_config",
+      "label": "auth.config.ts",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "auth.config.ts",
+      "source_file": "lib/auth.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_auth_config_authconfig",
+      "label": "authConfig",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "authconfig",
+      "source_file": "lib/auth.config.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "lib_auth_credentialsschema",
+      "label": "credentialsSchema",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "credentialsschema",
+      "source_file": "lib/auth.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "lib_auth_handlers",
+      "label": "handlers",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "handlers",
+      "source_file": "lib/auth.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "lib_auth_signin",
+      "label": "signIn",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "signin",
+      "source_file": "lib/auth.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "lib_auth_signout",
+      "label": "signOut",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "signout",
+      "source_file": "lib/auth.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "middleware",
+      "label": "middleware.ts",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "middleware.ts",
+      "source_file": "middleware.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "middleware_auth",
+      "label": "{ auth }",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "{ auth }",
+      "source_file": "middleware.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "middleware_config",
+      "label": "config",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "code",
+      "norm_label": "config",
+      "source_file": "middleware.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "ref_next_auth",
+      "label": "next-auth",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "concept",
+      "norm_label": "next-auth",
+      "source_file": "package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "ref_zod",
+      "label": "zod",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "auth.ts",
+      "file_type": "concept",
+      "norm_label": "zod",
+      "source_file": "package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "ai_context_decisions_decision_412",
+      "label": "Decision",
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "Decision: Tidak ada lapisan auth/role selain Admin",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "decision",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L645"
+      "source_location": "L412"
     },
     {
-      "id": "ai_context_decisions_decision_tools_graphify_dipakai_untuk_navigasi_codebase_dengan_disiplin_token",
-      "label": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+      "id": "ai_context_decisions_decision_tidak_ada_lapisan_auth_role_selain_admin",
+      "label": "Decision: Tidak ada lapisan auth/role selain Admin",
       "_origin": "ast",
-      "community": 44,
-      "community_name": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+      "community": 45,
+      "community_name": "Decision: Tidak ada lapisan auth/role selain Admin",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+      "norm_label": "decision: tidak ada lapisan auth/role selain admin",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L643"
+      "source_location": "L410"
     },
     {
-      "id": "ai_context_decisions_important_675",
+      "id": "ai_context_decisions_important_420",
       "label": "Important",
       "_origin": "ast",
-      "community": 44,
-      "community_name": "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)",
+      "community": 45,
+      "community_name": "Decision: Tidak ada lapisan auth/role selain Admin",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "important",
       "source_file": "AI_CONTEXT/DECISIONS.md",
-      "source_location": "L675"
+      "source_location": "L420"
+    },
+    {
+      "id": "ai_context_decisions_reason_416",
+      "label": "Reason",
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "Decision: Tidak ada lapisan auth/role selain Admin",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "reason",
+      "source_file": "AI_CONTEXT/DECISIONS.md",
+      "source_location": "L416"
     },
     {
       "id": "ai_context_decisions_alternatives_considered_865",
@@ -8083,39 +8271,6 @@
       "source_location": "L5"
     },
     {
-      "id": "app_admin_login_page",
-      "label": "login/page.tsx",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "login/page.tsx",
-      "source_file": "app/admin/login/page.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "app_admin_login_page_metadata",
-      "label": "metadata",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "metadata",
-      "source_file": "app/admin/login/page.tsx",
-      "source_location": "L3"
-    },
-    {
-      "id": "app_api_auth_nextauth_route",
-      "label": "[...nextauth]/route.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "[...nextauth]/route.ts",
-      "source_file": "app/api/auth/[...nextauth]/route.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "components_admin_gantipasswordform",
       "label": "GantiPasswordForm.tsx",
       "_origin": "ast",
@@ -8124,17 +8279,6 @@
       "file_type": "code",
       "norm_label": "gantipasswordform.tsx",
       "source_file": "components/admin/GantiPasswordForm.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "components_admin_loginform",
-      "label": "LoginForm.tsx",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "loginform.tsx",
-      "source_file": "components/admin/LoginForm.tsx",
       "source_location": "L1"
     },
     {
@@ -8158,83 +8302,6 @@
       "norm_label": "status_label",
       "source_file": "components/admin/PesanList.tsx",
       "source_location": "L14"
-    },
-    {
-      "id": "lib_auth",
-      "label": "auth.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "auth.ts",
-      "source_file": "lib/auth.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_auth_config",
-      "label": "auth.config.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "auth.config.ts",
-      "source_file": "lib/auth.config.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_auth_config_authconfig",
-      "label": "authConfig",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "authconfig",
-      "source_file": "lib/auth.config.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "lib_auth_credentialsschema",
-      "label": "credentialsSchema",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "credentialsschema",
-      "source_file": "lib/auth.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "lib_auth_handlers",
-      "label": "handlers",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "handlers",
-      "source_file": "lib/auth.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "lib_auth_signin",
-      "label": "signIn",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "signin",
-      "source_file": "lib/auth.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "lib_auth_signout",
-      "label": "signOut",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "signout",
-      "source_file": "lib/auth.ts",
-      "source_location": "L13"
     },
     {
       "id": "lib_prisma",
@@ -8268,61 +8335,6 @@
       "norm_label": "prisma",
       "source_file": "lib/prisma.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "middleware",
-      "label": "middleware.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "middleware.ts",
-      "source_file": "middleware.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "middleware_auth",
-      "label": "{ auth }",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "{ auth }",
-      "source_file": "middleware.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "middleware_config",
-      "label": "config",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "code",
-      "norm_label": "config",
-      "source_file": "middleware.ts",
-      "source_location": "L29"
-    },
-    {
-      "id": "ref_next_auth",
-      "label": "next-auth",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "concept",
-      "norm_label": "next-auth",
-      "source_file": "package.json",
-      "source_location": "L19"
-    },
-    {
-      "id": "ref_zod",
-      "label": "zod",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "prisma.ts",
-      "file_type": "concept",
-      "norm_label": "zod",
-      "source_file": "package.json",
-      "source_location": "L24"
     },
     {
       "id": "components_admin_programmanager",
@@ -8420,18 +8432,6 @@
       "source_location": "L1"
     },
     {
-      "id": "ai_context_handoff_current_state",
-      "label": "CURRENT STATE",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "AI HANDOFF",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "current state",
-      "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L23"
-    },
-    {
       "id": "ai_context_handoff_currently_working_on",
       "label": "CURRENTLY WORKING ON",
       "_origin": "ast",
@@ -8441,7 +8441,7 @@
       "node_kind": "heading",
       "norm_label": "currently working on",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L197"
+      "source_location": "L214"
     },
     {
       "id": "ai_context_handoff_do_not_change",
@@ -8453,7 +8453,7 @@
       "node_kind": "heading",
       "norm_label": "do not change",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L308"
+      "source_location": "L327"
     },
     {
       "id": "ai_context_handoff_git",
@@ -8465,7 +8465,7 @@
       "node_kind": "heading",
       "norm_label": "git",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L369"
+      "source_location": "L388"
     },
     {
       "id": "ai_context_handoff_graphify_low_token",
@@ -8477,7 +8477,7 @@
       "node_kind": "heading",
       "norm_label": "graphify low-token",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L350"
+      "source_location": "L369"
     },
     {
       "id": "ai_context_handoff_important_decisions",
@@ -8489,7 +8489,7 @@
       "node_kind": "heading",
       "norm_label": "important decisions",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L275"
+      "source_location": "L294"
     },
     {
       "id": "ai_context_handoff_known_issues",
@@ -8501,7 +8501,7 @@
       "node_kind": "heading",
       "norm_label": "known issues",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L210"
+      "source_location": "L229"
     },
     {
       "id": "ai_context_handoff_next_action",
@@ -8513,7 +8513,7 @@
       "node_kind": "heading",
       "norm_label": "next action",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L322"
+      "source_location": "L341"
     },
     {
       "id": "ai_context_handoff_project",
@@ -8549,7 +8549,7 @@
       "node_kind": "heading",
       "norm_label": "verification",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L335"
+      "source_location": "L354"
     },
     {
       "id": "legacy_script",
@@ -9356,7 +9356,7 @@
       "source_location": "L63"
     },
     {
-      "id": "ai_context_changelog_changed_206",
+      "id": "ai_context_changelog_changed_209",
       "label": "Changed",
       "_origin": "ast",
       "community": 9,
@@ -9365,7 +9365,7 @@
       "node_kind": "heading",
       "norm_label": "changed",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L206"
+      "source_location": "L209"
     },
     {
       "id": "ai_context_decisions_alternatives_considered_963",
@@ -9510,7 +9510,7 @@
       "confidence_score": 1.0,
       "context": "app/admin/actions.ts::updateGalleryImage",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L116",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -16568,123 +16568,123 @@
     },
     {
       "source": "ai_context_changelog_2026_09_23",
-      "target": "ai_context_changelog_added_422",
+      "target": "ai_context_changelog_added_425",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L422",
+      "source_location": "L425",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_23",
-      "target": "ai_context_changelog_changed_430",
+      "target": "ai_context_changelog_changed_433",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L430",
+      "source_location": "L433",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_24",
-      "target": "ai_context_changelog_changed_413",
+      "target": "ai_context_changelog_changed_416",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L413",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_25",
-      "target": "ai_context_changelog_added_377",
+      "target": "ai_context_changelog_added_380",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L377",
+      "source_location": "L380",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_25",
-      "target": "ai_context_changelog_fixed_393",
+      "target": "ai_context_changelog_fixed_396",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L393",
+      "source_location": "L396",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_25",
-      "target": "ai_context_changelog_changed_399",
+      "target": "ai_context_changelog_changed_402",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L399",
+      "source_location": "L402",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_25",
-      "target": "ai_context_changelog_technical_notes_404",
+      "target": "ai_context_changelog_technical_notes_407",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L404",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_26",
-      "target": "ai_context_changelog_added_252",
+      "target": "ai_context_changelog_added_255",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L252",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_26",
-      "target": "ai_context_changelog_fixed_265",
+      "target": "ai_context_changelog_fixed_268",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L265",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_26",
-      "target": "ai_context_changelog_changed_308",
+      "target": "ai_context_changelog_changed_311",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L308",
+      "source_location": "L311",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_26",
-      "target": "ai_context_changelog_technical_notes_352",
+      "target": "ai_context_changelog_technical_notes_355",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L352",
+      "source_location": "L355",
       "weight": 1.0
     },
     {
@@ -16695,29 +16695,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L183",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_27",
-      "target": "ai_context_changelog_changed_206",
+      "target": "ai_context_changelog_changed_209",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L206",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
       "source": "ai_context_changelog_2026_09_27",
-      "target": "ai_context_changelog_technical_notes_223",
+      "target": "ai_context_changelog_technical_notes_226",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L223",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -16772,7 +16772,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L181",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -16783,7 +16783,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L250",
+      "source_location": "L253",
       "weight": 1.0
     },
     {
@@ -16794,7 +16794,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L375",
+      "source_location": "L378",
       "weight": 1.0
     },
     {
@@ -16805,7 +16805,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L411",
+      "source_location": "L414",
       "weight": 1.0
     },
     {
@@ -16816,7 +16816,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L420",
+      "source_location": "L423",
       "weight": 1.0
     },
     {
@@ -16827,7 +16827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L439",
+      "source_location": "L442",
       "weight": 1.0
     },
     {
@@ -16849,7 +16849,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L419",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -16860,7 +16860,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L451",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -16871,7 +16871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L478",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -16882,7 +16882,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L503",
+      "source_location": "L500",
       "weight": 1.0
     },
     {
@@ -16893,7 +16893,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L527",
+      "source_location": "L524",
       "weight": 1.0
     },
     {
@@ -16904,7 +16904,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L557",
+      "source_location": "L554",
       "weight": 1.0
     },
     {
@@ -16915,7 +16915,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L598",
+      "source_location": "L595",
       "weight": 1.0
     },
     {
@@ -16926,7 +16926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L622",
+      "source_location": "L619",
       "weight": 1.0
     },
     {
@@ -16937,7 +16937,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L645",
+      "source_location": "L642",
       "weight": 1.0
     },
     {
@@ -16948,7 +16948,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L699",
+      "source_location": "L696",
       "weight": 1.0
     },
     {
@@ -16959,7 +16959,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L752",
+      "source_location": "L749",
       "weight": 1.0
     },
     {
@@ -16970,7 +16970,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L781",
+      "source_location": "L778",
       "weight": 1.0
     },
     {
@@ -16981,7 +16981,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L27",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -16992,7 +16992,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L376",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -17003,7 +17003,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L417",
+      "source_location": "L414",
       "weight": 1.0
     },
     {
@@ -17014,40 +17014,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L802",
-      "weight": 1.0
-    },
-    {
-      "source": "ai_context_current_state_current_state",
-      "target": "ai_context_current_state_broken_features",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L840",
-      "weight": 1.0
-    },
-    {
-      "source": "ai_context_current_state_current_state",
-      "target": "ai_context_current_state_current_blockers",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L850",
-      "weight": 1.0
-    },
-    {
-      "source": "ai_context_current_state_current_state",
-      "target": "ai_context_current_state_exact_next_step",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L857",
+      "source_location": "L799",
       "weight": 1.0
     },
     {
@@ -17058,7 +17025,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L9",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "ai_context_current_state_current_state",
+      "target": "ai_context_current_state_broken_features",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
+      "source_location": "L837",
+      "weight": 1.0
+    },
+    {
+      "source": "ai_context_current_state_current_state",
+      "target": "ai_context_current_state_current_blockers",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
+      "source_location": "L847",
+      "weight": 1.0
+    },
+    {
+      "source": "ai_context_current_state_current_state",
+      "target": "ai_context_current_state_exact_next_step",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AI_CONTEXT/CURRENT_STATE.md",
+      "source_location": "L854",
       "weight": 1.0
     },
     {
@@ -18796,7 +18796,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L197",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -18807,7 +18807,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L210",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -18829,7 +18829,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L275",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -18851,7 +18851,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L308",
+      "source_location": "L327",
       "weight": 1.0
     },
     {
@@ -18862,7 +18862,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L322",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -18873,7 +18873,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L335",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -18884,7 +18884,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L350",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -18895,7 +18895,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L369",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -18906,7 +18906,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -19126,7 +19126,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L111",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -19148,7 +19148,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L33",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -19159,7 +19159,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L48",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -19170,7 +19170,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L64",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -19192,7 +19192,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AI_CONTEXT/TODO.md",
-      "source_location": "L96",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -23943,7 +23943,7 @@
       "confidence_score": 0.95,
       "context": "FormPendaftaran",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L354",
+      "source_location": "L353",
       "weight": 1.0
     },
     {
@@ -23983,7 +23983,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_changed_206",
+      "source": "ai_context_changelog_changed_209",
       "target": "components_site_header_header",
       "relation": "references",
       "_origin": "ast",
@@ -23991,7 +23991,7 @@
       "confidence_score": 0.95,
       "context": "Header",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L216",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -24003,7 +24003,7 @@
       "confidence_score": 0.95,
       "context": "Header",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L130",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -24016,6 +24016,30 @@
       "context": "KuotaAware",
       "source_file": "AI_CONTEXT/DECISIONS.md",
       "source_location": "L659",
+      "weight": 1.0
+    },
+    {
+      "source": "ai_context_handoff_current_state",
+      "target": "components_site_layanan_layanan",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "Layanan",
+      "source_file": "AI_CONTEXT/HANDOFF.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "ai_context_handoff_current_state",
+      "target": "components_site_lokasi_lokasi",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "Lokasi",
+      "source_file": "AI_CONTEXT/HANDOFF.md",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -24063,7 +24087,7 @@
       "confidence_score": 0.95,
       "context": "SignOutButton",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L172",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -24075,7 +24099,7 @@
       "confidence_score": 0.95,
       "context": "StorageFailCode",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L247",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -24103,7 +24127,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_storageunavailableerror",
       "relation": "references",
       "_origin": "ast",
@@ -24111,7 +24135,7 @@
       "confidence_score": 0.95,
       "context": "StorageUnavailableError",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L278",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -24123,7 +24147,7 @@
       "confidence_score": 0.95,
       "context": "StorageUnavailableError",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L247",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -24151,6 +24175,18 @@
       "weight": 1.0
     },
     {
+      "source": "ai_context_handoff_current_state",
+      "target": "components_site_testimoni_testimoni",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "Testimoni",
+      "source_file": "AI_CONTEXT/HANDOFF.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
       "source": "ai_context_architecture_pages_layout",
       "target": "components_site_themetoggle_themetoggle",
       "relation": "references",
@@ -24171,7 +24207,7 @@
       "confidence_score": 0.95,
       "context": "ThemeToggle",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L321",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -24183,7 +24219,7 @@
       "confidence_score": 0.95,
       "context": "ThemeToggle",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L172",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -24247,7 +24283,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_assertstorageready",
       "relation": "references",
       "_origin": "ast",
@@ -24255,7 +24291,7 @@
       "confidence_score": 0.95,
       "context": "assertStorageReady()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L281",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -24267,7 +24303,7 @@
       "confidence_score": 0.95,
       "context": "assertStorageReady()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L251",
+      "source_location": "L250",
       "weight": 1.0
     },
     {
@@ -24291,11 +24327,11 @@
       "confidence_score": 0.95,
       "context": "assertStorageReady()",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L147",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_blobenabled",
       "relation": "references",
       "_origin": "ast",
@@ -24303,7 +24339,7 @@
       "confidence_score": 0.95,
       "context": "blobEnabled()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L271",
+      "source_location": "L274",
       "weight": 1.0
     },
     {
@@ -24315,7 +24351,7 @@
       "confidence_score": 0.95,
       "context": "blobEnabled()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L740",
+      "source_location": "L737",
       "weight": 1.0
     },
     {
@@ -24331,7 +24367,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_classifystorageerror",
       "relation": "references",
       "_origin": "ast",
@@ -24339,7 +24375,7 @@
       "confidence_score": 0.95,
       "context": "classifyStorageError()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -24351,7 +24387,7 @@
       "confidence_score": 0.95,
       "context": "classifyStorageError()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L252",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -24403,7 +24439,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_describestoragefailure",
       "relation": "references",
       "_origin": "ast",
@@ -24411,7 +24447,7 @@
       "confidence_score": 0.95,
       "context": "describeStorageFailure()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L280",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -24423,7 +24459,7 @@
       "confidence_score": 0.95,
       "context": "describeStorageFailure()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L250",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -24487,7 +24523,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "lib_storage_isephemeralfs",
       "relation": "references",
       "_origin": "ast",
@@ -24495,7 +24531,7 @@
       "confidence_score": 0.95,
       "context": "isEphemeralFs()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L280",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -24507,7 +24543,7 @@
       "confidence_score": 0.95,
       "context": "isEphemeralFs()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L249",
+      "source_location": "L248",
       "weight": 1.0
     },
     {
@@ -24559,7 +24595,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_changed_308",
+      "source": "ai_context_changelog_changed_311",
       "target": "app_admin_actions_movegalleryimage",
       "relation": "references",
       "_origin": "ast",
@@ -24567,7 +24603,7 @@
       "confidence_score": 0.95,
       "context": "moveGalleryImage",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L330",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -24579,7 +24615,7 @@
       "confidence_score": 0.95,
       "context": "moveGalleryImage",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L204",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -24627,11 +24663,11 @@
       "confidence_score": 0.95,
       "context": "moveGalleryImage",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L137",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_fixed_265",
+      "source": "ai_context_changelog_fixed_268",
       "target": "components_admin_uploadform_pesanfromstatus",
       "relation": "references",
       "_origin": "ast",
@@ -24639,7 +24675,7 @@
       "confidence_score": 0.95,
       "context": "pesanFromStatus()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L285",
+      "source_location": "L288",
       "weight": 1.0
     },
     {
@@ -24651,7 +24687,7 @@
       "confidence_score": 0.95,
       "context": "pesanFromStatus()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L768",
+      "source_location": "L765",
       "weight": 1.0
     },
     {
@@ -24663,7 +24699,7 @@
       "confidence_score": 0.95,
       "context": "pesanFromStatus()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L258",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -24687,7 +24723,7 @@
       "confidence_score": 0.95,
       "context": "pesanFromStatus()",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L149",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -24843,7 +24879,7 @@
       "confidence_score": 0.95,
       "context": "requireAdmin()",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L450",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -24879,7 +24915,7 @@
       "confidence_score": 0.95,
       "context": "requireAdmin()",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L280",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -24999,7 +25035,7 @@
       "confidence_score": 0.95,
       "context": "storeImage()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L709",
+      "source_location": "L706",
       "weight": 1.0
     },
     {
@@ -25011,7 +25047,7 @@
       "confidence_score": 0.95,
       "context": "storeImage()",
       "source_file": "AI_CONTEXT/CURRENT_STATE.md",
-      "source_location": "L233",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -25039,7 +25075,7 @@
       "weight": 1.0
     },
     {
-      "source": "ai_context_changelog_changed_206",
+      "source": "ai_context_changelog_changed_209",
       "target": "app_admin_actions_updategalleryimage",
       "relation": "references",
       "_origin": "ast",
@@ -25047,7 +25083,7 @@
       "confidence_score": 0.95,
       "context": "updateGalleryImage",
       "source_file": "AI_CONTEXT/CHANGELOG.md",
-      "source_location": "L218",
+      "source_location": "L221",
       "weight": 1.0
     },
     {
@@ -25071,10 +25107,10 @@
       "confidence_score": 0.95,
       "context": "updateGalleryImage",
       "source_file": "AI_CONTEXT/HANDOFF.md",
-      "source_location": "L117",
+      "source_location": "L134",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6cf75de2c22dfaeb20efbd6bcb931ffe7531e693"
+  "built_at_commit": "c7784519546aa27b05d30c1d114b0dde077c3468"
 }
