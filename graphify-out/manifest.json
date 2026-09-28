@@ -12,9 +12,9 @@
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/layout.tsx": {
-    "mtime": 1790409151.3714178,
-    "seen": 1790409281.0691965,
-    "ast_hash": "6e0b290b1261855b7f09fa4eeca793bb",
+    "mtime": 1790573062.361604,
+    "seen": 1790573632.612607,
+    "ast_hash": "c8e8d59bf4cfbf7b5609bdd228fc3178",
     "semantic_hash": ""
   },
   "app/admin/(dashboard)/page.tsx": {
@@ -588,33 +588,33 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/ARCHITECTURE.md": {
-    "mtime": 1790566567.2097697,
-    "seen": 1790569915.468277,
-    "ast_hash": "5c3b643a543826fcc1dff422b5de5f84",
+    "mtime": 1790573635.6506457,
+    "seen": 1790574028.9519262,
+    "ast_hash": "c48c9a3724735a2fedd89b3de63c01ba",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CHANGELOG.md": {
-    "mtime": 1790569886.6103792,
-    "seen": 1790569915.4682796,
-    "ast_hash": "2eab39614f50a6cb5e72390171f69640",
+    "mtime": 1790574235.6365767,
+    "seen": 1790574275.951226,
+    "ast_hash": "6a7583cf68b8099a82149b89b7a71bbf",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CURRENT_STATE.md": {
-    "mtime": 1790569894.2911634,
-    "seen": 1790569915.4682813,
-    "ast_hash": "beeeb34e5b139a2b02eee0788d63f43e",
+    "mtime": 1790574256.181715,
+    "seen": 1790574275.9512277,
+    "ast_hash": "b11920f3d06df203bfdd91c04be35369",
     "semantic_hash": ""
   },
   "AI_CONTEXT/DECISIONS.md": {
-    "mtime": 1790569863.3396592,
-    "seen": 1790569915.468284,
-    "ast_hash": "66fb843186af5ea8d65154edac26d439",
+    "mtime": 1790574221.1158805,
+    "seen": 1790574275.9512286,
+    "ast_hash": "781d6bb0db335d4e27f844b18c2eb287",
     "semantic_hash": ""
   },
   "AI_CONTEXT/HANDOFF.md": {
-    "mtime": 1790569903.4959395,
-    "seen": 1790569915.4682858,
-    "ast_hash": "69b71c39e3f601a3c31e1422084385b8",
+    "mtime": 1790574256.1847131,
+    "seen": 1790574275.9512293,
+    "ast_hash": "d574b65b9c66dc1a87022e4ff8c11add",
     "semantic_hash": ""
   },
   "AI_CONTEXT/PROJECT_CONTEXT.md": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/TODO.md": {
-    "mtime": 1790569894.2911634,
-    "seen": 1790569915.4682903,
-    "ast_hash": "d815e93ce271c372f92c32efc72dc171",
+    "mtime": 1790573975.2659981,
+    "seen": 1790574028.9519322,
+    "ast_hash": "ca2487c13c80d268045b437f206578c8",
     "semantic_hash": ""
   },
   "prisma/backfill-gallery-year.ts": {
@@ -657,6 +657,12 @@
     "mtime": 1790569786.696096,
     "seen": 1790569915.468316,
     "ast_hash": "da95b5bc0516f2aec8e9d4a2dd2cc11c",
+    "semantic_hash": ""
+  },
+  "components/admin/AdminNav.tsx": {
+    "mtime": 1790573202.089352,
+    "seen": 1790573632.6126385,
+    "ast_hash": "f0874044d646417ccffceae53aeca61c",
     "semantic_hash": ""
   }
 }
