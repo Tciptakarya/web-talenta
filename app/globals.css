@@ -645,10 +645,12 @@
   /* ---------- Footer ---------- */
   footer{background:#0F1836; color:#8B98BE; padding:56px 0 28px;}
   .footer-top{display:flex; justify-content:space-between; align-items:flex-start; gap:40px; padding-bottom:36px; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:wrap;}
+  /* Logo footer: TANPA plat putih. Footer selalu navy (#0F1836) di kedua
+     mode, jadi memakai varian logo berteks putih yang langsung duduk di atas
+     navy (lihat DECISIONS.md → logo 2 varian). Plat putih + shadow yang
+     sebelumnya ada justru membuat wordmark putih tak terlihat. */
   .footer-brand{
-    display:flex; align-items:center; gap:10px;
-    background:#fff; padding:14px 26px; border-radius:18px; width:fit-content;
-    box-shadow:0 14px 30px -16px rgba(0,0,0,0.45);
+    display:flex; align-items:center; width:fit-content;
   }
   .footer-brand img{height:84px; width:auto; display:block;}
   .footer-nav{display:flex; gap:28px; flex-wrap:wrap;}
@@ -837,6 +839,52 @@
 
 /* badge hitung emas di sidebar: teks navy gelap di atas emas */
 :root.dark .bg-gold.text-navy{color:#16214A;}
+
+/* ======================================================================
+   Menu admin: pola active state (SATU sumber untuk semua halaman)
+   Sidebar gelap navy → item aktif = navy sedikit lebih terang + teks
+   putih + garis indikator di sisi kiri. Hover sengaja lebih lemah dari
+   active supaya tidak tertukar. Warna sidebar tetap (white overlay di
+   atas navy, bukan palette baru).
+   ====================================================================== */
+.admin-nav{display:flex;}
+.admin-nav-link{
+  position:relative;
+  display:block;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  line-height:1.35;
+  color:#C4CDE8;                       /* teks tidak aktif (dari kode lama) */
+  background:transparent;
+  transition:background .18s ease, color .18s ease;
+}
+.admin-nav-link:hover{background:rgba(255,255,255,.07); color:#E9EDF9;}
+.admin-nav-link.is-active{
+  background:rgba(255,255,255,.14);    /* navy sedikit lebih terang */
+  color:#fff;
+  font-weight:700;
+}
+/* Indikator aktif: Option A — garis vertikal kecil di sisi kiri.
+   (Jangan ditambah dot juga: satu indikator saja.) */
+.admin-nav-link.is-active::before{
+  content:"";
+  position:absolute;
+  left:2px; top:50%;
+  width:3px; height:18px;
+  margin-top:-9px;
+  border-radius:2px;
+  background:var(--gold);
+}
+/* Angka counter ikut naik kontrasnya saat menu aktif (tidak hilang). */
+.admin-nav-count{color:#8B98BE;}
+.admin-nav-link.is-active .admin-nav-count{color:#DCE3F5;}
+/* Fokus keyboard tetap terlihat (konvensi proyek: outline emas). */
+.admin-nav-link:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+/* Nav mobile: pola sama, tata letak horizontal. */
+.admin-nav--mobile{gap:4px;}
+.admin-nav--mobile .admin-nav-link{white-space:nowrap; padding:6px 10px; font-size:13px;}
 
 /* ======================================================================
    Tombol ganti tema (light/dark)

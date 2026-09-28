@@ -73,8 +73,16 @@ app/
   `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`, `Pesan`). Tidak ada duplikat
   `<aside>` di file lain. Isinya:
   - **Sidebar navy** (`w-64`, `hidden md:flex flex-col`, `p-6`): brand →
-    `nav` (dengan badge jumlah pesan/foto/pendaftaran) → **account section**
-    (`mt-auto shrink-0`: email admin + `ThemeToggle` + `SignOutButton`).
+    **`<AdminNav>`** (menu + badge jumlah pesan/foto/pendaftaran) →
+    **account section** (`mt-auto shrink-0`: email admin + `ThemeToggle` +
+    `SignOutButton`).
+  - **Menu & active state** (`components/admin/AdminNav.tsx`, client
+    component): **sumber tunggal** menu admin untuk sidebar desktop **dan**
+    nav mobile (`variant="mobile"`). Active state dihitung dari
+    `usePathname()` (App Router) — item paling spesifik yang cocok, sehingga
+    child route seperti `/admin/galeri/edit/123` tetap menyalakan
+    **Galeri** dan tidak pernah ada dua menu aktif. Ganya
+    (`.admin-nav-link` / `.is-active`) ditolong di `app/globals.css`.
   - **Scroll behavior (≥768px / `md:`)**: wrapper
     `min-h-screen md:min-h-0 md:h-dvh flex md:overflow-hidden` → tinggi =
     viewport dan window tidak ikut scroll. Kolom konten
@@ -113,7 +121,8 @@ components/
     ├── KategoriManager, ProgramManager, GaleriList, JadwalManager,
     │   MateriManager, PendaftaranList, PesanList, TestimoniManager
     ├── LoginForm, ForgotPasswordForm, ResetPasswordForm,
-    │   GantiPasswordForm, SignOutButton, UploadForm
+    │   GantiPasswordForm, SignOutButton, UploadForm,
+    │   AdminNav          # menu sidebar + active state (usePathname)
 ```
 
 ### Hooks & State Management

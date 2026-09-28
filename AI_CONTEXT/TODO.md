@@ -20,9 +20,13 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## In Progress
 
-- Task **ganti logo ke artwork baru** (2026-09-28) selesai
-  diimplementasikan & diverifikasi (tsc 0, build hijau, E2E kedua mode,
-  tinggi header tetap 240px, 0 console error, keenam aset 200), **belum
+- Task **active state menu sidebar admin** (2026-09-28, spesifikasi 12
+  bagian) selesai diimplementasikan & diverifikasi penuh (tsc 0, build
+  hijau, logika 17/17 kasus, 9/9 route admin tepat 1 menu aktif, child
+  route terbukti, nav mobile benar, sidebar tetap fixed, 0 console
+  error), **belum di-commit** — menunggu persetujuan user.
+- Task **ganti logo ke artwork baru** (2026-09-28) selesai & terverifikasi
+  (tsc 0, build hijau, E2E kedua mode, keenam aset 200), **belum
   di-commit** — menunggu persetujuan user.
 - Task **bersihkan fragment anchor dari address bar** sudah **di-commit &
   ter-push** (`6cf75de` + `19a2d3c`) dan **terverifikasi live** (6 link nav

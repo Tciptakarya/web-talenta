@@ -1014,6 +1014,15 @@ publik: nav header, nav footer, tombol hero, CTA "Hubungi Kami", dan logo
    lockup penuh tidak terbaca). Ditambah `public/apple-touch-icon.png`
    180×180 **latar putih opak** karena iOS tidak mendukung transparan;
    `app/layout.tsx` → `icons.apple` diarahkan ke sana.
+6. **Plat putih di footer dihapus** (keputusan user 2026-09-28).
+   Dulu `.footer-brand` punya `background:#fff` + padding 14px 26px +
+   radius 18px + shadow — memang agar logo bertema gelap terbaca.
+   Karena footer sekarang memakai varian **teks putih**, plat putih itu
+   membuat wordmark putih jadi tak terlihat (user melaporkan: "hapus saja
+   bagian putihnya"). Sekarang `.footer-brand` hanya
+   `display:flex; align-items:center; width:fit-content`; logo duduk
+   langsung di atas navy. Footer **tidak** perlu mode gelap/terang
+   berbeda karena `footer{background:#0F1836}` di kedua mode.
 
 ### Reason
 
@@ -1052,3 +1061,76 @@ adalah solusi paling sederhana dan tidak mengubah struktur data.
   `alt` (a11y).
 - Jangan andalkan `filter` CSS untuk kontras logo: teks logo sudah
   berwarna, bukan mask.
+
+## Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link`
+
+### Decision
+
+1. Menu admin dipindah dari `app/admin/(dashboard)/layout.tsx` ke **client
+   component `components/admin/AdminNav.tsx`** — **sumber tunggal** untuk
+   sidebar desktop (`variant="sidebar"`) dan nav mobile
+   (`variant="mobile"`). Layout (server component) hanya mengirim angka
+   counter; array `NAV` + `Link` tidak lagi ada di layout.
+2. Active state dihitung dari **`usePathname()`** (App Router yang sudah
+   dipakai project — tidak ada router/sistem routing baru):
+   - `/admin` aktif **hanya** persis di `/admin`;
+   - menu lain aktif juga untuk child route-nya
+     (`path === href || path.startsWith(href + "/")`), mis.
+     `/admin/galeri/edit/123` → **Galeri** tetap aktif;
+   - dari kandidat yang cocok diambil yang **terpanjang** (paling spesifik),
+     jadi tidak pernah ada dua menu aktif bersamaan;
+   - `path` dinormalisasi: garis miring di akhir dibuang.
+3. Ganya active mengikuti keputusan project soal style (class CSS tak-ber-layer
+   di `app/globals.css`):
+   - tidak aktif: teks `#C4CDE8` (dari kode lama), latar transparan;
+   - hover: `rgba(255,255,255,.07)` + teks `#E9EDF9` — **sengaja lebih
+     lemah** dari active supaya tidak tertukar;
+   - **aktif**: `rgba(255,255,255,.14)` (navy sedikit lebih terang, palette
+     sidebar tidak diganti), teks `#fff`, `font-weight:700`, radius **8px**,
+     transisi `.18s ease` pada background & warna;
+   - **indikator: Option A** — garis vertikal **3×18px** `var(--gold)`
+     via `::before` di sisi kiri. **Hanya satu** indikator (tanpa dot).
+4. `aria-current="page"` pada menu aktif; fokus keyboard
+   `outline:2px solid var(--gold)` (konvensi proyek yang sudah dipakai di
+   galeri). `prefers-reduced-motion` sudah dimatikan oleh rule global
+   `*` + `!important`, jadi transisi ikut hilang bila pengguna memintanya.
+5. **Counter tidak diubah**: badge emas (Pesan, Pendaftaran) dan angka Galeri
+   tetap seperti sebelumnya; hanya kelas `.admin-nav-count` yang warnanya
+   dinaikkan saat menu aktif (`#8B98BE` → `#DCE3F5`) supaya angka tidak
+   kehilangan kontras. Tidak ada sistem badge baru.
+
+### Reason
+
+Spesifikasi user (12 bagian): active state harus jelas dan **konsisten di 9
+halaman**, tanpa gradient/glow/shadow berlebihan/warna mencolok, hover
+tidak boleh lebih kuat dari active, dan harus memakai mekanisme routing yang
+sudah ada. Sebelum task ini menu admin **tidak punya active state sama
+sekali** — hanya `hover:bg-white/10` + perubahan warna teks, sehingga
+user tidak bisa pasti sedang di halaman mana.
+
+### Alternatives Considered
+
+- `useSelectedLayoutSegment()` — hanya memberi segment pertama, tidak
+  membedakan `/admin` dari child-nya secara eksplisit; `usePathname()`
+  lebih jelas dan mudah diuji.
+- CSS-only (`:target`, `:has`) — tidak bisa tahu halaman aktif tanpa JS.
+- Menempel class active manual di tiap halaman — copy-paste 9×, melanggar
+  aturan konsistensi.
+- Indikator dot (Option B) — ditolak karena garis vertikal lebih rapi untuk
+  daftar menu vertikal (dan hanya satu jenis indikator yang dipakai).
+
+### Current Implementation
+
+`components/admin/AdminNav.tsx`, `app/admin/(dashboard)/layout.tsx`,
+`app/globals.css` (`.admin-nav`, `.admin-nav-link`, `.is-active`,
+`.admin-nav-count`, `.admin-nav--mobile`).
+
+### Important
+
+- **Menu/route baru harus ditambahkan di `NAV` (`AdminNav.tsx`)**, bukan
+  di layout.
+- Varian mobile mewarisi pola yang sama — jangan membuat gaya active
+  terpisah untuk mobile.
+- Aturan `startsWith(href + "/")` sudah menangani route child di masa depan.
+- Jangan pakai `filter`/gradient untuk active state; warna sidebar tetap
+  navy + overlay putih.

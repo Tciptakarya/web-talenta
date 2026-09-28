@@ -27,14 +27,19 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
   Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
   error).
-- **Working tree berisi 1 task baru (BELUM di-commit): ganti logo ke
-  artwork baru** — `public/logo.png` (teks gelap) +
-  `public/logo-inverse.png` (teks putih), `Header` (2 varian + tukar
-  CSS), `Footer` (varian inverse), `favicon.png` + `app/icon.png`
-  (feather saja 512×512), `apple-touch-icon.png` (180×180 latar putih),
-  `app/layout.tsx` (icons.apple), `globals.css`, `ARCHITECTURE.md` &
-  `DECISIONS.md`. Bug lama ikut tertutup: logo berteks hitam dulu
-  nyaris tak terlihat di footer navy & header mode gelap.
+- **Working tree berisi 2 task baru (BELUM di-commit):**
+  1. **Active state menu sidebar admin** — `components/admin/AdminNav.tsx`
+     (baru, client, `usePathname`), `app/admin/(dashboard)/layout.tsx`
+     (menu + `Link` dihapus), `app/globals.css`. 9/9 route admin terverifikasi
+     tepat 1 menu aktif + child route + nav mobile; sidebar tetap fixed.
+  2. **Ganti logo ke artwork baru** — `public/logo.png` (teks gelap) +
+     `public/logo-inverse.png` (teks putih), `Header` (2 varian + tukar CSS),
+     `Footer` (varian inverse), `favicon.png` + `app/icon.png` (feather saja
+     512×512), `apple-touch-icon.png` (180×180 latar putih),
+     `app/layout.tsx` (icons.apple), `globals.css` (termasuk **plat putih
+     footer dihapus**), `ARCHITECTURE.md` & `DECISIONS.md`. Bug lama ikut
+     tertutup: logo berteks hitam dulu nyaris tak terlihat di footer navy &
+     header mode gelap.
 - Task sebelumnya (sudah ter-push & live): **redesign galeri editorial +
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`,
   `b61d5c4` `graphify-out/`) — terverifikasi live 0 console error.
@@ -215,17 +220,26 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Task **ganti logo ke artwork baru** (2026-09-28) selesai
-diimplementasikan & diverifikasi, **BELUM di-commit** — menunggu
-persetujuan commit. `tsc` 0, build hijau 22 routes, E2E kedua mode
-(tinggi header tetap 240px, logo 201×200, 0 console error), keenam aset
-logo/favicon 200 dengan link tag ikon benar. Task **bersihkan fragment
-anchor** sudah **di-commit & ter-push** (`6cf75de` + `19a2d3c`) dan
-**terverifikasi live** di `https://talentaciptakarya.com` (6 link nav →
-hash kosong, URL tetap `/`, tiap section 170px dari atas, 0 console
-error). Task **redesign galeri editorial + fix 2 bug** juga sudah live
-(`c318627` + `b61d5c4`: 3 kop program `position: static` tanpa
-tumpang-tindih, 7 baris tahun / 3 terbuka).
+Dua task selesai diimplementasikan & diverifikasi, **keduanya BELUM
+di-commit** — menunggu persetujuan user:
+
+1. **Active state menu sidebar admin** (spesifikasi 12 bagian) —
+   `components/admin/AdminNav.tsx` (baru) + `app/admin/(dashboard)/layout.tsx`
+   + `app/globals.css`. `tsc` 0, build hijau 22 routes; logika 17/17 kasus;
+   **9/9 route admin** tepat 1 menu aktif yang benar + `aria-current="page"`;
+   child route `/admin/galeri/edit/[id]` terbukti (route QA sementara sudah
+   dihapus); nav mobile 390px benar; sidebar tetap fixed (top 0, tetap 0
+   setelah area konten di-scroll 4493px, window scroll 0); gap account
+   section 24px & email 1 baris; counter Galeri "30" tetap; tanpa horizontal
+   overflow; 0 console error (React #418 pre-existing).
+2. **Ganti logo ke artwork baru** — `tsc` 0, build hijau, E2E kedua mode,
+   keenam aset 200, tinggi header tetap 240px, 0 console error.
+
+Task **bersihkan fragment anchor** sudah **di-commit & ter-push**
+(`6cf75de` + `19a2d3c`) dan **terverifikasi live** di
+`https://talentaciptakarya.com` (6 link nav → hash kosong, URL tetap `/`,
+tiap section 170px dari atas, 0 console error). Task **redesign galeri
+editorial + fix 2 bug** juga sudah live (`c318627` + `b61d5c4`).
 
 **Operasi**: server lokal (`npm run start`, port 3000) boleh berjalan —
 **jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).

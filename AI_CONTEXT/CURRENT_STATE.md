@@ -374,20 +374,33 @@ Status verifikasi:
 
 ## Currently In Progress
 
-Task **ganti logo ke artwork baru** (2026-09-28) selesai
-diimplementasikan & diverifikasi, **BELUM di-commit** — `public/logo.png`
-(teks gelap) + `public/logo-inverse.png` (teks putih), `Header` merender
-2 varian + tukar CSS, `Footer` memakai varian inverse, `favicon.png` +
-`app/icon.png` feather saja 512×512, plus `apple-touch-icon.png` 180×180
-latar putih. `tsc` 0, build hijau 22 routes, E2E kedua mode (tinggi
-header tetap 240px, logo 201×200, sampel piksel wordmark 83 terang / 151
-gelap, 0 overflow, 0 console error), kelima aset ikon/logo 200 dengan
-link tag benar. Keputusan & aturan regenerasi varian ada di
+Task **active state menu sidebar admin** (2026-09-28, spesifikasi 12
+bagian user) selesai diimplementasikan & diverifikasi, **BELUM di-commit** —
+`components/admin/AdminNav.tsx` (baru, client, `usePathname`),
+`app/admin/(dashboard)/layout.tsx` (menu + `Link` dihapus),
+`app/globals.css` (`.admin-nav-link` / `.is-active`). `tsc` 0, build hijau
+22 routes; logika active state 17/17 kasus; **9/9 route admin** tepat 1 menu
+aktif yang benar + `aria-current="page"`; child route
+`/admin/galeri/edit/[id]` terbukti (route QA sementara, sudah dihapus);
+nav mobile 390px benar & counter tetap; sidebar tetap fixed (top 0, tetap 0
+setelah scroll 4493px); gap account section 24px & email 1 baris; tanpa
+horizontal overflow; 0 console error (React #418 = pre-existing).
+
+Task **ganti logo ke artwork baru** (2026-09-28) selesai & terverifikasi,
+**juga BELUM di-commit** — `public/logo.png` (teks gelap) +
+`public/logo-inverse.png` (teks putih), `Header` merender 2 varian + tukar
+CSS, `Footer` memakai varian inverse, `favicon.png` + `app/icon.png`
+feather saja 512×512, plus `apple-touch-icon.png` 180×180 latar putih, dan
+**plat putih di footer dihapus** (`.footer-brand` tanpa
+background/padding/shadow → logo varian putih duduk langsung di atas navy).
+`tsc` 0, build hijau, E2E kedua mode (tinggi header tetap 240px, logo
+201×200, sampel piksel wordmark 83 terang / 151 gelap, footer brand 85×84
+tanpa plat, 0 overflow, 0 console
+error), keenam aset 200 dengan link tag benar. Aturan regenerasi varian di
 `DECISIONS.md` → *Logo dipakai dalam 2 varian*.
 
-Tidak ada task kode lain yang sedang dikerjakan. Task **bersihkan
-fragment anchor dari address bar** sudah **di-commit & ter-push**
-(`6cf75de` + `19a2d3c`) dan **terverifikasi live** di
+Task **bersihkan fragment anchor dari address bar** sudah **di-commit &
+ter-push** (`6cf75de` + `19a2d3c`) dan **terverifikasi live** di
 `https://talentaciptakarya.com`: 6 link nav → hash kosong, URL tetap `/`,
 tiap section 170px dari atas, **0 console error**; deep-link tetap
 berfungsi, tombol Back memulihkan posisi. Task sebelumnya (redesign galeri

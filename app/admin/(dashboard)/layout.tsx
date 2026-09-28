@@ -2,23 +2,11 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { blobEnabled } from "@/lib/storage";
 import SignOutButton from "@/components/admin/SignOutButton";
+import AdminNav from "@/components/admin/AdminNav";
 import ThemeToggle from "@/components/site/ThemeToggle";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const NAV = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/galeri", label: "Galeri" },
-  { href: "/admin/testimoni", label: "Testimoni" },
-  { href: "/admin/program", label: "Program" },
-  { href: "/admin/jadwal", label: "Jadwal Pelatihan" },
-  { href: "/admin/pendaftaran", label: "Pendaftaran" },
-  { href: "/admin/materi", label: "Materi Pelatihan" },
-  { href: "/admin/kategori", label: "Kategori Kelas" },
-  { href: "/admin/pesan", label: "Pesan Masuk" },
-];
 
 export default async function AdminLayout({
   children,
@@ -41,30 +29,12 @@ export default async function AdminLayout({
           <p className="font-display text-lg font-semibold">Talenta Cipta Karya</p>
           <p className="text-xs text-[#B7C4EA] mt-1">Dashboard Admin</p>
         </div>
-        <nav className="md:flex-1 md:min-h-0 md:overflow-y-auto flex flex-col gap-1 pr-1 -mr-1">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="px-3 py-2 rounded-lg text-sm font-semibold text-[#C4CDE8] hover:bg-white/10 hover:text-white transition"
-            >
-              {n.label}
-              {n.href === "/admin/pesan" && pesanCount > 0 && (
-                <span className="ml-2 inline-block rounded-full bg-gold text-navy text-xs font-bold px-2 py-0.5">
-                  {pesanCount}
-                </span>
-              )}
-              {n.href === "/admin/galeri" && (
-                <span className="ml-2 text-xs text-[#8B98BE]">{fotoCount}</span>
-              )}
-              {n.href === "/admin/pendaftaran" && pendaftaranBaru > 0 && (
-                <span className="ml-2 inline-block rounded-full bg-gold text-navy text-xs font-bold px-2 py-0.5">
-                  {pendaftaranBaru}
-                </span>
-              )}
-            </Link>
-          ))}
-        </nav>
+        {/* Menu + active state ada di AdminNav (client, usePathname). */}
+        <AdminNav
+          pesanCount={pesanCount}
+          fotoCount={fotoCount}
+          pendaftaranBaru={pendaftaranBaru}
+        />
         <div className="mt-auto shrink-0 space-y-3">
           <div className="flex items-center justify-between gap-2">
             <p
@@ -80,17 +50,14 @@ export default async function AdminLayout({
       </aside>
 
       <div className="flex-1 min-w-0 md:h-full md:flex md:flex-col">
-        {/* Nav mobile */}
+        {/* Nav mobile — pola active state sama, tidak diduplikasi. */}
         <div className="md:hidden shrink-0 bg-navy text-white p-4 flex items-center gap-3 overflow-x-auto">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="text-sm font-semibold text-[#C4CDE8] whitespace-nowrap"
-            >
-              {n.label}
-            </Link>
-          ))}
+          <AdminNav
+            variant="mobile"
+            pesanCount={pesanCount}
+            fotoCount={fotoCount}
+            pendaftaranBaru={pendaftaranBaru}
+          />
           <span className="ml-auto" />
           <ThemeToggle />
           <SignOutButton inline />

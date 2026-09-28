@@ -17,6 +17,38 @@ Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug) dan
 
 ### Changed
 
+- **Active state menu sidebar admin ditambahkan** (spesifikasi 12 bagian
+  user) — sebelumnya menu admin **tidak punya active state sama sekali**
+  (hanya `hover:bg-white/10`), jadi user tidak bisa pasti sedang di halaman
+  mana. Menu admin dipindah dari `app/admin/(dashboard)/layout.tsx` ke
+  **client component `components/admin/AdminNav.tsx`** — sumber tunggal untuk
+  sidebar desktop (`variant="sidebar"`) dan nav mobile
+  (`variant="mobile"`), jadi tidak ada copy-paste gaya per halaman.
+  Active state dari **`usePathname()`** (App Router yang sudah dipakai, tanpa
+  sistem routing baru): `/admin` aktif hanya persis, menu lain juga untuk
+  child route-nya (`/admin/galeri/edit/123` → Galeri), dari kandidat yang
+  cocok diambil yang **terpanjang** sehingga tidak pernah ada dua menu aktif,
+  path dinormalisasi (garis miring akhir dibuang), plus
+  `aria-current="page"`. Ganya di `app/globals.css` (tak-ber-layer, satu
+  pola): aktif = `rgba(255,255,255,.14)` di atas navy yang sudah ada (palette
+  sidebar tidak diganti), teks `#fff`, weight 700, radius 8px, transisi
+  `.18s`; **indikator Option A** = garis vertikal 3×18px `var(--gold)` di
+  sisi kiri (satu jenis saja, tanpa dot); hover `rgba(255,255,255,.07)`
+  **sengaja lebih lemah** dari active; fokus keyboard
+  `outline:2px solid var(--gold)`; `prefers-reduced-motion` sudah ikut dari
+  rule global. Counter (angka Galeri + badge emas Pesan/Pendaftaran) tidak
+  berubah — hanya warnanya naik kontras saat aktif (`.admin-nav-count`).
+  Verifikasi: `npx tsc --noEmit` 0 error, `npm run build` hijau 22 routes;
+  logika active state **17/17 kasus** lolos (termasuk trailing slash, route
+  tak dikenal, dan prefix mirip yang tidak boleh aktif); **9/9 route admin**
+  → tepat 1 menu aktif yang benar + `aria-current` sesuai; **child route
+  `/admin/galeri/edit/[id]` terbukti** memakai route QA sementara yang
+  sudah dihapus; nav mobile 390px → aktif benar, counter tetap,
+  sidebar tersembunyi; sidebar tetap fixed (top 0, tinggi = viewport, tetap
+  0 setelah area konten di-scroll 4493px, window scroll 0); gap account
+  section 24px & email 1 baris (tidak berubah); tanpa horizontal overflow;
+  0 console error (React #418 di `/admin/program` = pre-existing). Regresi
+  publik `/` & `/kelas/barista` tetap 0 error.
 - **Logo situs diganti ke artwork baru (2 varian)** — `public/logo.png`
   (wordmark **teks gelap**, untuk latar terang) dan
   `public/logo-inverse.png` (wordmark **teks putih** + biru di-*mixing* 40%
@@ -33,6 +65,16 @@ Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug) dan
   `logo-inverse.png` (sampel 151), footer → inverse; tinggi header tetap
   240px (tanpa layout shift), 201×200 px, tanpa overflow, 0 console
   error.
+  **Plat putih di footer dihapus** (requested user setelah lihat hasilnya):
+  `.footer-brand` sebelumnya punya `background:#fff` + `padding:14px 26px` +
+  `border-radius:18px` + `box-shadow` — sisa desain lama saat logo masih
+  ber-teks gelap. Setelah footer memakai varian logo **putih**, plat putih
+  membuat wordmark putih tak terlihat (hanya feather biru yang tampak).
+  Sekarang `.footer-brand` hanya `display:flex; align-items:center;
+  width:fit-content` → logo duduk langsung di atas navy `#0F1836`. Terverifikasi
+  mode gelap & terang (footer navy di keduanya): `background:transparent`,
+  `box-shadow:none`, `padding:0`, kotak brand pas seukuran logo (85×84),
+  wordmark putih (sampel piksel 151–160), tanpa overflow, 0 console error.
   **Favicon ikut diperbarui** (keputusan user): `public/favicon.png` +
   `app/icon.png` → 512×512 transparan berisi **feather saja** (potongan
   atas artwork; lockup penuh tidak terbaca di 32px), dan
