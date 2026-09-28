@@ -10,10 +10,10 @@ Format: tanggal · isi · hash commit.
 
 ## [2026-09-28]
 
-Commit: `c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
-(`graphify-out/`) — keduanya ter-push ke `main` & terverifikasi live di
-`https://talentaciptakarya.com` (0 console error). Item kedua (bersihkan fragment anchor, **belum
-di-commit**) menyusul pada entri ini.
+Commit: `c318627` + `b61d5c4` (redesign galeri + fix 2 bug) dan
+`6cf75de` + `19a2d3c` (bersihkan fragment anchor) — semuanya ter-push ke
+`main` & terverifikasi live di `https://talentaciptakarya.com`
+(0 console error).
 
 ### Changed
 
@@ -174,7 +174,10 @@ di-commit**) menyusul pada entri ini.
 - `graphify update .` exit-1 transien sekali (crash `0xC0000005` yang
   sudah diketahui) → retry hijau: **776 node / 1320 edge / 48 community**,
   backup `graphify-out/2026-09-28/`.
-- **Belum di-commit** — menunggu persetujuan user.
+- Terverifikasi live di `talentaciptakarya.com`: 6 link nav (`Tentang
+  Kami`, `Visi & Misi`, `Layanan`, `Galeri`, `Lokasi`, `Testimoni`) →
+  hash kosong, URL tetap `/`, tiap section 170px dari atas,
+  **0 console error**.
 
 ---
 

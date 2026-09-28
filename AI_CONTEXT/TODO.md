@@ -20,15 +20,13 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## In Progress
 
-- Task **bersihkan fragment anchor dari address bar** (2026-09-28,
-  keputusan user) selesai diimplementasikan & diverifikasi penuh
-  (tsc 0, build hijau, E2E: hash bersih setelah klik, Ctrl+click &
-  deep-link tetap apa adanya, tombol Back memulihkan posisi, regresi 5
-  rute 0 error), **belum di-commit** — menunggu persetujuan user.
-- Task sebelumnya **redesign galeri editorial/premium minimal + fix 2
-  bug** sudah **di-commit** (`c318627` + `b61d5c4`), ter-push, dan
-  **terverifikasi live** (0 console error). Task **struktur galeri
-  PROGRAM → TAHUN → FOTO** juga sudah live (`368d947` + `6accd2a`).
+- Tidak ada task kode yang sedang dikerjakan. Task terakhir **bersihkan
+  fragment anchor dari address bar** sudah **di-commit & ter-push**
+  (`6cf75de` + `19a2d3c`) dan **terverifikasi live** (6 link nav hash
+  kosong, section 170px dari atas, 0 console error). Task **redesign
+  galeri editorial + fix 2 bug** juga sudah live (`c318627` +
+  `b61d5c4`), begitu pula **struktur galeri PROGRAM → TAHUN → FOTO**
+  (`368d947` + `6accd2a`).
 
 ## Next
 

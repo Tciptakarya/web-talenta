@@ -1,9 +1,8 @@
 # Current State
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
-> 2026-09-28** (HEAD `b61d5c4` **sudah ter-push & live** di
-> `talentaciptakarya.com`; working tree memuat task **bersihkan fragment
-> anchor dari address bar** yang BELUM di-commit).
+> 2026-09-28** (HEAD `19a2d3c` **sudah ter-push & live** di
+> `talentaciptakarya.com`; working tree **bersih**).
 > Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
@@ -375,23 +374,21 @@ Status verifikasi:
 
 ## Currently In Progress
 
-Task **bersihkan fragment anchor dari address bar** (2026-09-28,
-keputusan user) **selesai diimplementasikan & diverifikasi, BELUM
-di-commit** — `components/site/AnchorHashCleaner.tsx` (baru, client
-component render `null`, satu listener `click` di `document`) +
-`app/(public)/layout.tsx`. `npx tsc --noEmit` 0 error; `npm run build`
-hijau 22 routes. E2E localhost: 4 titik klik (nav header, nav footer,
-tombol hero, CTA "Hubungi Kami") → hash kosong & tiap section mendarat
-170px dari atas; **Ctrl+click hash tetap** (guard modifier); `history
-.back()` memulihkan posisi 5983 → 0; deep-link `/#galeri` **tetap**
-membawa hash & ter-scroll; regresi `/`, `/kelas`, `/kelas/barista`,
-`/program/pelatihan-barista`, `/admin` → 0 crash, 0 overflow,
-**0 console error**. `graphify update .` hijau (801 node / 1347 edge /
-54 community).
+**Tidak ada task kode yang sedang dikerjakan.** Task terakhir **bersihkan
+fragment anchor dari address bar** sudah **di-commit & ter-push**
+(`6cf75de` source + `AGENTS.md` + `AI_CONTEXT/`, `19a2d3c`
+`graphify-out/`) dan **terverifikasi live** di
+`https://talentaciptakarya.com`: 6 link nav (`Tentang Kami`, `Visi &
+Misi`, `Layanan`, `Galeri`, `Lokasi`, `Testimoni`) → hash kosong, URL
+tetap `/`, tiap section mendarat **170px** dari atas, **0 console error**;
+deep-link `/#galeri` tetap berfungsi, tombol Back memulihkan posisi.
+Task sebelumnya (redesign galeri + fix 2 bug) juga sudah live
+(`c318627`, `b61d5c4`). `git status` bersih.
 
-Task sebelumnya sudah **di-commit & live**: redesign galeri editorial +
-fix 2 bug (`c318627`, `b61d5c4`) — 3 kop program `position: static`
-(tanpa tumpang-tindih), 7 baris tahun / 3 terbuka, 0 console error.
+Catatan investigasi: klaim lama "cache AST = penyebab crash
+`graphify update`" **terbantah** oleh eksperimen 16 run (crash ~37% dengan
+dan tanpa cache, ~33% tanpa hook) — penyebab belum teridentifikasi,
+workaround = retry. Lihat *Issue 9*.
 
 Catatan lingkungan:
 

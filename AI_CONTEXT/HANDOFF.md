@@ -27,10 +27,12 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
   Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
   error).
-- **Working tree berisi 1 task baru (BELUM di-commit): bersihkan fragment
-  anchor dari address bar** — `components/site/AnchorHashCleaner.tsx`
-  (baru) + `app/(public)/layout.tsx`, plus `AGENTS.md` & `AI_CONTEXT/`.
-  Teruji penuh di localhost, menunggu persetujuan user untuk commit.
+- **Working tree BERSIH** — task **bersihkan fragment anchor dari
+  address bar** sudah **di-commit & ter-push**: `6cf75de` (source +
+  `AGENTS.md` + `AI_CONTEXT/`) dan `19a2d3c` (`graphify-out/`), lalu
+  terverifikasi **live**: 6 link nav (`Tentang Kami`, `Visi & Misi`,
+  `Layanan`, `Galeri`, `Lokasi`, `Testimoni`) → hash kosong, URL tetap
+  `/`, tiap section mendarat **170px** dari atas, **0 console error**.
 - Task sebelumnya (sudah ter-push & live): **redesign galeri editorial +
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`,
   `b61d5c4` `graphify-out/`) — terverifikasi live 0 console error.
@@ -58,7 +60,22 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, SUDAH ter-push `c318627` + `b61d5c4`, LIVE
+**Task terbaru (source code, SUDAH ter-push `6cf75de` + `19a2d3c`, LIVE
+& terverifikasi 0 console error): bersihkan fragment anchor dari address
+bar** (2026-09-28, keputusan user dari 3 opsi yang dibahas) — link section
+(`#visimisi`, `#galeri`, dst) tidak lagi menampilkan `#...` di address bar.
+`components/site/AnchorHashCleaner.tsx` (baru, client component render
+`null`, satu listener `click` di `document`) memanggil
+`history.replaceState` 150 ms setelah navigasi fragment, dimount di
+`app/(public)/layout.tsx`; link **tetap** anchor native. Dipertahankan:
+smooth scroll + `scroll-margin-top:170px`, deep-link, Ctrl+click, keyboard,
+tombol Back. Teruji localhost (4 titik klik, Ctrl+click, `history.back()`,
+deep-link, regresi 5 rute) & live (6 link nav, semua section 170px dari
+atas, 0 console error). Sekalian **mengkoreksi klaim salah** soal crash
+`graphify update` (lihat *Known Issues* 9 — penyebab belum teridentifikasi,
+intermiten ~37%).
+
+**Task sebelumnya (source code, SUDAH ter-push `c318627` + `b61d5c4`, LIVE
 & terverifikasi 0 console error): fix 2 bug hasil review user** (2026-09-28) —
 
 1. **Kop program galeri tumpang-tindih di tepi kiri atas** — kop ditulis
@@ -196,12 +213,14 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Tidak ada task kode yang sedang dikerjakan. Task **redesign galeri
-editorial + fix 2 bug** sudah **di-commit** (`c318627` + `b61d5c4`),
-**ter-push**, dan **terverifikasi live** di
-`https://talentaciptakarya.com` (3 kop program `position: static` tanpa
-tumpang-tindih, 7 baris tahun / 3 terbuka, tanpa overflow, 0 console
-error). `git status` bersih.
+Tidak ada task kode yang sedang dikerjakan. Task terakhir **bersihkan
+fragment anchor dari address bar** sudah **di-commit** (`6cf75de` +
+`19a2d3c`), **ter-push**, dan **terverifikasi live** di
+`https://talentaciptakarya.com` (6 link nav → hash kosong, URL tetap `/`,
+tiap section 170px dari atas, 0 console error). Task **redesign galeri
+editorial + fix 2 bug** juga sudah live (`c318627` + `b61d5c4`: 3 kop
+program `position: static` tanpa tumpang-tindih, 7 baris tahun / 3
+terbuka). `git status` bersih.
 
 **Operasi**: server lokal (`npm run start`, port 3000) boleh berjalan —
 **jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).
