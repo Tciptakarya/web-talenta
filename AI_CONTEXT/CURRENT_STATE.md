@@ -2,7 +2,8 @@
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
 > 2026-09-28** (HEAD `b61d5c4` **sudah ter-push & live** di
-> `talentaciptakarya.com`; working tree **bersih**).
+> `talentaciptakarya.com`; working tree memuat task **bersihkan fragment
+> anchor dari address bar** yang BELUM di-commit).
 > Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
@@ -93,8 +94,8 @@ tutup → body unlock → **fokus kembali ke foto**), 8 breakpoint
 (single group: tanpa chip & kop program, hierarki H1→H2→H3→H2, 0 alt
 kosong) + `/admin/galeri` (30 kartu), **0 console error**;
 `graphify update` → **776 node / 1320 edge / 48 community** pada saat
-verifikasi task ini (graph kini **798 node / 1342 edge / 51 community**
-setelah rebuild 2026-09-28 — cache AST rusak, lihat *Issue 9*).
+verifikasi task ini (graph kini **801 node / 1347 edge / 54 community**
+setelah rebuild 2026-09-28 — lihat *Issue 9*).
 
 **Task sebelumnya (source code, SUDAH ter-push `368d947` + `6accd2a`,
 LIVE di production): struktur galeri PROGRAM → TAHUN → FOTO**
@@ -374,15 +375,23 @@ Status verifikasi:
 
 ## Currently In Progress
 
-**Tidak ada task kode yang sedang dikerjakan.** Task **redesign galeri
-editorial + fix 2 bug hasil review** sudah **di-commit** (`c318627`
-source + `AGENTS.md` + `AI_CONTEXT/`, `b61d5c4` `graphify-out/`),
-**ter-push** ke `main`, dan **terverifikasi live** di
-`https://talentaciptakarya.com`: 3 kop program (`Pelatihan Barista`,
-`Artificial Intelligence`, `Kursus Komputer`) `position: static` dengan
-docTop 3503/4767/5224 (tanpa tumpang-tindih, `left:32px`), 7 baris tahun
-dengan 3 terbuka, chip aktif ada, tanpa horizontal overflow, **0 console
-error**. `git status` bersih.
+Task **bersihkan fragment anchor dari address bar** (2026-09-28,
+keputusan user) **selesai diimplementasikan & diverifikasi, BELUM
+di-commit** — `components/site/AnchorHashCleaner.tsx` (baru, client
+component render `null`, satu listener `click` di `document`) +
+`app/(public)/layout.tsx`. `npx tsc --noEmit` 0 error; `npm run build`
+hijau 22 routes. E2E localhost: 4 titik klik (nav header, nav footer,
+tombol hero, CTA "Hubungi Kami") → hash kosong & tiap section mendarat
+170px dari atas; **Ctrl+click hash tetap** (guard modifier); `history
+.back()` memulihkan posisi 5983 → 0; deep-link `/#galeri` **tetap**
+membawa hash & ter-scroll; regresi `/`, `/kelas`, `/kelas/barista`,
+`/program/pelatihan-barista`, `/admin` → 0 crash, 0 overflow,
+**0 console error**. `graphify update .` hijau (801 node / 1347 edge /
+54 community).
+
+Task sebelumnya sudah **di-commit & live**: redesign galeri editorial +
+fix 2 bug (`c318627`, `b61d5c4`) — 3 kop program `position: static`
+(tanpa tumpang-tindih), 7 baris tahun / 3 terbuka, 0 console error.
 
 Catatan lingkungan:
 
@@ -633,57 +642,59 @@ Kredensial disimpan di Windows Git Credential Manager (username `Tciptakarya`).
 
 Sarankan user **memutar (rotate) token GitHub** tersebut bila masih aktif.
 
-### Issue 9 — `graphify update .` crash `0xC0000005` — akar masalah terkonfirmasi (cache AST)
+### Issue 9 — `graphify update .` crash `0xC0000005` — penyebab BELUM teridentifikasi (intermiten ~37%)
 
 **Symptoms**
 
-- 2026-09-26: 1 dari 2 percobaan mati tanpa output dengan exit
-  `-1073741819` = `0xC0000005` (access violation Windows); retry langsung
-  berhasil.
-- 2026-09-28: **4× berturut-turut crash** (setiap percobaan = 0 baris
-  output), padahal `graphify --version`, `graphify god-nodes`, dan
-  `graphify check-update .` semuanya exit 0 → tool & `graph.json` sehat,
-  hanya fase `update` yang mati.
+- 2026-09-26: 1 dari 2 percobaan mati tanpa output, exit `-1073741819`
+  = `0xC0000005` (access violation Windows); retry langsung berhasil.
+- 2026-09-28 (pagi): **4× berturut-turut** crash, lalu beberapa kali hijau.
+- 2026-09-28 (siang): eksperimen terkontrol 16 run → **6 crash (~37%)**,
+  tersebar merata (lihat tabel). Gejalanya selalu sama: **0 baris output**,
+  proses hilang begitu saja, file `graphify-out/` tidak berubah.
 
-**Root Cause — terkonfirmasi (2026-09-28, diperbarui)**
+**Eksperimen terkontrol (2026-09-28, 16 run `graphify update .`)**
 
-Cache AST di `graphify-out/cache/` (v0.9.67, Windows) **membuat pembacaan
-di fase `update` mati di lapisan native**. Bukan satu file korup: crash
-terjadi **setiap kali folder cache ada** (termasuk cache yang baru ditulis
-run sebelumnya), dan `graphify update .` **selalu hijau** saat cache
-dipindah aside. Bukti 2×: `Rename-Item graphify-out\cache cache.bak` →
-`graphify update .` EXIT=0 re-extract penuh → **798 node / 1342 edge /
-51 community**. Dugaan lama "bentrok dengan `graphify hook-check` dari
-PreToolUse hook" **tidak terbukti** — hook tetap berjalan pada percobaan
-yang berhasil. Workaround: pindahkan/hapus `graphify-out\cache` sebelum
-`graphify update .` (cache = data turunan, selalu dibuat ulang).
+| Kondisi | Run | Crash | Sukses | Rate crash |
+|---|---|---|---|---|
+| A: `graphify-out/cache` **ada** | 5 | 2 | 3 | 40% |
+| B: `graphify-out/cache` **dipindah** | 5 | 2 | 3 | 40% |
+| C: hook `PreToolUse` **dimatikan** (`hooks.json` di-rename) | 6 | 2 | 4 | 33% |
+| **Total** | **16** | **6** | **10** | **~37%** |
 
-**Investigation Already Done**
+**Kesimpulan — hipotesis lama DIBATASI (2026-09-28)**
 
-- `graphify-out/cache/ast/v0.9.67-s4/` = tempat cache AST.
-- Dua proses `python` (mulai 12:12:06) pernah menggantung setelah crash
-  sebelumnya; sudah dimatikan.
-- `graphify --version` (0.9.67), `god-nodes --top 3`, `check-update .`
-  → semuanya OK saat `update` crash (jadi graph.json & install sehat).
-- `.codex/hooks.json` (matcher `Bash` → `graphify hook-check`) dibaca dan
-  dipastikan synchronous — bukan penyebab crash ini.
+- ❌ **Cache AST bukan penyebab.** Dulu terlihat "mewani" karena 4 crash
+  beruntun terjadi saat cache ada, dan 2 run sesudah memindahkan cache
+  kebetulan hijau. Data 16 run membuktikan rate crash **identik** dengan
+  dan tanpa cache (40% vs 40%). Memindahkan cache **tidak menolong**.
+- ❌ **Hook `PreToolUse` bukan penyebab.** Hook `.codex/hooks.json`
+  (`graphify hook-check`, matcher `Bash`) dinonaktifkan → crash rate
+  tetap 33%. Dugaan lama "bentrok hook" **salah**.
+- ❌ **Bentrok proses lain bukan penyebab.** Saat crash, `Get-Process`
+  menunjukkan tidak ada `graphify`/`uv`/`python` lain yang berjalan.
+- ⚠️ **Windows Event Log tidak mencatat crash ini** (hanya `Explorer.EXE`
+  yang crash) → access violation terjadi di dalam shim/uv tanpa WER
+  entry, jadi tidak ada stack trace yang bisa diambil.
+- ✅ Subcommand lain **tidak pernah** crash: `graphify --version`,
+  `god-nodes --top 3`, `check-update .` selalu exit 0 → masalahnya
+  spesifik di jalur `update` (bukan install/graph.json yang rusak).
 
 **Current Status**
 
-**TERPECAHKAN (2026-09-28)** dengan workaround di atas (2× berturut-turut
-hijau). Cache lama dipindah ke
-`%LOCALAPPDATA%\Temp\opencode\graphify-cache-*` (boleh dihapus manual).
-Backup curated graph tetap dibuat di `graphify-out/2026-09-28/`.
+**OPEN, sudah terkarakterisasi** (bukan solved). Workaround satu-satunya
+yang terbukti: **ulang `graphify update .` sampai exit 0** (rata-rata
+~2,7 run). Tidak perlu memindahkan cache. Status graph saat ini:
+**801 node / 1347 edge / 54 community** (angka bergeser tiap rebuild,
+jadi bukan acuan tetap — yang penting `update` exit 0).
 
 **Recommended Next Investigation**
 
-- Pola operasi: `Rename-Item graphify-out\cache cache.bak` → `graphify
-  update .` → bila hijau, hapus `cache.bak`.
-- Bila ingin fix upstream: `uv tool upgrade graphifyy` (terpasang
-  0.9.67) dan uji ulang apakah jalur baca cache sudah aman.
-- `graphify update .` juga menampilkan "community set changed since
-  labeling … renamed N community(ies) by their hub" — **opsional**, nama
-  ber-hub memang informatif (`AGENTS.md`).
+- Ultimate fix: `uv tool upgrade graphifyy` (terpasang 0.9.67) → uji
+  apakah crash `0xC0000005` di jalur `update` hilang. Ini bug upstream
+  (shim uv + Windows), bukan bug project.
+- Untuk agent berikutnya: jangan memoalsikan cache sebagai "perbaikan" —
+  sudah terbukti tidak berpengaruh; cukup retry.
 
 ### Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong)
 

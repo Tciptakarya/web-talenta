@@ -20,11 +20,15 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## In Progress
 
-- Tidak ada task kode yang sedang dikerjakan.
-- Task **redesign galeri editorial/premium minimal + fix 2 bug** sudah
-  **di-commit** (`c318627` + `b61d5c4`), ter-push, dan **terverifikasi
-  live** (0 console error). Task sebelumnya **struktur galeri PROGRAM →
-  TAHUN → FOTO** juga sudah live (`368d947` + `6accd2a`).
+- Task **bersihkan fragment anchor dari address bar** (2026-09-28,
+  keputusan user) selesai diimplementasikan & diverifikasi penuh
+  (tsc 0, build hijau, E2E: hash bersih setelah klik, Ctrl+click &
+  deep-link tetap apa adanya, tombol Back memulihkan posisi, regresi 5
+  rute 0 error), **belum di-commit** — menunggu persetujuan user.
+- Task sebelumnya **redesign galeri editorial/premium minimal + fix 2
+  bug** sudah **di-commit** (`c318627` + `b61d5c4`), ter-push, dan
+  **terverifikasi live** (0 console error). Task **struktur galeri
+  PROGRAM → TAHUN → FOTO** juga sudah live (`368d947` + `6accd2a`).
 
 ## Next
 
@@ -74,15 +78,12 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
       di-force-fix** — `npm audit fix --force` menarik `next@16` dan versi
       Prisma yang menyebabkan breaking change. Audit ulang hanya jika versi
       Next/Prisma dinaikkan secara sadar.
-- [x] **Crash `graphify update .` (`0xC0000005`)** — akar masalah
-      ditemukan 2026-09-28: **cache AST di `graphify-out/cache/` membuat
-      pembacaan fase `update` mati di Windows** (bukan bentrok
-      `hook-check` seperti diduga sebelumnya; terjadi setiap kali cache
-      ada). Workaround: pindahkan `graphify-out\cache` aside → update
-      **hijau** (**798 node / 1342 edge / 51 community**, proven 2×).
-      Cache = data turunan, aman dihapus; crash berikutnya cukup ulangi
-      langkah tersebut. (`AGENTS.md` → *Troubleshooting graphify*;
-      `CURRENT_STATE.md` → Issue 9)
+- [x] **Crash `graphify update .` (`0xC0000005`)** — dikarakterisasi
+      2026-09-28: **intermiten ~37%** (16 run: cache ada 2/5, cache
+      dipindah 2/5, hook dimatikan 2/6) → penyebab **belum teridentifikasi**;
+      cache & hook sudah terbukti **bukan** penyebab. Workaround: retry
+      sampai exit 0. Fix upstream: `uv tool upgrade graphifyy`.
+      (`AGENTS.md` → *Troubleshooting graphify*; `CURRENT_STATE.md` → Issue 9)
 - [ ] Nama community graphify diganti otomatis sesuai node hub (`prisma.ts`,
       `data.ts`, dst). **Opsional**: bisa diberi nama semantik gratis di lokal
       dengan `graphify label . --backend=ollama --missing-only` (model

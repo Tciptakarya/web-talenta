@@ -12,10 +12,29 @@ Format: tanggal · isi · hash commit.
 
 Commit: `c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
 (`graphify-out/`) — keduanya ter-push ke `main` & terverifikasi live di
-`https://talentaciptakarya.com` (0 console error).
+`https://talentaciptakarya.com` (0 console error). Item kedua (bersihkan fragment anchor, **belum
+di-commit**) menyusul pada entri ini.
 
 ### Changed
 
+- **Fragment anchor dibersihkan dari address bar** — klik link section
+  (`#visimisi`, `#galeri`, dst) tidak lagi menampilkan `#...` di address
+  bar; URL tetap `https://talentaciptakarya.com`. Keputusan user; detail
+  di `DECISIONS.md`. Cara: link **tetap** anchor native + komponen baru
+  `components/site/AnchorHashCleaner.tsx` (client component, render
+  `null`, satu listener `click` di `document`) memanggil
+  `history.replaceState` 150 ms setelah navigasi fragment; dimount di
+  `app/(public)/layout.tsx`. Yang dipertahankan: smooth scroll +
+  `scroll-margin-top:170px`, deep-link (`/#galeri` masih bisa
+  dibuka/share), Ctrl+click buka tab baru, navigasi keyboard, dan tombol
+  Back yang memulihkan posisi. Dilewati: link ke section **halaman lain**
+  (`/kelas/foo#jadwal`) serta klik dengan modifier. Teruji localhost: 4
+  titik klik (nav header, nav footer, tombol hero, CTA "Hubungi Kami")
+  → hash kosong & section mendarat 170px dari atas; Ctrl+click hash tetap;
+  `history.back()` memulihkan posisi (5983 → 0); deep-link `/#galeri`
+  tetap membawa hash; regresi `/`, `/kelas`, `/kelas/barista`,
+  `/program/pelatihan-barista`, `/admin` → 0 crash, 0 overflow,
+  0 console error.
 - **Redesain visual galeri publik ke gaya editorial/premium minimal**
   (`components/site/GalleryGrid.tsx`, `app/globals.css`,
   `app/(public)/kelas/[slug]/page.tsx`) mengikuti spesifikasi 21 bagian
@@ -141,17 +160,16 @@ Commit: `c318627` (source + `AGENTS.md` + `AI_CONTEXT/`) dan `b61d5c4`
   `{kondisi && ( … )}` — di posisi expression itu di-parse sebagai object
   literal → `npx tsc` gagal (TS1005/TS1382). Pindahkan komentar ke atas
   ekspresinya.
-- **Akar masalah crash `graphify update .` ditemukan**: cache AST di
-  `graphify-out/cache/` membuat pembacaan fase `update` mati di Windows →
-  `0xC0000005` tanpa output (terjadi **setiap kali cache ada**, termasuk
-  cache yang baru ditulis run sebelumnya), sementara `graphify --version` /
-  `god-nodes` / `check-update .` tetap exit 0. Dugaan lama "bentrok
-  `hook-check`" **tidak terbukti**. Workaround: pindahkan
-  `graphify-out\cache` aside → `graphify update .` **hijau**, re-extract
-  penuh → **798 node / 1342 edge / 51 community** (proven 2×, backup
-  `graphify-out/2026-09-28/`); cache lama dipindah ke
-  `%LOCALAPPDATA%\Temp\opencode\graphify-cache-*` (tidak dihapus, tidak
-  mengotori repo). `AGENTS.md` → *Troubleshooting graphify* &
+- **Crash `graphify update .` (`0xC0000005`) — dikarakterisasi, penyebab
+  belum teridentifikasi**: 16 run terkontrol (2026-09-28) → 6 crash
+  (~37%): cache ada 2/5, cache dipindah 2/5, hook `PreToolUse` dimatikan
+  2/6 → rate **identik**, jadi cache & hook **terbukti bukan penyebab**
+  (hipotesis "pindahkan cache" yang sempat ditulis sebelumnya
+  **dibatalkan**). Gejala selalu sama: 0 baris output, `graphify-out/`
+  tidak berubah; Windows Event Log tidak mencatatnya; subcommand lain
+  (`--version` / `god-nodes` / `check-update .`) tidak pernah crash.
+  Workaround: **ulang sampai exit 0** (rata-rata ~2,7 run); fix upstream
+  `uv tool upgrade graphifyy`. `AGENTS.md` → *Troubleshooting graphify* &
   `CURRENT_STATE.md` → Issue 9.
 - `graphify update .` exit-1 transien sekali (crash `0xC0000005` yang
   sudah diketahui) → retry hijau: **776 node / 1320 edge / 48 community**,

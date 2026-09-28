@@ -27,12 +27,18 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`).
   Ter-deploy ke `talentaciptakarya.com` & terverifikasi live (0 console
   error).
-- **Working tree BERSIH** — tidak ada perubahan belum ter-commit.
-  Isi task yang baru selesai: (a) kop program galeri `<header>` → `<div>`
-  (rule global navbar `header{position:fixed}` membuat kop menumpuk di
-  tepi kiri atas); (b) crash `/admin` "Application error" **bukan bug
-  kode** — `npm run dev` berjalan bersamaan dengan `npm run start` dan
-  menghapus chunk produksi di `.next/`.
+- **Working tree berisi 1 task baru (BELUM di-commit): bersihkan fragment
+  anchor dari address bar** — `components/site/AnchorHashCleaner.tsx`
+  (baru) + `app/(public)/layout.tsx`, plus `AGENTS.md` & `AI_CONTEXT/`.
+  Teruji penuh di localhost, menunggu persetujuan user untuk commit.
+- Task sebelumnya (sudah ter-push & live): **redesign galeri editorial +
+  fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`,
+  `b61d5c4` `graphify-out/`) — terverifikasi live 0 console error.
+  Isi fixnya: (a) kop program galeri `<header>` → `<div>` (rule global
+  navbar `header{position:fixed}` membuat kop menumpuk di tepi kiri atas);
+  (b) crash `/admin` "Application error" **bukan bug kode** — `npm run
+  dev` berjalan bersamaan dengan `npm run start` dan menghapus chunk
+  produksi di `.next/`.
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
 - Server lokal **sedang berjalan** (port 3000) — `taskkill /F /IM node.exe`
   sebelum build. **Jangan jalankan `npm run dev` bersamaan** dengan
@@ -44,7 +50,9 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
   chips `Pelatihan Barista (24)` + `Kursus Komputer (6)`), 2 testimoni,
   1 admin; **jadwal 0, pendaftaran 0, materi 0, pesan 0**.
 - `graphify-out/`: **798 node / 1339 edge / 50 community** (rebuild
-  terakhir oleh hook `post-commit` setelah cache AST dipindah aside;
+  terakhir oleh hook `post-commit` (angka bergeser tiap rebuild; crash
+  `graphify update` ~37% bersifat intermiten — workaround: retry, lihat
+  *Known Issues* 9);
   angka edge/community bergeser tipis antar rebuild, backup
   `graphify-out/2026-09-28/`; sudah ter-commit).
 
@@ -219,16 +227,16 @@ Sisa pekerjaan berikutnya seluruhnya **konfigurasi (ops, bukan kode)**.
    (2026-09-26): `&` mentah di teks JSX diganti `&amp;`
    (`kategori/page.tsx:19`, `JadwalManager.tsx:504`). Warning hilang, graph
    713 node. Teks tetap tampil sama.
-9. ~~**`graphify update .` crash `0xC0000005`**~~ — **AKAR MASALAH
-   TERKONFIRMASI (2026-09-28): cache AST di `graphify-out/cache/` membuat
-   pembacaan fase `update` mati di Windows** — terjadi **setiap kali
-   cache ada** (termasuk cache yang baru ditulis run sebelumnya).
-   Workaround: `Rename-Item graphify-out\cache cache.bak` → `graphify
-   update .` → **hijau** (proven 2×: **798 node / 1342 edge / 51
-   community**) → hapus `cache.bak`. Cache lama dipindah ke
-   `%LOCALAPPDATA%\Temp\opencode\graphify-cache-*`. Dugaan lama "bentrok
-   `hook-check`" **tidak terbukti**. Detail: `AGENTS.md` → *Troubleshooting
-   graphify* & `CURRENT_STATE.md` → Issue 9.
+9. **Crash `graphify update .` (`0xC0000005`) — penyebab BELUM
+   teridentifikasi, sifatnya intermiten ~37%** (eksperimen 16 run
+   2026-09-28: cache ada 2/5 crash, cache dipindah 2/5, hook dimatikan
+   2/6). Cache, hook, dan bentrok proses **sudah terbukti BUKAN
+   penyebab** — jangan dibaca ulang sebagai "solusi pindahkan cache".
+   **Workaround: ulangi `graphify update .` sampai exit 0** (rata-rata
+   ~2,7 run). Subcommand lain tidak pernah crash; Windows Event Log
+   tidak mencatat crash ini. Fix upstream: `uv tool upgrade graphifyy`.
+   Detail: `AGENTS.md` → *Troubleshooting graphify* &
+   `CURRENT_STATE.md` → Issue 9.
 10. Nama community graphify = nama node hub (`prisma.ts`, `data.ts`) —
     informatif, tidak wajib LLM. Bisa dilabeli semantik gratis lokal:
     `graphify label . --backend=ollama --missing-only`.

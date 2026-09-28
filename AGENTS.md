@@ -325,16 +325,21 @@ teks JSX (tidak valid XML) membuat parser berhenti. Perbaikan: tulis
 
 Troubleshooting graphify:
 
-- Crash `0xC0000005` (access violation) saat `graphify update .` — akar
-  masalah **terkonfirmasi 2026-09-28**: cache AST di `graphify-out/cache/`
-  membuat pembacaan fase `update` mati di Windows. Terjadi **setiap kali
-  cache ada** (termasuk cache yang baru ditulis run sebelumnya), sementara
-  `graphify --version` / `god-nodes` / `check-update .` tetap exit 0.
-  Workaround: `Rename-Item graphify-out\cache cache.bak` →
-  `graphify update .` → hapus `cache.bak` bila hijau (cache = data
-  turunan, selalu dibuat ulang). Dugaan lama "bentrok `graphify
-  hook-check`" **tidak terbukti**. Detail: `AI_CONTEXT/CURRENT_STATE.md`
-  → Issue 9.
+- Crash `0xC0000005` (access violation, exit `-1073741819`) saat
+  `graphify update .` — **PENYEBAB BELUM TERIDENTIFIKASI; sifatnya
+  intermiten ~35–40%** (terukur 6 crash dari 16 run pada 2026-09-28).
+  Yang sudah **terbukti bukan penyebab** (jadi jangan mencari-cache/hook):
+  - cache: `cache` ada → 2/5 crash; `cache` tidak ada → 2/5 crash
+    (rate identik, jadi memindahkan cache **tidak menolong**);
+  - hook `PreToolUse` (`.codex/hooks.json` → `graphify hook-check`):
+    hook dimatikan → tetap 2/6 crash;
+  - proses graphify lain: tidak ada yang berjalan saat crash.
+  Windows Event Log **tidak** mencatat crash ini (jadi shim/uv crash tanpa
+  WER entry), sedangkan `graphify --version` / `god-nodes` /
+  `check-update .` **tidak pernah** crash → masalahnya spesifik di jalur
+  `update`. **Workaround satu-satunya: ulangi `graphify update .` sampai
+  exit 0.** Untuk Investigasi upstream: `uv tool upgrade graphifyy`
+  (terpasang 0.9.67). Detail: `AI_CONTEXT/CURRENT_STATE.md` → Issue 9.
 - `graphify label` **tidak butuh API key** bila memakai backend lokal:
   `graphify label . --backend=ollama --missing-only` (atau `--backend=claude`).
   Nama community default (nama node hub) justru informatif — tidak wajib

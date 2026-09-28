@@ -930,3 +930,59 @@ Bila gejala "**semua** `/_next/static/*` membalas 400 + file chunk di
 disk tinggal sedikit" muncul lagi → periksa `Get-Process node` (kemungkinan
 dua server) dan `Get-ChildItem .next\static\chunks -Recurse -File` —
 bukan menyalahi kode.
+
+---
+
+## Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B)
+
+### Decision
+
+Address bar harus tetap bersih (`https://talentaciptakarya.com`) saat
+pengguna menekan link section di beranda (`#visimisi`, `#galeri`, dst).
+Caranya **bukan** mengganti anchor jadi tombol, melainkan:
+
+1. Link tetap `<a href="#id">` (native) — smooth scroll,
+   `scroll-margin-top`, deep-link, Ctrl+click, dan keyboard tetap utuh.
+2. `components/site/AnchorHashCleaner.tsx` (client component, render
+   `null`) memasang **satu** listener `click` di `document`. Bila target
+   adalah `<a href>` ber-fragment **dan** `pathname`-nya sama dengan
+   halaman sekarang, 150 ms setelah navigasi fragment selesai jalankan
+   `history.replaceState(null, "", pathname + search)`.
+3. Dilewati: klik dengan modifier (Ctrl/Cmd/Shift/Alt, klik tengah —
+   membuka tab baru), link ke section **halaman lain**
+   (`/kelas/foo#jadwal`), dan hash yang diketik manual atau dibuka dari
+   luar (deep-link sengaja dipertahankan).
+
+### Reason
+
+Permintaan user (2026-09-28): bagian URL tidak perlu terlihat di address
+bar. Tiga opsi dibahas — hilangkan hash total / bersihkan setelah klik /
+section jadi halaman `/path` — dan user memilih **Opsi B** karena
+deep-link masih bisa dibagikan dan tombol Back tetap memulihkan posisi.
+
+### Alternatives Considered
+
+- **Opsi A** (link jadi tombol + `scrollIntoView`, hash tidak pernah
+  dipakai): ditolak — kehilangan deep-link dan posisi tombol Back.
+- **Opsi C** (tiap section jadi route seperti `/visi-misi`): ditolak —
+  pekerjaan jauh lebih besar (routing + konten + layout) dan URL justru
+  lebih panjang, bukan lebih bersih.
+- `pushState` alih-alih `replaceState`: ditolak — menambah entri riwayat
+  berisi URL yang tidak pernah berarti apa-apa.
+
+### Current Implementation
+
+`components/site/AnchorHashCleaner.tsx`, dimount di
+`app/(public)/layout.tsx`. Otomatis berlaku untuk semua link anchor
+publik: nav header, nav footer, tombol hero, CTA "Hubungi Kami", dan logo
+(`/#top`).
+
+### Important
+
+- **Jangan** memakai `preventDefault()` di listener ini — itu mematikan
+  navigasi native anchor.
+- `ToTop` tidak terpengaruh (memakai `scrollTo`, tidak pernah menulis
+  fragment).
+- Kalau nanti ada halaman dengan section yang URL-nya **memang perlu**
+  bertanda, guard `pathname` sudah melewatinya; verifikasi ulang bahwa
+  `replaceState` tidak ikut terpakai di sana.

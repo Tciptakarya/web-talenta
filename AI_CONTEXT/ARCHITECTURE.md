@@ -40,7 +40,7 @@ Karakteristik: **server-side rendering, data selalu segar dari database**
 app/
 ├── layout.tsx                 # root layout (font Google, metadata global, skrip anti-FOUC tema)
 ├── (public)/                  # route group: situs publik (navbar + footer)
-│   ├── layout.tsx             #   Header + anchor #top + Footer + ToTop
+│   ├── layout.tsx             #   Header + anchor #top + Footer + ToTop + AnchorHashCleaner
 │   ├── page.tsx               #   Beranda
 │   ├── kelas/page.tsx         #   Daftar kategori (chip filter)
 │   ├── kelas/[slug]/page.tsx  #   Detail kategori + program
@@ -63,8 +63,11 @@ app/
 ### Pages & Layout
 
 - `(public)/layout.tsx` → `Header`, anchor `<div id="top" />`, konten halaman,
-  `Footer`, `ToTop`. (Animasi `Reveal` dipakai **di dalam tiap halaman /
-  komponen**, bukan di layout — mis. `JadwalTerdekat.tsx`.)
+  `Footer`, `ToTop`, `AnchorHashCleaner` (membersihkan fragment `#…` dari
+  address bar setelah anchor diklik — komponen client `null`, hanya
+  memasang 1 listener `click` di `document`; lihat `DECISIONS.md`).
+  (Animasi `Reveal` dipakai **di dalam tiap halaman / komponen**, bukan di
+  layout — mis. `JadwalTerdekat.tsx`.)
 - `admin/(dashboard)/layout.tsx` → **satu-satunya** sumber sidebar untuk
   seluruh 9 halaman admin (`Dashboard`, `Galeri`, `Testimoni`, `Program`,
   `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`, `Pesan`). Tidak ada duplikat
@@ -100,6 +103,7 @@ components/
 ├── site/     # dipakai halaman publik (Client Components bila ada interaksi)
 │   ├── Header.tsx, Footer.tsx, HeroAbout.tsx, Layanan.tsx, Kontak.tsx,
 │   │   Lokasi.tsx, Testimoni.tsx, Reveal.tsx, ThemeToggle.tsx, ToTop.tsx
+│   ├── AnchorHashCleaner.tsx  # lepas #fragment dari URL setelah klik anchor
 │   ├── JadwalTerdekat.tsx   # tabel jadwal → memuat FormPendaftaran
 │   ├── FormPendaftaran.tsx  # modal pendaftaran (createPortal ke body)
 │   ├── GalleryGrid.tsx      # filter chip + lightbox navigable
