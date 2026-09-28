@@ -214,6 +214,19 @@ model EmailMessage {
   @@index([direction, deletedAt])
 }
 
+/// Teks statis website publik yang bisa diedit dari Admin > Tampilan Website.
+/// `key` = id dari registry `lib/content.ts` (satu-satunya sumber daftar key).
+/// Nilai yang belum pernah diubah TIDAK disimpan — halaman publik memakai
+/// nilai bawaan dari registry, jadi tabel ini bisa tetap kosong.
+model SiteContent {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([updatedAt])
+}
+
 /// Metadata lampiran email masuk. Isi file TIDAK disimpan di database —
 /// diambil on-demand dari IMAP lewat route admin yang dilindungi auth.
 model EmailAttachment {

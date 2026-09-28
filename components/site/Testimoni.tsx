@@ -1,16 +1,28 @@
 import Reveal from "@/components/site/Reveal";
 import type { TestimonialRow } from "@/lib/data";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 
 /** Testimoni — data dari database, bisa ditambah/diedit admin tanpa deploy. */
-export default function Testimoni({ items }: { items: TestimonialRow[] }) {
+export default function Testimoni({
+  items,
+  c,
+}: {
+  items: TestimonialRow[];
+  c: ContentMap;
+}) {
   if (items.length === 0) return null;
 
   return (
     <section className="section" id="testimoni">
       <div className="wrap">
         <Reveal className="section-head">
-          <span className="kicker">Testimoni</span>
-          <h2>Cerita dari mereka yang sudah berkarya</h2>
+          <span className="kicker">
+            <Rich text={textOf(c, "testimoni.kicker")} />
+          </span>
+          <h2>
+            <Rich text={textOf(c, "testimoni.title")} />
+          </h2>
         </Reveal>
         <Reveal className="testi-grid">
           {items.map((t) => (

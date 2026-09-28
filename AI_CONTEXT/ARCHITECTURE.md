@@ -78,8 +78,9 @@ app/
   (Animasi `Reveal` dipakai **di dalam tiap halaman / komponen**, bukan di
   layout — mis. `JadwalTerdekat.tsx`.)
 - `admin/(dashboard)/layout.tsx` → **satu-satunya** sumber sidebar untuk
-  seluruh 10 halaman admin (`Dashboard`, `Galeri`, `Email`, `Testimoni`, `Program`,
-  `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`, `Pesan`). Tidak ada duplikat
+  seluruh 11 halaman admin (`Dashboard`, `Galeri`, `Email`, `Tampilan Website`,
+  `Testimoni`, `Program`, `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`,
+  `Pesan`). Tidak ada duplikat
   `<aside>` di file lain. Isinya:
   - **Sidebar navy** (`w-64`, `hidden md:flex flex-col`, `p-6`): brand →
     **`<AdminNav>`** (menu + badge jumlah pesan/foto/pendaftaran/**email
@@ -137,6 +138,7 @@ components/
     │   GantiPasswordForm, SignOutButton, UploadForm,
     │   AdminNav          # menu sidebar + active state (usePathname),
     │   EmailCenter       # /admin/email: inbox, terkirim, tulis, balas
+    │   KontenEditor      # /admin/konten: editor teks situs publik
 ```
 
 ### Hooks & State Management
@@ -211,6 +213,7 @@ Pembagian: Testimoni (3), Kategori (3 + `deleteCategoryAction`), Program
 | `lib/passwordReset.ts` | `generateResetToken`, `hashToken` (SHA256), `isExpired` |
 | `lib/rateLimit.ts` | Rate limiter in-memory sliding window |
 | `lib/content.ts` | Konten statis v1 (PROGRAMS, TESTIMONIALS, CATEGORIES, GALLERY_IMAGES) sebagai fallback/data awal |
+| `lib/siteContent.ts` | **Registry teks publik** (10 bagian, 68 field) + `textOf()`, `renderInline()`, `getContentMap()`, `saveContentValues()`, `resetContentValues()`. Berbeda dengan `lib/content.ts` di atas — jangan digabung |
 
 ### Middleware & Authorization
 
@@ -269,6 +272,7 @@ Dijelaskan per relasi:
 | | `statusEmail` = `sent\|failed\|skipped` | bukti email dicek setelah penyimpanan |
 | `ContactMessage` | `statusEmail` | pola sama: pesan tetap tersimpan walau email gagal (PRD §8) |
 | `MateriPelatihan` | `tipe` (`VIDEO\|MODUL CETAK\|PDF\|SLIDE`), `fileUrl?`, `linkUrl?` | wajib salah satu (upload **atau** link) |
+| `SiteContent` | `key` @id (dari registry `lib/siteContent.ts`), `value` | teks statis situs publik yang diedit dari Admin > Tampilan Website; **hanya nilai yang berbeda dari bawaan yang disimpan** (kosong = bawaan) |
 | `EmailMessage` | `messageId?` **@unique** (anti-duplikasi), `direction` (`inbound`\|`outbound`\|`draft`), `status` (String + Zod), `isRead`, `deletedAt?` (email masuk yang disembunyikan), `htmlBody?`, `resendId?` | cache email masuk (IMAP) + log email keluar (Resend) + draft; `status` **tidak** pernah diklaim `delivered` tanpa webhook; semua query menyaring `deletedAt: null` |
 | `EmailAttachment` | `filename`, `mimeType`, `size`, `partPath`, `contentId?` | metadata lampiran inbound saja; isi file diambil on-demand dari IMAP (tidak disimpan di DB) |
 | `PasswordResetToken` | `tokenHash @unique`, `expiresAt`, `usedAt?` | hanya hash tersimpan; 30 menit; sekali pakai |

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ProgramIcon } from "@/components/site/ProgramIcon";
 import Reveal from "@/components/site/Reveal";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 
 export type LayananProgram = {
   id: number;
@@ -21,9 +23,11 @@ export type LayananCategory = {
 export default function Layanan({
   programs,
   categories,
+  c,
 }: {
   programs: LayananProgram[];
   categories: LayananCategory[];
+  c: ContentMap;
 }) {
   const gridRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLButtonElement>(null);
@@ -66,8 +70,12 @@ export default function Layanan({
     <section className="section section-alt" id="layanan">
       <div className="wrap">
         <Reveal className="section-head">
-          <span className="kicker">Layanan Kami</span>
-          <h2>Sebelas jalur pelatihan, satu tujuan: siap kerja</h2>
+          <span className="kicker">
+            <Rich text={textOf(c, "layanan.kicker")} />
+          </span>
+          <h2>
+            <Rich text={textOf(c, "layanan.title")} />
+          </h2>
         </Reveal>
 
         {/* Category filter chips */}

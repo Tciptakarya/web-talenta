@@ -1,17 +1,19 @@
 import Image from "next/image";
+import Rich from "@/components/site/Rich";
+import { textOf, withYear, type ContentMap } from "@/lib/siteContent";
 
 // Anchor memakai path absolut (/#about) supaya berfungsi juga dari
 // halaman di luar beranda (mis. /kelas).
 const NAV_LINKS = [
-  { href: "/#about", label: "Tentang Kami" },
-  { href: "/#visimisi", label: "Visi & Misi" },
-  { href: "/#layanan", label: "Layanan" },
-  { href: "/#galeri", label: "Galeri" },
-  { href: "/#lokasi", label: "Lokasi" },
-  { href: "/#testimoni", label: "Testimoni" },
+  { href: "/#about", key: "nav.about" },
+  { href: "/#visimisi", key: "nav.visimisi" },
+  { href: "/#layanan", key: "nav.layanan" },
+  { href: "/#galeri", key: "nav.galeri" },
+  { href: "/#lokasi", key: "nav.lokasi" },
+  { href: "/#testimoni", key: "nav.testimoni" },
 ];
 
-export default function Footer() {
+export default function Footer({ c }: { c: ContentMap }) {
   return (
     <footer>
       <div className="wrap">
@@ -29,7 +31,7 @@ export default function Footer() {
           <nav className="footer-nav">
             {NAV_LINKS.map((l) => (
               <a key={l.href} href={l.href}>
-                {l.label}
+                <Rich text={textOf(c, l.key)} />
               </a>
             ))}
           </nav>
@@ -37,8 +39,7 @@ export default function Footer() {
         <div className="footer-bottom">
           <div className="footer-info">
             <span>
-              &copy; {new Date().getFullYear()} Talenta Cipta Karya. Semua hak
-              dilindungi.
+              <Rich text={withYear(textOf(c, "footer.copyright"))} />
             </span>
             <a href="mailto:info@talentaciptakarya.com">
               info@talentaciptakarya.com

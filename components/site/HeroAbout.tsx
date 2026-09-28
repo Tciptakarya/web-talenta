@@ -1,29 +1,28 @@
 import Reveal from "@/components/site/Reveal";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 
 /** Hero v1 — konten statis (brand), tanpa reveal (terlihat langsung). */
-export default function Hero() {
+export default function Hero({ c }: { c: ContentMap }) {
   return (
     <section className="hero">
       <div className="wrap">
         <div>
           <div className="hero-eyebrow-row">
             <span className="badge-pill">
-              <span className="dot" />LPK &amp; LKP Berizin Resmi
+              <span className="dot" />
+              <Rich text={textOf(c, "hero.badge")} />
             </span>
           </div>
           <h1>
-            Temukan Talenta,
-            <br />
-            Ciptakan <em>Karya.</em>
+            <Rich text={textOf(c, "hero.title")} />
           </h1>
           <p className="lead">
-            Yayasan Talenta Cipta Karya membekali kamu dengan keterampilan nyata
-            lewat program pelatihan yang relevan dengan kebutuhan industri — dari
-            nol hingga siap kerja.
+            <Rich text={textOf(c, "hero.lead")} />
           </p>
           <div className="hero-actions">
             <a href="#layanan" className="btn btn-primary">
-              Lihat Layanan
+              <Rich text={textOf(c, "hero.cta1")} />
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -36,21 +35,33 @@ export default function Hero() {
               </svg>
             </a>
             <a href="#kontak" className="btn btn-ghost">
-              Hubungi Kami
+              <Rich text={textOf(c, "hero.cta2")} />
             </a>
           </div>
           <div className="hero-stats">
             <div>
-              <strong>LPK &amp; LKP</strong>
-              <span>Terdaftar &amp; berizin resmi</span>
+              <strong>
+                <Rich text={textOf(c, "hero.stat1a")} />
+              </strong>
+              <span>
+                <Rich text={textOf(c, "hero.stat1b")} />
+              </span>
             </div>
             <div>
-              <strong>Barista · Komputer</strong>
-              <span>Bimbel · Digital Marketing</span>
+              <strong>
+                <Rich text={textOf(c, "hero.stat2a")} />
+              </strong>
+              <span>
+                <Rich text={textOf(c, "hero.stat2b")} />
+              </span>
             </div>
             <div>
-              <strong>Depok, Jawa Barat</strong>
-              <span>Lokasi pelatihan</span>
+              <strong>
+                <Rich text={textOf(c, "hero.stat3a")} />
+              </strong>
+              <span>
+                <Rich text={textOf(c, "hero.stat3b")} />
+              </span>
             </div>
           </div>
         </div>
@@ -82,8 +93,12 @@ export default function Hero() {
             <line x1="9" y1="14.5" x2="4" y2="19.5" />
           </svg>
           <div className="hero-card">
-            <strong>Kurikulum Berbasis Industri</strong>
-            <span>Program dirancang bersama mitra dunia usaha</span>
+            <strong>
+              <Rich text={textOf(c, "hero.cardTitle")} />
+            </strong>
+            <span>
+              <Rich text={textOf(c, "hero.cardText")} />
+            </span>
           </div>
         </div>
       </div>
@@ -91,7 +106,7 @@ export default function Hero() {
   );
 }
 
-export function About() {
+export function About({ c }: { c: ContentMap }) {
   const check = (
     <svg
       viewBox="0 0 24 24"
@@ -111,42 +126,37 @@ export function About() {
       <div className="wrap">
         <div className="about-grid">
           <Reveal>
-            <span className="kicker">Tentang Kami</span>
+            <span className="kicker">
+              <Rich text={textOf(c, "about.kicker")} />
+            </span>
             <h2
               style={{
                 marginTop: 14,
                 fontSize: "clamp(28px,3.2vw,38px)",
               }}
             >
-              Ruang belajar untuk siapa pun yang siap berkarya
+              <Rich text={textOf(c, "about.title")} />
             </h2>
           </Reveal>
           <Reveal className="about-copy">
             <p>
-              Selamat datang di <strong>Yayasan Talenta Cipta Karya</strong>,
-              tempat kamu mendapatkan pembelajaran berkualitas yang membuka
-              peluang karier. Kami adalah{" "}
-              <strong>LPK (Lembaga Pelatihan Kerja)</strong> dan{" "}
-              <strong>LKP (Lembaga Kursus dan Pelatihan)</strong> yang telah
-              memiliki izin resmi.
+              <Rich text={textOf(c, "about.body1")} />
             </p>
             <p>
-              Tersedia berbagai kursus dan pelatihan yang dirancang untuk
-              membekali kamu dengan keterampilan yang benar-benar dibutuhkan di
-              dunia kerja — dari dasar hingga siap terjun langsung ke industri.
+              <Rich text={textOf(c, "about.body2")} />
             </p>
             <ul className="credential-list">
               <li>
                 {check}
-                Lembaga pelatihan &amp; kursus berizin resmi
+                <Rich text={textOf(c, "about.bullet1")} />
               </li>
               <li>
                 {check}
-                Program disusun sesuai kebutuhan industri
+                <Rich text={textOf(c, "about.bullet2")} />
               </li>
               <li>
                 {check}
-                Pendampingan dari materi dasar hingga siap kerja
+                <Rich text={textOf(c, "about.bullet3")} />
               </li>
             </ul>
           </Reveal>
@@ -156,12 +166,13 @@ export function About() {
   );
 }
 
-export function VisiMisi() {
+export function VisiMisi({ c }: { c: ContentMap }) {
+  // Isi misi diambil dari Tampilan Website (dengan nilai bawaan di registry).
   const misi = [
-    "Menyediakan pendidikan dan pelatihan berkualitas yang sesuai dengan kebutuhan industri.",
-    "Meningkatkan keterampilan dan daya saing peserta melalui program yang relevan dan inovatif.",
-    "Membangun kemitraan dengan dunia usaha untuk membuka peluang kerja dan wirausaha.",
-    "Membekali peserta dengan nilai-nilai profesionalisme dan etika kerja yang tinggi.",
+    textOf(c, "visimisi.misi1"),
+    textOf(c, "visimisi.misi2"),
+    textOf(c, "visimisi.misi3"),
+    textOf(c, "visimisi.misi4"),
   ];
 
   const icons = [
@@ -189,17 +200,21 @@ export function VisiMisi() {
     <section className="section" id="visimisi">
       <div className="wrap">
         <Reveal className="section-head">
-          <span className="kicker">Visi &amp; Misi</span>
-          <h2>Arah yang menuntun setiap program kami</h2>
+          <span className="kicker">
+            <Rich text={textOf(c, "visimisi.kicker")} />
+          </span>
+          <h2>
+            <Rich text={textOf(c, "visimisi.title")} />
+          </h2>
         </Reveal>
         <div className="vm-grid">
           <Reveal className="visi-card">
             <div>
-              <span className="kicker">Visi</span>
+              <span className="kicker">
+                <Rich text={textOf(c, "visimisi.visiKicker")} />
+              </span>
               <p>
-                Menjadi lembaga unggul dalam menciptakan sumber daya manusia
-                yang kompeten, kreatif, dan siap kerja di berbagai sektor,
-                berkontribusi pada pembangunan ekonomi dan sosial.
+                <Rich text={textOf(c, "visimisi.visi")} />
               </p>
             </div>
             <svg

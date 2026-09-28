@@ -5,6 +5,8 @@ import { Lokasi } from "@/components/site/Lokasi";
 import Testimoni from "@/components/site/Testimoni";
 import Kontak from "@/components/site/Kontak";
 import Reveal from "@/components/site/Reveal";
+import Rich from "@/components/site/Rich";
+import { getContentMap, textOf } from "@/lib/siteContent";
 import JadwalTerdekat from "@/components/site/JadwalTerdekat";
 import {
   getGallery,
@@ -33,24 +35,26 @@ import {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [programs, testimonials, gallery, categories, upcomingJadwal] =
+  const [programs, testimonials, gallery, categories, upcomingJadwal, c] =
     await Promise.all([
       getPrograms(),
       getTestimonials(),
       getGallery(),
       getActiveCategories(),
       getUpcomingJadwal(8),
+      // Teks statis yang bisa diedit dari Admin > Tampilan Website.
+      getContentMap(),
     ]);
 
   return (
     <>
-      <Hero />
-      <About />
-      <VisiMisi />
-      <Layanan programs={programs} categories={categories} />
+      <Hero c={c} />
+      <About c={c} />
+      <VisiMisi c={c} />
+      <Layanan programs={programs} categories={categories} c={c} />
 
       {/* Jadwal Kelas Terdekat — jadwal aktif terdekat, diurutkan per occurrence WIB */}
-      <JadwalTerdekat items={upcomingJadwal} />
+      <JadwalTerdekat items={upcomingJadwal} c={c} />
 
       {/* Anchor #galeri — target nav "Galeri" di Header/Footer.
           Satu section galeri publik dengan struktur PROGRAM → TAHUN → FOTO
@@ -61,8 +65,12 @@ export default async function HomePage() {
           <section className="section gallery-section" id="galeri-utama">
             <div className="wrap wrap-gallery">
               <Reveal className="section-head">
-                <span className="kicker">Galeri</span>
-                <h2>Dokumentasi kegiatan Talenta Cipta Karya</h2>
+                <span className="kicker">
+                  <Rich text={textOf(c, "galeri.kicker")} />
+                </span>
+                <h2>
+                  <Rich text={textOf(c, "galeri.title")} />
+                </h2>
               </Reveal>
               <GalleryGrid items={gallery} />
             </div>
@@ -70,9 +78,9 @@ export default async function HomePage() {
         )}
       </div>
 
-      <Lokasi />
-      <Testimoni items={testimonials} />
-      <Kontak />
+      <Lokasi c={c} />
+      <Testimoni items={testimonials} c={c} />
+      <Kontak c={c} />
     </>
   );
 }

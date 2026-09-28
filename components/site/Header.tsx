@@ -3,20 +3,23 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/site/ThemeToggle";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 
 // Anchor memakai path absolut (/#about) supaya tetap berfungsi dari
 // halaman lain di luar beranda (mis. dari /kelas).
+// `key` = key di registry Tampilan Website; label diambil dari sana.
 const NAV_LINKS = [
-  { href: "/#about", label: "Tentang Kami" },
-  { href: "/#visimisi", label: "Visi & Misi" },
-  { href: "/#layanan", label: "Layanan" },
-  { href: "/#galeri", label: "Galeri" },
-  { href: "/#lokasi", label: "Lokasi" },
-  { href: "/#testimoni", label: "Testimoni" },
+  { href: "/#about", key: "nav.about" },
+  { href: "/#visimisi", key: "nav.visimisi" },
+  { href: "/#layanan", key: "nav.layanan" },
+  { href: "/#galeri", key: "nav.galeri" },
+  { href: "/#lokasi", key: "nav.lokasi" },
+  { href: "/#testimoni", key: "nav.testimoni" },
 ];
 
 /** Header v1: state scroll, menu mobile, tombol close di dalam nav. */
-export default function Header() {
+export default function Header({ c }: { c: ContentMap }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -72,14 +75,14 @@ export default function Header() {
           </button>
           {NAV_LINKS.map((l) => (
             <a key={l.href} href={l.href} className="nav-link" onClick={close}>
-              {l.label}
+              <Rich text={textOf(c, l.key)} />
             </a>
           ))}
         </nav>
         <div className="nav-cta">
           <ThemeToggle />
           <a href="/#kontak" className="btn btn-ghost">
-            Hubungi Kami
+            <Rich text={textOf(c, "nav.kontak")} />
           </a>
           <button
             type="button"

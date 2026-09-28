@@ -287,6 +287,13 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
+Task **Tampilan Website** (edit teks publik dari admin, 2026-09-28) selesai &
+terverifikasi penuh, **BELUM di-commit** — `/admin/konten` + registry
+`lib/siteContent.ts` (68 field, 10 bagian) + `Rich.tsx` (escape HTML lalu
+`**tebal**`) + `KontenEditor.tsx` + tabel `SiteContent` + 2 Server Action.
+`revalidatePath` membuat perubahan langsung berlaku. XSS diuji: `<script>`
+menjadi teks biasa.
+
 Tiga task selesai diimplementasikan & diverifikasi, **ketiganya BELUM
 di-commit** — menunggu persetujuan user:
 

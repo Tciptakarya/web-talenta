@@ -3,6 +3,8 @@ import Reveal from "@/components/site/Reveal";
 import FormPendaftaran from "@/components/site/FormPendaftaran";
 import KuotaBadge from "@/components/site/KuotaBadge";
 import { sisaKursi } from "@/lib/data";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 import type { UpcomingJadwalRow } from "@/lib/data";
 
 /** Nomor WhatsApp resmi — konsisten dengan Footer/Kontak (0811-9700-322). */
@@ -78,8 +80,10 @@ function labelJadwalPublik(j: Pick<UpcomingJadwalRow, "hari" | "tanggal">): stri
  */
 export default function JadwalTerdekat({
   items,
+  c,
 }: {
   items: UpcomingJadwalRow[];
+  c: ContentMap;
 }) {
   if (items.length === 0) return null;
 
@@ -90,12 +94,14 @@ export default function JadwalTerdekat({
     <section className="section" id="jadwal-terdekat">
       <div className="wrap">
         <Reveal className="section-head">
-          <span className="kicker">Jadwal Kelas Terdekat</span>
-          <h2>Kelas berikutnya sudah menunggu jadwalmu</h2>
+          <span className="kicker">
+            <Rich text={textOf(c, "jadwal.kicker")} />
+          </span>
+          <h2>
+            <Rich text={textOf(c, "jadwal.title")} />
+          </h2>
           <p className="mt-3 text-mist">
-            Lihat jadwal pelatihan yang akan datang, lalu klik <strong>Daftar</strong>{" "}
-            pada baris yang kamu pilih — kuota tiap batch terbatas. Masih ada
-            pertanyaan? Hubungi kami lewat WhatsApp.
+            <Rich text={textOf(c, "jadwal.description")} />
           </p>
         </Reveal>
 
@@ -198,10 +204,10 @@ export default function JadwalTerdekat({
               <path d="M21 11.5a8.5 8.5 0 1 1-3.8-7.1" />
               <path d="M21 11.5c0 4.7-3.8 8.5-8.5 8.5a8.6 8.6 0 0 1-4.3-1.1L3 20l1.2-5A8.5 8.5 0 0 1 21 11.5z" />
             </svg>
-            Tanya Jadwal via WhatsApp
+            <Rich text={textOf(c, "jadwal.cta1")} />
           </a>
           <Link href="/kelas" className="btn btn-ghost">
-            Lihat semua kelas →
+            <Rich text={textOf(c, "jadwal.cta2")} />
           </Link>
         </Reveal>
       </div>

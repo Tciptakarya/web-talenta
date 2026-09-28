@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { useState } from "react";
 import Reveal from "@/components/site/Reveal";
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
 
 const MAP_IMG =
   "https://staticmap.openstreetmap.de/staticmap.php?center=-6.4428355,106.8106061&zoom=16&size=900x480&maptype=mapnik&markers=-6.4428355,106.8106061,lightblue1";
 
 /** Frame peta lokasi — mempertahankan fallback onerror dari v1. */
-export default function MapFrame() {
+export default function MapFrame({ c }: { c: ContentMap }) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -20,7 +22,7 @@ export default function MapFrame() {
       className="map-frame"
     >
       <span className="map-chip">
-        Buka di Maps
+        <Rich text={textOf(c, "lokasi.petaChip")} />
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -61,10 +63,11 @@ export default function MapFrame() {
             <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
-          <strong>Ngopi Bareng Teman</strong>
+          <strong>
+            <Rich text={textOf(c, "lokasi.cardTitle")} />
+          </strong>
           <span>
-            Komplek Permata Depok, Sektor Pirus Blok K1 No.16, Pd. Jaya, Kec.
-            Cipayung, Kota Depok — ketuk untuk buka di Google Maps
+            <Rich text={textOf(c, "lokasi.alamat")} />
           </span>
         </span>
       )}
@@ -73,14 +76,16 @@ export default function MapFrame() {
   );
 }
 
-export function Lokasi() {
+export function Lokasi({ c }: { c: ContentMap }) {
   return (
     <section className="section lokasi-dark" id="lokasi">
       <div className="wrap">
         <Reveal className="section-head" style={{ marginBottom: 44 }}>
-          <span className="kicker kicker-light">Lokasi Kami</span>
+          <span className="kicker kicker-light">
+            <Rich text={textOf(c, "lokasi.kicker")} />
+          </span>
           <h2 style={{ color: "#fff", fontSize: "clamp(28px,3.4vw,40px)" }}>
-            Main ke tempat pelatihan kami
+            <Rich text={textOf(c, "lokasi.title")} />
           </h2>
           <p
             style={{
@@ -100,9 +105,9 @@ export function Lokasi() {
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L6 21l1.6-7L2.2 9.2l7.1-.6L12 2z" />
               </svg>
-              4,8 &middot; Coffee Shop
+              <Rich text={textOf(c, "lokasi.rating")} />
             </span>
-            <h3>Ngopi Bareng Teman</h3>
+            <h3><Rich text={textOf(c, "lokasi.cardTitle")} /></h3>
             <p className="lokasi-desc">
               Talenta Cipta Karya menjalankan pelatihan Barista langsung di
               lokasi mitra ini. Konfirmasi jadwal &amp; ketersediaan kelas lewat
@@ -115,11 +120,11 @@ export function Lokasi() {
                 rel="noopener"
                 className="btn btn-cream"
               >
-                Rute ke Sini
+                <Rich text={textOf(c, "lokasi.cta")} />
               </a>
             </div>
           </Reveal>
-          <MapFrame />
+          <MapFrame c={c} />
         </div>
       </div>
     </section>

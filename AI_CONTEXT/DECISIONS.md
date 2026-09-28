@@ -1525,3 +1525,81 @@ keterbatasan Resend.
 - Kredensial yang dipakai Email Center: `PANEL_RESEND_API_KEY`, fallback ke
   `RESEND_API_KEY`.
 
+
+## Decision: Teks website publik diedit dari Admin > Tampilan Website
+
+### Decision
+
+Teks statis situs publik (judul, paragraf, label menu, angka, alamat) kini bisa
+diubah dari **Admin > Tampilan Website** (`/admin/konten`), tanpa menyentuh kode.
+
+1. **Registry = satu-satunya daftar key** (`lib/siteContent.ts`,
+   `CONTENT_SECTIONS`). 10 bagian, 68 field: Hero, Tentang Kami, Visi & Misi,
+   Layanan, Jadwal, Galeri, Lokasi, Testimoni, Kontak, Navbar & Footer.
+2. **Nilai bawaan (`defaultValue`) = isi website saat ini.** Kalau admin belum
+   pernah mengubah suatu key, halaman publik memakai nilai bawaan. Jadi tabel
+   `SiteContent` **boleh tetap kosong** dan situs tidak pernah gagal render.
+3. **Hanya nilai yang benar-benar berbeda yang disimpan.** `saveContentValues()`
+   membandingkan dengan bawaan: sama → hapus barisnya (kembali ke bawaan),
+   berbeda → upsert. Tabel jadi berisi murni "override", bukan salinan.
+4. **Format teks aman**: `**tebal**`, `*miring*`, baris baru = pemisah baris.
+   `renderInline()` melakukan **escape HTML lebih dulu**, baru menyisipkan tag,
+   sehingga teks dari admin tidak pernah bisa menyuntikkan HTML/skrip
+   (dibuktikan: `<script>alert(1)</script>` tampil sebagai teks biasa, 0 elemen
+   `<script>` di DOM).
+5. **Perubahan langsung berlaku** karena `saveContentAction()` memanggil
+   `revalidatePath("/", "layout")` — cache ISR 60 detik dibuang saat admin
+   menyimpan. Pengunjung berikutnya langsung dapat teks baru.
+6. **Cakupan**: hanya teks. Foto, program, jadwal, kategori, dan testimoni tetap
+   punya menunya masing-masing (Galeri, Program, Jadwal, Kategori, Testimoni).
+7. Kolom tabel diisi dengan **nilai efektif** (nilai tersimpan bila ada, kalau
+   tidak nilai bawaan) supaya admin melihat persis teks yang sedang tayang.
+
+### Reason
+
+Permintaan user: "di tampilan web publik itu saya bisa edit semuanya di panel
+admin", dengan screenshot bagian **Tentang Kami** dan **Layanan** yang masih
+hardcode di `components/site/`.
+
+Opsi yang dipertimbangkan:
+
+- **Table per section** (ditolak — banyak tabel untuk data yang bentuknya
+  sama: teks pendek/panjang).
+- **Key-value tanpa registry** (ditolak — tidak ada daftar key yang tervalidasi,
+  bisa tersimpan key ngawur; juga tidak ada cara menampilkan nilai bawaan).
+- **CMS pihak ketiga** (ditolak — berlebihan untuk 68 teks, dan menambah
+  dependensi eksternal).
+- **Editor inline di halaman publik** (ditolak — butuh mode edit di situs
+publik, hak akses, dan konfirmasi; memisahkan presentation dengan
+  penyuntingan).
+
+### Current Implementation
+
+- `lib/siteContent.ts` — registry, `textOf()`, `renderInline()`,
+  `withYear()`, `getContentMap()`, `saveContentValues()`, `resetContentValues()`.
+- `components/site/Rich.tsx` — komponen render teks (server component).
+- `app/admin/(dashboard)/konten/page.tsx` + `components/admin/KontenEditor.tsx`
+  — editor per bagian (`<details>`), badge "diubah", tombol "Kembalikan ke
+  bawaan".
+- `app/admin/actions.ts` — `saveContentAction`, `resetContentAction` (keduanya
+  `requireAdmin()` + `revalidatePath`).
+- `components/admin/AdminNav.tsx` — menu "Tampilan Website".
+- Diterapkan di: `HeroAbout.tsx`, `Layanan.tsx`, `JadwalTerdekat.tsx`,
+  `Kontak.tsx`, `Lokasi.tsx`, `Testimoni.tsx`, `Header.tsx`, `Footer.tsx`,
+  `app/(public)/page.tsx`, `app/(public)/layout.tsx`.
+- Skema: `SiteContent { key @id, value, updatedAt, updatedBy? }` (additive).
+
+### Important
+
+- **`lib/content.ts` BUKAN `lib/siteContent.ts`.** Yang pertama sudah ada
+  (data seed program & galeri v1, dipakai `lib/data.ts`); yang kedua baru.
+  Jangan menggabungkan keduanya.
+- Key baru **wajib** didaftarkan di `CONTENT_SECTIONS` lebih dulu; Server
+  Action mengabaikan key yang tidak dikenal.
+- Jangan pernah mengembalikan `dangerouslySetInnerHTML` tanpa `renderInline()`
+  (escape dulu, baru sisipkan tag).
+- Teks yang sengaja dibiarkan hardcode (tanpa key) tetap tampil sebagai teks biasa; bila mau diedit, tambahkan key-nya ke registry.
+  sebagai teks biasa; bila mau diedit, tambahkan key-nya ke registry.
+- Jumlah program pada judul "Sebelas jalur pelatihan" **tidak** ikut berubah
+  otomatis — itu keputusan sadar, dengan catatan di UI agar admin mengubahnya
+  sendiri bila jumlah program bertambah.

@@ -165,6 +165,12 @@ Berdasarkan history git (terverifikasi):
       `cid:` ditulis ulang ke route lampiran terproteksi auth. Teruji pada
       email Vercel (8.186 karakter): 0 script/iframe/form/on-handler, semua
       link `rel="noopener noreferrer nofollow"`.
+- [x] **Edit teks website publik dari admin** (2026-09-28) — halaman
+      `/admin/konten` ("Tampilan Website"), 10 bagian / 68 field: Hero,
+      Tentang Kami, Visi & Misi, Layanan, Jadwal, Galeri, Lokasi, Testimoni,
+      Kontak, Navbar & Footer. Nilai bawaan = teks saat ini; hanya yang
+      berbeda yang disimpan; `**tebal**`/`*miring*` dengan HTML di-escape;
+      `revalidatePath` supaya langsung berlaku.
 - [x] **Draft Email Center** (2026-09-28) — tab Draft + tombol "Simpan
       Draft" (bukan autosave, sesuai keputusan user), form "Edit Draft"
       terisi penuh saat draft dibuka, draft terhapus otomatis setelah terkirim,

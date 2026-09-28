@@ -45,6 +45,13 @@ AI agent WAJIB:
 - Pertahankan pola yang sudah ada: mutasi admin = Server Action di
   `app/admin/actions.ts` dengan `requireAdmin()`; validasi = Zod dari
   `lib/schemas.ts`; email tidak boleh memblokir penyimpanan data (PRD §8).
+- Teks statis situs publik (judul, paragraf, label menu) **tidak** ditulis
+  langsung di komponen: daftarkan key-nya di `lib/siteContent.ts`
+  (`CONTENT_SECTIONS`) lalu pakai `textOf(c, "about.title")`. Nilai bawaannya
+  adalah isi website saat ini, dan hanya nilai yang berbeda yang disimpan di
+  tabel `SiteContent`. Jangan render teks admin tanpa `renderInline()`
+  (escape HTML dulu). `lib/content.ts` (data seed) dan `lib/siteContent.ts`
+  (registry teks publik) **bukan file yang sama**.
 - Halaman publik memakai **ISR 60 detik** (`export const revalidate = 60`),
   dan rute `[slug]` juga memakai `dynamic = "force-static"` — keduanya WAJIB
   berpasangan, kalau tidak Next 15 tetap mengirim `no-store`. `/admin/*`

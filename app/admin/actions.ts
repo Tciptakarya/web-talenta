@@ -1172,6 +1172,72 @@ export async function saveDraftAction(
 }
 
 /**
+ * Simpan teks website publik (Admin > Tampilan Website).
+ *
+ * `revalidatePath("/", "layout")` membuang cache ISR halaman publik, jadi
+ * perubahan langsung terlihat pengunjung tanpa menunggu jendela 60 detik.
+ */
+export async function saveContentAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+
+    const values: Record<string, string> = {};
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === "string") values[key] = value;
+    }
+    if (Object.keys(values).length === 0) {
+      return { ok: false, error: "Tidak ada teks yang dikirim." };
+    }
+
+    const { saveContentValues } = await import("@/lib/siteContent");
+    const n = await saveContentValues(values);
+    if (n === 0) {
+      return { ok: false, error: "Tidak ada teks yang dikenal. Muat ulang halaman lalu coba lagi." };
+    }
+
+    revalidatePath("/", "layout");
+    revalidatePath("/admin/konten");
+    return { ok: true, message: `${n} teks tersimpan.` };
+  } catch (err) {
+    console.error("[konten] simpan gagal:", err);
+    return { ok: false, error: "Gagal menyimpan teks." };
+  }
+}
+
+/** Kembalikan satu teks ke nilai bawaan (menghapus nilai yang tersimpan). */
+export async function resetContentAction(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const key = String(formData.get("key") ?? "");
+    if (!key) return { ok: false, error: "Teks tidak valid." };
+
+    const { resetContentValues, ALL_CONTENT_KEYS } = await import("@/lib/siteContent");
+    if (!ALL_CONTENT_KEYS.includes(key)) {
+      return { ok: false, error: "Teks tidak dikenal." };
+    }
+    const n = await resetContentValues([key]);
+    revalidatePath("/", "layout");
+    revalidatePath("/admin/konten");
+    return {
+      ok: true,
+      message:
+        n > 0
+          ? "Teks dikembalikan ke nilai bawaan."
+          : "Teks memang sudah memakai nilai bawaan.",
+    };
+  } catch (err) {
+    console.error("[konten] reset gagal:", err);
+    return { ok: false, error: "Gagal mengembalikan teks." };
+  }
+}
+
+/**
  * Hapus email.
  *
  * Email **masuk** hanya disembunyikan (`deletedAt`) karena aslinya masih ada

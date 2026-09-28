@@ -27,6 +27,7 @@ const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/galeri", label: "Galeri" },
   { href: "/admin/email", label: "Email" },
+  { href: "/admin/konten", label: "Tampilan Website" },
   { href: "/admin/testimoni", label: "Testimoni" },
   { href: "/admin/program", label: "Program" },
   { href: "/admin/jadwal", label: "Jadwal Pelatihan" },

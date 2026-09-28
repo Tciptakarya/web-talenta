@@ -460,6 +460,16 @@ Status verifikasi:
 
 ## Currently In Progress
 
+Task **Tampilan Website (edit teks publik dari admin)** (2026-09-28) selesai
+diimplementasikan & diverifikasi penuh, **BELUM di-commit** —
+`/admin/konten`, 10 bagian / 68 field, registry `lib/siteContent.ts`, tabel
+`SiteContent`, komponen `Rich.tsx` + `KontenEditor.tsx`.
+Bukti: 68 field tampil di editor; simpan → teks langsung berubah di halaman
+publik tanpa menunggu 60 detik (`revalidatePath`); `**tebal**` jadi
+`<strong>`; `<script>alert(1)</script>` di-escape jadi teks biasa (0 elemen
+`<script>` di DOM, 0 console error); semua 9 section publik + label navbar +
+footer + hak cipta tetap benar; mobile 390px tanpa horizontal overflow.
+
 Task **Admin Email Center** (2026-09-28) selesai diimplementasikan &
 diverifikasi lokal, **BELUM di-commit** (detail di *Last Completed Work*).
 Menunggu kredensial `MAIL_IMAP_*` untuk menguji Inbox secara nyata
@@ -1116,6 +1126,22 @@ telah dihentikan (2026-09-28) sehingga `prisma db push`, `tsc`, `build`, dan
 menjalankan `next dev` bersamaan dengan build/`next start`.
 
 ## Exact Next Step
+
+1. **Commit** (menunggu persetujuan user): Tampilan Website (edit teks
+   publik), Email Center (draft/hapus/pencarian + pesan error spesifik),
+   active state sidebar, logo/footer, dan ISR 60 detik. Lalu
+   `graphify update .` (retry sampai exit 0) dan commit `chore:` untuk
+   `graphify-out/`. *Seluruh perubahan sudah `tsc` 0 & build hijau; user
+   sudah mengonfirmasi Email Center berfungsi di produksi (2026-09-28).*
+2. **Vercel**: region fungsi `iad1` → `sin1` (Settings → Functions →
+   Region → Redeploy). Sisa masalah kecepatan produksi.
+3. **Daftarkan webhook** `https://talentaciptakarya.com/api/resend/webhook`
+   di dashboard Resend + isi `RESEND_WEBHOOK_SECRET` agar status
+   delivered/bounced tercatat nyata.
+4. Isi `RESEND_API_KEY` yang valid → notifikasi aplikasi ikut jalan
+   (Issue 1).
+5. Opsional (sudah tercatat di `TODO.md`): index `pg_trgm` untuk
+   pencarian, blokir gambar eksternal (piksel pelacak Resend).
 
 1. **Commit** (menunggu persetujuan user): source Email Center (termasuk
    draft/hapus/pencarian + perbaikan tag `<header>`/`<footer>`) + active

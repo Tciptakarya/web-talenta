@@ -1,5 +1,8 @@
 "use client";
 
+import Rich from "@/components/site/Rich";
+import { textOf, type ContentMap } from "@/lib/siteContent";
+
 import { useState } from "react";
 import Reveal from "@/components/site/Reveal";
 
@@ -10,7 +13,7 @@ type Status = { type: "success" | "error"; message: string } | null;
  * submit → validasi → POST /api/contact → simpan DB + kirim email Resend.
  * Tombol WhatsApp tetap berdampingan sebagai opsi cepat (§12).
  */
-export default function Kontak() {
+export default function Kontak({ c }: { c: ContentMap }) {
   const [status, setStatus] = useState<Status>(null);
   const [loading, setLoading] = useState(false);
 
@@ -69,11 +72,19 @@ export default function Kontak() {
       <div className="wrap">
         <div className="kontak-grid">
           <Reveal className="kontak-side">
-            <span className="kicker">Hubungi Kami</span>
-            <h2>Siap memulai langkah pertamamu?</h2>
+            <span className="kicker">
+              <Rich text={textOf(c, "kontak.kicker")} />
+            </span>
+            <h2>
+              <Rich text={textOf(c, "kontak.title")} />
+            </h2>
             <p>
-              Tinggalkan pesan dan tim kami akan segera menghubungi kamu untuk
-              info program, jadwal, dan pendaftaran.
+              <Rich
+                text={
+                  textOf(c, "kontak.description") ||
+                  "Tinggalkan pesan dan tim kami akan segera menghubungi kamu untuk info program, jadwal, dan pendaftaran."
+                }
+              />
             </p>
             {/* WhatsApp dipertahankan sebagai opsi tambahan, bukan pengganti */}
             <a
@@ -92,7 +103,7 @@ export default function Kontak() {
                 <path d="M21 11.5c0 4.7-3.8 8.5-8.5 8.5a8.6 8.6 0 0 1-4.3-1.1L3 20l1.2-5A8.5 8.5 0 0 1 21 11.5z" />
                 <path d="M9 10.3c0 2.6 2.1 4.7 4.7 4.7" />
               </svg>
-              0811-9700-322
+              <Rich text={textOf(c, "kontak.wa")} />
             </a>
             <div className="social-row">
               <a
@@ -181,7 +192,7 @@ export default function Kontak() {
                 <textarea
                   id="pesan"
                   name="pesan"
-                  placeholder="Ceritakan program yang kamu minati..."
+                  placeholder={textOf(c, "kontak.pesan")}
                   required
                   minLength={5}
                   maxLength={3000}
@@ -193,7 +204,7 @@ export default function Kontak() {
                 disabled={loading}
                 style={loading ? { opacity: 0.7 } : undefined}
               >
-                {loading ? "Mengirim..." : "Kirim Pesan"}
+                {loading ? textOf(c, "kontak.loading") : textOf(c, "kontak.submit")}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"

@@ -12,6 +12,31 @@ Format: tanggal · isi · hash commit.
 
 ### Added
 
+- **Admin > Tampilan Website** (`/admin/konten`) — seluruh **teks statis
+  website publik** bisa diedit dari panel admin tanpa menyentuh kode.
+  10 bagian / **68 field**: Hero, Tentang Kami, Visi & Misi, Layanan, Jadwal,
+  Galeri, Lokasi, Testimoni, Kontak, Navbar & Footer (label menu + hak cipta).
+  - Nilai bawaan = isi website saat ini, jadi tabel `SiteContent` boleh tetap
+    kosong dan situs tidak pernah gagal render. Hanya nilai yang **berbeda**
+    dari bawaan yang disimpan (mengosongkan = kembali ke bawaan).
+  - Format aman: `**tebal**`, `*miring*`, baris baru = pemisah baris.
+    `renderInline()` melakukan escape HTML **lebih dulu** — dibuktikan
+    `<script>alert(1)</script>` tampil sebagai teks biasa, 0 elemen
+    `<script>` di DOM, 0 console error.
+  - Perubahan langsung berlaku karena `revalidatePath("/", "layout")` membuang
+    cache ISR saat admin menyimpan (terverifikasi: teks baru tampil tanpa
+    menunggu jendela 60 detik).
+  - Kolom diisi **nilai efektif** (nilai tersimpan bila ada, kalau tidak nilai
+    bawaan) + badge "diubah" + tombol "Kembalikan ke bawaan".
+  - Skema `SiteContent { key @id, value, updatedAt, updatedBy? }` (additive);
+    registry + fungsi di `lib/siteContent.ts`; komponen render `Rich.tsx`;
+    komponen admin `KontenEditor.tsx`; 2 Server Action
+    (`saveContentAction`, `resetContentAction`).
+  - Komponen publik yang sekarang menerima prop `c: ContentMap`:
+    `HeroAbout`, `Layanan`, `JadwalTerdekat`, `Kontak`, `Lokasi`,
+    `Testimoni`, `Header`, `Footer`, `app/(public)/page.tsx`,
+    `app/(public)/layout.tsx`.
+
 - **Draft** — tab baru **Draft** (dengan jumlah draft di label), tombol
   **"Simpan Draft"** pada form compose/reply/teruskan, dan **"Edit Draft"**
   (membuka draft langsung mengisi form To/Cc/Bcc/Subjek/Isi). Draft
