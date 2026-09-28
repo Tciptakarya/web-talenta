@@ -748,3 +748,185 @@ berubah).
   admin lewat Edit.
 - Kolom `year` tidak boleh dipakai sebagai filter wajib di query — grouping
   tetap dilakukan setelah `findMany`.
+
+---
+
+## Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe
+
+### Decision
+
+1. Elemen galeri yang menyentuh tipografi/warna — chip `.gal-chip`,
+   kop program `.gallery-program` / `.gallery-program-title` /
+   `.gallery-program-kategori`, baris tahun `.year-*`, judul
+   `.gallery-title` — didefinisikan sebagai **class CSS tak-ber-layer di
+   `app/globals.css`**, bukan utility Tailwind.
+2. **Alasan pertama (tipografi)**: `globals.css` memuat rule global
+   tak-ber-layer (`h1..h4{font-size:…}`, `h1,h2,h3,h4{font-weight:700;
+   letter-spacing:-0.01em}`) sedangkan Tailwind v4 menaruh utility di
+   cascade layer → utility **kalah selalu** berapa pun spesifikasinya.
+   Terbukti: `<h3 class="text-[21px] font-semibold">` terukur
+   18,72px/700. Lewat `.gallery-program-title` (tak-ber-layer): 25,6px /
+   600 / uppercase ✓.
+3. **Alasan kedua (warna)**: blok `:root.dark` hanya me-reset token
+   tertentu. Fakta terukur: `var(--navy)` **tidak adaptif** (tetap
+   `#16214A` → tak terlihat di bg `#0E1322`), sedangkan `var(--blue)`,
+   `var(--line)`, `var(--mist)`, dan `var(--color-navy)` **adaptif**.
+   Konvensi wajib untuk CSS/JSX baru:
+   - teks heading/label → utility **`text-navy`** (terang: navy; gelap:
+     `:root.dark .text-navy` → putih);
+   - garis/aksen state aktif → **`var(--color-navy)`** (terang navy /
+     gelap biru) atau **`var(--blue)`** (terang #2C4A9E / gelap #4E7FF0);
+   - teks redup → **`var(--mist)`**;
+   - **jangan** menulis `color: var(--navy)` di CSS komponen baru.
+4. Chip sengaja **tidak** memakai `bg-white`/`text-navy/70`:
+   `:root.dark .bg-white` (spesifisitas 0,3,0) memblokir `hover:bg-*` /
+   `hover:border-*` apa pun, dan `text-navy/70` hanya ≈1,6:1 di gelap.
+5. Thumbnail tahun memakai **foto pertama grup tahun yang sudah ada**
+   (`t.items[0].url`, `loading="lazy"`, object-fit cover) — keputusan
+   user: boleh asal **tanpa perubahan schema/DB**.
+6. State aktif accordion: garis **2px** `var(--color-navy)` +
+   `padding-bottom` dikompensasi (13+2 = 14+1 = 15px) agar tidak ada
+   layout jump; panah `↑` + `aria-expanded` + foto tampil = pengubah
+   status utama; fokus keyboard = outline `--gold`.
+
+### Reason
+
+Spesifikasi visual user menuntut gaya editorial/premium dengan palet
+brand yang sama **dan** tampil benar di mode terang + gelap. Pendekatan
+"utility Tailwind saja" terbukti gagal dua kali (ukuran h3 & warna dark)
+— keduanya akar masalahnya sama: asumsi bahwa utility Tailwind dan token
+`--*` selalu berlaku.
+
+### Alternatives Considered
+
+- Utility Tailwind untuk h3 (ditolak — mustahil menang dari rule
+  tak-ber-layer tanpa mengubah rule global yang diandalkan halaman lain).
+- `!important` pada utility (ditolak — memulai perang spesifisitas
+  permanen).
+- Meng-override `--navy` di `:root.dark` (ditolak — `--navy` dipakai
+  banyak komponen yang justru sengaja ingin navy asli di mode gelap;
+  mengubahnya merusak halaman lain).
+- Memindahkan seluruh `globals.css` ke `@layer` (ditolak — akan
+  membalik perilaku puluhan halaman yang mengandalkan rule tak-ber-layer).
+- Caption dipindah ke bawah foto (ditolak — tinggi kartu berubah saat
+  gambar load → layout shift; caption overlay dilemaskan saja).
+
+### Current Implementation
+
+- `app/globals.css`: `.gal-chip`, `.gallery-program`,
+  `.gallery-program-title`, `.gallery-program-kategori`, `.year-*`,
+  `.gallery-title` (tanpa `color`), kartu radius 12px, hover 1.02/0.2s,
+  `prefers-reduced-motion`.
+- `components/site/GalleryGrid.tsx`: JSX memakai class di atas + `text-navy`
+  pada h3/label tahun; struktur, grouping, a11y (`aria-pressed`,
+  `aria-expanded`, `aria-controls`), lightbox, filter tidak berubah.
+- `app/(public)/kelas/[slug]/page.tsx`: `<h2 class="gallery-title text-navy">`.
+
+### Important
+
+- **Jangan** kembalikan chip ke `bg-white` + `text-navy/70` — rusak di
+  mode gelap (dan hover mati).
+- **Jangan** tulis `color: var(--navy)` pada CSS baru — pakai `text-navy`,
+  `var(--color-navy)`, `var(--blue)`, atau `var(--mist)`.
+- **Jangan** memindahkan rule global `h1..h4` ke `@layer` tanpa
+  memeriksa seluruh halaman yang mengandalkan perilaku tak-ber-layer itu.
+- Elemen baru yang butuh tipografi khusus mengalahkan rule `h3` → tulis
+  sebagai class CSS di `globals.css`, bukan utility Tailwind.
+
+---
+
+## Decision: Kop program galeri memakai `<div>`, bukan `<header>`
+
+### Decision
+
+Elemen kop program di `components/site/GalleryGrid.tsx` memakai
+**`<div className="gallery-program">`**, bukan `<header>`. Rule global
+tak-ber-layer
+
+```css
+header{position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 0;}
+```
+
+di `app/globals.css` (± baris 131) disengaja **untuk navbar**
+(`components/site/Header.tsx`) dan berlaku ke semua elemen `<header>`
+mentah. **`components/site/Header.tsx` adalah satu-satunya pemakai elemen
+`<header>` yang sah** — komponen lain (publik maupun admin) memakai
+`<div>`.
+
+### Reason
+
+Kejadian 2026-09-28: kop program yang ditulis `<header
+className="gallery-program">` saat redesign ikut terkena rule navbar →
+`position:fixed` → kedua kop program (Pelatihan Barista + Kursus
+Komputer) menempel & saling menumpuk di tepi kiri atas viewport, dan
+garis `border-bottom`-nya tampak seperti coretan melintasi teks navbar —
+persis yang dilaporkan user di screenshot review.
+
+### Alternatives Considered
+
+- Menambah override `position:static` + reset padding pada
+  `.gallery-program` (ditolak — selamanya harus mengingat property apa
+  saja yang diborong rule global; rentan lupa).
+- Mengganti selector navbar jadi `#siteHeader` (ditolak — menyentuh
+  banyak rule turunan `header .wrap`, `header.is-scrolled`,
+  `:root.dark header.is-scrolled`, dsb.; perubahan luas di luar
+  kebutuhan).
+- Tetap `<header>` demi semantics (ditolak — di dalam `<section
+  aria-label>` elemen `<header>` tidak menambah landmark/benefit
+  aksesibilitas).
+
+### Current Implementation
+
+`components/site/GalleryGrid.tsx` — kop program = `<div
+className="gallery-program">` berisi `<h3>` + metadata kategori.
+
+### Important
+
+**Jangan** memakai elemen `<header>`/`<footer>` mentah di komponen selain
+navbar. Bila suatu saat memang butuh `<header>` di konten, scope rule
+navbar lebih dulu (`#siteHeader`) setelah memeriksa SEMUA selector
+`header…` di `globals.css`.
+
+---
+
+## Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)
+
+### Decision
+
+`npm run dev` dan `npm run start` **tidak boleh berjalan bersamaan** di
+folder project yang sama. Sebelum build: `taskkill /F /IM node.exe`
+(matikan SEMUA proses node), lalu jalankan **salah satu** server —
+`npm run start` untuk verifikasi produksi, `npm run dev` bila memang butuh
+hot reload (matikan yang lain dulu).
+
+### Reason
+
+Kejadian 2026-09-28: `npm run start` (port 3000) sedang berjalan, lalu
+`npm run dev` ikut dijalankan (gagal bind 3000 → mendapat port 3001) dan
+**menimpa folder `.next/` yang sama** — dalam ±10 detik
+`.next/static/chunks` tersisa 1 file `polyfills.js` (penamaan dev), seluruh
+chunk produksi (webpack, main-app, halaman admin) terhapus. Akibatnya
+server produksi membalas **400** untuk semua request `/_next/static/*` →
+`ChunkLoadError: Loading chunk 631 failed` → halaman admin crash dengan
+"Application error: a client-side exception has occurred while loading".
+**Bukan bug kode** — gejalanya identik dengan kode rusak, jadi wajib
+disederhanakan dulu sebelum menyalahi kode.
+
+### Alternatives Considered
+
+- Folder `.next` terpisah untuk dev (ditolak — Next tidak mendukung itu;
+  setup ekstra tanpa kebutuhan nyata).
+- Membiarkan dua server berjalan (ditolak — bukti insiden di atas).
+
+### Current Implementation
+
+Operasi harian: **satu server**. Bukti pemulihan insiden: `npm run build`
+ulang → 40 file chunk pulih; 8/8 script di HTML `/admin/pendaftaran` →
+HTTP 200; navigasi klien `/admin` → `/admin/pendaftaran` normal.
+
+### Important
+
+Bila gejala "**semua** `/_next/static/*` membalas 400 + file chunk di
+disk tinggal sedikit" muncul lagi → periksa `Get-Process node` (kemungkinan
+dua server) dan `Get-ChildItem .next\static\chunks -Recurse -File` —
+bukan menyalahi kode.

@@ -1,7 +1,9 @@
 # TODO
 
 Disusun dari kondisi source code, konfigurasi, dokumentasi, dan riwayat git
-yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
+yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
+(HEAD `47908f5` ter-push; working tree = task visual galeri belum
+di-commit).
 
 ## Critical
 
@@ -19,16 +21,20 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 
 ## In Progress
 
-- Tidak ada pekerjaan yang sedang berjalan. Task **struktur galeri
-  PROGRAM → TAHUN → FOTO** selesai, sudah di-commit & ter-push
-  (`368d947` + `6accd2a`), live di production.
+- Task **visual galeri editorial/premium minimal** + **fix 2 bug hasil
+  review user** (2026-09-28) selesai diverifikasi, **belum di-commit** —
+  menunggu persetujuan user (lihat *Next*).
+- Task sebelumnya **struktur galeri PROGRAM → TAHUN → FOTO** sudah
+  di-commit & ter-push (`368d947` + `6accd2a`), live di production.
 
 ## Next
 
-- [ ] **Isi tahun 8 foto lama yang `year = NULL`** lewat Edit di
-      `/admin/galeri` (peringatan "N belum punya tahun"). Tahunnya harus
-      benar-benar diketahui admin — jangan ditebak. Selama NULL, foto tampil
-      di grup **"Tanpa Tahun"** (bukan hilang).
+- [ ] **Commit + push task visual galeri** — source
+      (`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`) +
+      `AI_CONTEXT/` dalam satu commit `feat:`, `graphify-out/` menyusul
+      `chore:`. **Hanya bila user menyetujui**; setelah push, tunggu
+      deploy Vercel & verifikasi live (galeri mode gelap + terang,
+      0 console error).
 - [ ] **Verifikasi fix modal pendaftaran di production** — buka
       `https://talentaciptakarya.com`, klik **Daftar** pada tabel jadwal:
       modal harus terpusat dan tidak menimpa tabel. (Sudah diverifikasi hanya
@@ -75,10 +81,15 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
       di-force-fix** — `npm audit fix --force` menarik `next@16` dan versi
       Prisma yang menyebabkan breaking change. Audit ulang hanya jika versi
       Next/Prisma dinaikkan secara sadar.
-- [ ] `graphify update .` sesekali crash `0xC0000005` — transien, aman diulang;
-      dugaan akar: `graphify hook-check` (PreToolUse hook di `.codex/hooks.json`)
-      berjalan bersamaan dengan `graphify update .`.
-      (`CURRENT_STATE.md` → Issue 9)
+- [x] **Crash `graphify update .` (`0xC0000005`)** — akar masalah
+      ditemukan 2026-09-28: **cache AST di `graphify-out/cache/` membuat
+      pembacaan fase `update` mati di Windows** (bukan bentrok
+      `hook-check` seperti diduga sebelumnya; terjadi setiap kali cache
+      ada). Workaround: pindahkan `graphify-out\cache` aside → update
+      **hijau** (**798 node / 1342 edge / 51 community**, proven 2×).
+      Cache = data turunan, aman dihapus; crash berikutnya cukup ulangi
+      langkah tersebut. (`AGENTS.md` → *Troubleshooting graphify*;
+      `CURRENT_STATE.md` → Issue 9)
 - [ ] Nama community graphify diganti otomatis sesuai node hub (`prisma.ts`,
       `data.ts`, dst). **Opsional**: bisa diberi nama semantik gratis di lokal
       dengan `graphify label . --backend=ollama --missing-only` (model
@@ -106,6 +117,41 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-26 (HEAD `fd32dae`).
 ## Completed
 
 Berdasarkan history git (terverifikasi):
+
+- [x] **Fix 2 bug hasil review user** (2026-09-28, **belum di-commit**) —
+      (1) kop program galeri tumpang-tindih di tepi kiri atas: elemen
+      `<header className="gallery-program">` kena rule global navbar
+      `header{position:fixed…}` → diganti **`<div>`**; (2) crash `/admin`
+      "Application error: a client-side exception" → **bukan bug kode**:
+      `npm run dev` berjalan bersamaan dengan `npm run start` →
+      `next dev` menimpa `.next/` (chunk produksi terhapus) → semua
+      `/_next/static/*` balas 400 → `ChunkLoadError`; diperbaiki dengan
+      build ulang + **satu server**. Teruji: tsc 0, build hijau, 2 kop
+      `position:static` tak tumpang-tindih (terang & gelap), 8/8 script
+      chunk → 200, navigasi klien `/admin` → Pendaftaran + sapuan 4
+      halaman admin 0 crash (React #418 pre-existing di `/admin/program`
+      saja), regresi `/kelas/barista` 0 error.
+
+- [x] **Visual galeri editorial/premium minimal** (2026-09-28, **belum
+      di-commit**) — chip `.gal-chip` (token adaptif dark mode, tinggi
+      27px, aktif `--color-navy`); kop program `.gallery-program*`
+      (class CSS karena rule global `h3{font-size:1.17em}` tak-ber-layer
+      mengalahkan utility Tailwind — dulu judul cuma 18,72px); baris
+      tahun editorial + thumbnail foto pertama (lazy, **tanpa ubah DB**)
+      + garis aktif 2px `--color-navy` dengan padding dikompensasi
+      (tanpa layout jump); `.gallery-title` clamp 30–48px; kartu radius
+      12px + hover 1.02/0.2s + `prefers-reduced-motion`; **perbaikan
+      mode gelap** (`var(--navy)` tidak adaptif → `text-navy`/
+      `var(--color-navy)`/`var(--blue)`). Teruji: tsc 0, build hijau,
+      E2E gelap+terang per elemen, akordeon (scrollY 0), filter, lightbox
+      (Escape + fokus kembali), 8 breakpoint tanpa overflow, regresi
+      `/kelas/barista` + `/admin/galeri`, 0 console error.
+
+- [x] **Isi tahun 8 foto lama (`year = NULL`)** — **terpantau selesai**
+      2026-09-28: galeri publik tak punya grup "Tanpa Tahun" lagi
+      (30 foto semua bertahun: 2026:13, 2025:4, 2024:7, 2023:5, 2022:1;
+      chips `Pelatihan Barista (24)` + `Kursus Komputer (6)`). Diisi
+      admin via Edit, bukan oleh AI; tidak ada foto yang diubah/dihapus.
 
 - [x] **Struktur galeri PROGRAM → TAHUN → FOTO** (2026-09-27, commit
       `368d947` + `6accd2a`, **sudah ter-push & live**) — kolom `year Int?`

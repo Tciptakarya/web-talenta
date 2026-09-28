@@ -163,10 +163,7 @@ export default async function KelasSlugPage({ params }: Props) {
             className="gallery-section"
             style={{ paddingTop: 0 }}
           >
-            <h2
-              id="gallery-heading"
-              className="font-display text-2xl font-semibold text-navy mb-6"
-            >
+            <h2 id="gallery-heading" className="gallery-title text-navy mb-6">
               Galeri {category.name}
             </h2>
             <GalleryGrid items={categoryGallery} />

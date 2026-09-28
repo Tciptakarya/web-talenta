@@ -8,6 +8,154 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-09-28]
+
+### Changed
+
+- **Redesain visual galeri publik ke gaya editorial/premium minimal**
+  (`components/site/GalleryGrid.tsx`, `app/globals.css`,
+  `app/(public)/kelas/[slug]/page.tsx`) mengikuti spesifikasi 21 bagian
+  user — struktur/data/lightbox/filter tidak berubah, hanya tampilan:
+  - **Chip filter** pindah dari utility Tailwind ke class **`.gal-chip`**:
+    tinggi 27px, padding 6×14px, idle `--paper-alt` + border `--line` +
+    `--ink`, hover `--paper` + border `--color-navy`, aktif
+    `--color-navy` + putih, `:focus-visible` outline `--gold`.
+  - **Kop program editorial** — `.gallery-program` (garis `--line`),
+    `.gallery-program-title` (Fraunces uppercase **clamp 22–30px**,
+    600, tracking .05em), `.gallery-program-kategori` ("Kategori · …"
+    11px uppercase tracking .16em, `--blue`).
+  - **Baris tahun editorial** — thumbnail foto pertama tiap tahun
+    (64×48 desktop / 52×39 mobile, `loading="lazy"`, **tanpa perubahan
+    DB**), label Fraunces 18–20px, jumlah foto `--mist`, panah `→`/`↑`
+    (geser 3px saat hover), hover tint netral, garis dasar 1px `--line`,
+    **garis aktif 2px `--color-navy`** dengan `padding-bottom`
+    dikompensasi (13+2 = 14+1 = 15px → tidak ada layout jump), `:focus-visible`
+    emas.
+  - **Judul galeri** `.gallery-title` → `clamp(30px, 4vw, 48px)`
+    (spesifikasi: 40–52 desktop / 30–36 mobile); aturan `color` dihapus
+    — warna diserahkan ke utility `text-navy` / `:root.dark h2`.
+  - Kartu foto radius 14 → **12px**, hover scale 1.03 → **1.02 (0.2s)**,
+    caption dilemaskan (12,5px/600 + gradient lebih pendek), aturan
+    `prefers-reduced-motion` (animasi & transisi dimatikan).
+
+### Fixed
+
+- **Judul program tidak memakai ukuran/berat yang dituju** — rule global
+  **tak-ber-layer** `h3{font-size:1.17em}` dan `h1..h4{font-weight:700;
+  letter-spacing:-0.01em}` di `globals.css` selalu mengalahkan utility
+  Tailwind (ber-layer) berapa pun spesifikasinya → h3 terukur
+  18,72px/700. Solusi: pindahkan tipografi kop program ke class CSS
+  tak-ber-layer `.gallery-program-title`/`.gallery-program-kategori`
+  (terukur 25,6px @800px, 30px @≥1024px, 600, uppercase ✓).
+- **Warna tak terlihat di mode gelap** — `.year-label`, garis baris
+  terbuka, jumlah & panah aktif memakai `var(--navy)` yang **tidak ikut
+  di-reset blok `:root.dark`** (#16214A di atas bg #0E1322 = tak
+  terbaca; garis aktif juga sempat tak membedakan diri). Diperbaiki:
+  label → utility `text-navy` (`:root.dark .text-navy` → putih),
+  garis/jumlah/panah aktif → `var(--color-navy)` / `var(--blue)` yang
+  **memang adaptif**; spesifikasi hover label dinaikkan
+  (`.year-row .year-toggle:hover .year-label`, 4 komponen) agar menang
+  atas override `:root.dark`.
+- **Chip idle tidak terbaca di mode gelap** — `text-navy/70` (≈1,6:1)
+  + `bg-white` yang diblokir `:root.dark .bg-white` (hover jadi mati)
+  → diganti `.gal-chip` dengan token yang ikut berubah.
+- **Kop program galeri menumpuk di tepi kiri atas viewport** — kop
+  ditulis sebagai `<header className="gallery-program">` dan kena rule
+  global tak-ber-layer `header{position:fixed; top:0; left:0; right:0;
+  z-index:100; padding:20px 0}` (khusus navbar `components/site/Header.tsx`)
+  → kedua kop (Pelatihan Barista + Kursus Komputer) jadi fixed di kiri
+  atas, saling menumpuk, dan garis pembatasnya tampak seperti coretan
+  melintasi teks navbar. Fix: elemen diganti **`<div>`** (di dalam
+  `<section aria-label>` sudah cukup untuk struktur; `<header>` di posisi
+  ini tidak memberi nilai aksesibilitas). Teruji: 2 kop `position:
+  static`, docTop 3428 & 4406 (flow, tidak tumpang-tindih), `left:32px`
+  dalam container, gap chip→kop 32px, garis→label tahun 27px; mode
+  terang h3 `rgb(22,33,74)` @30px + h2 47.36px / mode gelap h3
+  `rgb(236,239,249)`; **0 console error**.
+- **Crash `/admin` "Application error: a client-side exception has
+  occurred while loading"** — **bukan bug kode**: `npm run dev` (port
+  3001) dijalankan bersamaan dengan `npm run start` (port 3000) di folder
+  yang sama → `next dev` menimpa `.next/` (±12:30:33: `.next/static/chunks`
+  tersisa 1 file `polyfills.js`, seluruh chunk produksi terhapus) → server
+  produksi membalas **400** untuk semua `/_next/static/*` → reproduksi:
+  `ChunkLoadError: Loading chunk 631 failed`
+  (`app/admin/(dashboard)/pendaftaran/page-1b3be6771a0b55c3.js`). Fix:
+  `taskkill /F /IM node.exe` (kedua server), `npm run build` ulang (40
+  file chunk pulih), jalankan **hanya satu** server. Teruji: 8/8 script di
+  HTML `/admin/pendaftaran` → **200** (sebelumnya 400 semua), navigasi
+  klien `/admin` → klik "Pendaftaran" normal, direct load
+  `/admin/pendaftaran` ✓, sapuan `/admin`, `/admin/galeri`,
+  `/admin/program`, `/admin/pesan` → **0 crash** (hanya React #418
+  pre-existing di `/admin/program`).
+
+### Technical Notes
+
+- Verifikasi: `npx tsc --noEmit` **0 error**; `npm run build` **hijau**
+  (`taskkill /F /IM node.exe` lebih dulu); browser E2E localhost:
+  pengukuran per elemen di **mode gelap DAN terang** (chip, h3, label,
+  garis, jumlah, panah, kop, thumb — semua terbaca di kedua mode),
+  akordeon (default tahun terbaru terbuka; klik 2025 → panel + 4 foto,
+  `scrollYDelta = 0`), filter chip (section tersaring → kembali "Semua"),
+  lightbox (klik foto → fokus pindah ke close → Escape → tertutup,
+  body unlock, **fokus kembali ke foto**), regresi `/kelas/barista`
+  (single group: tanpa chip & kop program, H1→H2→H3→H2, 0 alt kosong)
+  dan `/admin/galeri` (30 kartu) → **0 console error**.
+- 8 breakpoint via iframe same-origin (1920/1440/1366/1024/768/430/390/
+  360): kolom **4/4/4/3/2/2/2/2**, h2 48→30px, h3 program 30→22px,
+  label 20/18px, thumb 64/52px, gap 14/10px, chip wrap 2 baris di
+  mobile, container 1360px, **tanpa horizontal overflow di semua lebar**.
+- Limitasi environment: **key event trusted (Tab/Enter/Escape) tidak
+  terkirim** selama desktop window tak terlihat oleh harness (sama dengan
+  `browser.screenshot` yang gagal) — handler Escape divalidasi via
+  dispatch KeyboardEvent ke `document` (jalur
+  `document.addEventListener("keydown")` yang sama); jalur Enter = native
+  `<button onClick>` yang identik dengan klik teruji & sudah lolos uji
+  trusted key di task sebelumnya.
+- Console error non-galeri: `staticmap.openstreetmap.de`
+  `ERR_TUNNEL_CONNECTION_FAILED` (section Lokasi — pre-existing, di luar
+  scope, tidak disentuh).
+- **Data berubah di luar sesi ini**: 8 foto `year = NULL` tampaknya sudah
+  diisi admin via Edit — galeri tak punya grup "Tanpa Tahun" lagi
+  (2026:13, 2025:4, 2024:7, 2023:5, 2022:1 = 30); grouping beradaptasi
+  otomatis tanpa ubah kode (bukti requirement "tanpa hardcode").
+- **Insiden operasional (pelajaran untuk agent berikutnya)**: `next dev`
+  dan `next start` **berbagi folder `.next/`** — berjalan bersamaan membuat
+  dev menghapus chunk produksi → 400/`ChunkLoadError` yang menyerupai bug
+  kode ("client-side exception"). Bedakan: kalau **SEMUA** `/_next/static/*`
+  membalas 400 dan `Get-ChildItem .next\static\chunks -Recurse -File`
+  tinggal sedikit → aset build hilang, bukan kode. Aturan: **satu server
+  Next saja** (`DECISIONS.md` → *Hanya SATU server Next pada satu waktu*).
+- Elemen `<header>` mentah kena rule global navbar `header{position:fixed…}`
+  (`globals.css` ± baris 131) — di komponen lain pakai `<div>`;
+  `components/site/Header.tsx` satu-satunya pemakai `<header>` yang sah.
+- E2E awal tidak menangkap bug kop karena pengukuran hanya mengecek
+  computed style (font/warna) **bukan posisi elemen**, dan screenshot
+  harness gagal (window tak terlihat). Untuk elemen struktural, verifikasi
+  `getComputedStyle(...).position` + `getBoundingClientRect` (docTop/
+  tumpang-tindih) — bukan gaya saja.
+- Komentar JSX `{/* … */}` **tidak boleh** ditaruh di dalam ekspresi
+  `{kondisi && ( … )}` — di posisi expression itu di-parse sebagai object
+  literal → `npx tsc` gagal (TS1005/TS1382). Pindahkan komentar ke atas
+  ekspresinya.
+- **Akar masalah crash `graphify update .` ditemukan**: cache AST di
+  `graphify-out/cache/` membuat pembacaan fase `update` mati di Windows →
+  `0xC0000005` tanpa output (terjadi **setiap kali cache ada**, termasuk
+  cache yang baru ditulis run sebelumnya), sementara `graphify --version` /
+  `god-nodes` / `check-update .` tetap exit 0. Dugaan lama "bentrok
+  `hook-check`" **tidak terbukti**. Workaround: pindahkan
+  `graphify-out\cache` aside → `graphify update .` **hijau**, re-extract
+  penuh → **798 node / 1342 edge / 51 community** (proven 2×, backup
+  `graphify-out/2026-09-28/`); cache lama dipindah ke
+  `%LOCALAPPDATA%\Temp\opencode\graphify-cache-*` (tidak dihapus, tidak
+  mengotori repo). `AGENTS.md` → *Troubleshooting graphify* &
+  `CURRENT_STATE.md` → Issue 9.
+- `graphify update .` exit-1 transien sekali (crash `0xC0000005` yang
+  sudah diketahui) → retry hijau: **776 node / 1320 edge / 48 community**,
+  backup `graphify-out/2026-09-28/`.
+- **Belum di-commit** — menunggu persetujuan user.
+
+---
+
 ## [2026-09-27]
 
 ### Added

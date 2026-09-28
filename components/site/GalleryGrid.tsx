@@ -199,18 +199,18 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
   if (items.length === 0) return null;
 
-  const chipAktif = "bg-navy text-white";
-  const chipIdle = "bg-white text-navy border border-line hover:bg-paper";
   /** Judul program hanya bila ada >1 grup (di halaman kategori tunggal
    *  judulnya redundan dengan judul section). */
   const tampilkanJudulProgram = groups.length > 1;
 
   return (
     <>
-      {/* Filter program — hanya bila galeri memuat >1 grup berfoto */}
+      {/* Filter program — hanya bila galeri memuat >1 grup berfoto.
+          Styling chip ada di CSS (.gal-chip) agar token warnanya ikut
+          berubah di mode gelap (utility Tailwind bg-white tidak). */}
       {groups.length > 1 && (
         <div
-          className="flex flex-wrap justify-center gap-2 mb-7"
+          className="flex flex-wrap justify-center gap-1.5 mb-8"
           role="group"
           aria-label="Filter program galeri"
         >
@@ -218,9 +218,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
             type="button"
             onClick={() => setFilter(null)}
             aria-pressed={filter === null}
-            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition ${
-              filter === null ? chipAktif : chipIdle
-            }`}
+            className="gal-chip"
           >
             Semua ({items.length})
           </button>
@@ -230,9 +228,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
               type="button"
               onClick={() => setFilter(g.key)}
               aria-pressed={filter === g.key}
-              className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition ${
-                filter === g.key ? chipAktif : chipIdle
-              }`}
+              className="gal-chip"
             >
               {g.nama} ({g.items.length})
             </button>
@@ -247,50 +243,61 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
           <section
             key={g.key}
             aria-label={`Galeri ${g.nama}`}
-            className="mb-9 last:mb-0"
+            className="mb-10 md:mb-14 last:mb-0"
           >
+            {/* Kop program — editorial: judul prominent, kategori metadata kecil,
+                dipisahkan garis tipis (bukan kartu). Kelas CSS — lihat globals.
+                <div>, bukan <header>: rule global header{position:fixed} di
+                globals.css khusus navbar — <header> mentah akan menempel di
+                tepi kiri atas viewport. */}
             {tampilkanJudulProgram && (
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-3 mb-4">
-                <h3 className="font-display text-xl md:text-2xl font-bold text-navy uppercase tracking-wide">
-                  {g.nama}
-                </h3>
+              <div className="gallery-program">
+                <h3 className="gallery-program-title text-navy">{g.nama}</h3>
                 {kategoriBeda && (
-                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue">
+                  <p className="gallery-program-kategori">
                     Kategori · {g.kategori}
-                  </span>
+                  </p>
                 )}
               </div>
             )}
 
-            <div className="space-y-3">
+            {/* Daftar tahun — editorial list (bukan rounded-rectangle card). */}
+            <div className="year-list">
               {g.tahun.map((t) => {
                 const tkey = `${g.key}|${t.key}`;
                 const terbuka = !tutup.has(tkey);
+                const panelId = `tahun-${g.key}-${t.key}`;
                 return (
-                  <div key={t.key}>
+                  <div key={t.key} className={`year-row${terbuka ? " is-open" : ""}`}>
                     <button
                       type="button"
                       onClick={() => toggleTahun(tkey)}
                       aria-expanded={terbuka}
-                      className="w-full flex items-center gap-3 rounded-xl border border-line bg-paper px-4 py-2.5 text-left hover:border-blue hover:bg-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                      aria-controls={terbuka ? panelId : undefined}
+                      className="year-toggle"
                     >
-                      <span
-                        aria-hidden="true"
-                        className="w-3 shrink-0 text-blue text-xs font-bold"
-                      >
-                        {terbuka ? "▼" : "▶"}
+                      {/* Thumbnail tahun — foto pertama tahun tersebut (image
+                          existing, tanpa query/tambahan DB). Dekoratif. */}
+                      <span className="year-thumb" aria-hidden="true">
+                        <Image
+                          src={t.items[0].url}
+                          alt=""
+                          width={72}
+                          height={54}
+                          loading="lazy"
+                          sizes="72px"
+                        />
                       </span>
-                      <span className="font-display text-base md:text-lg font-bold text-navy">
-                        {t.label}
-                      </span>
-                      <span className="ml-auto text-xs font-bold text-mist whitespace-nowrap">
-                        {t.items.length} Foto
+                      <span className="year-label text-navy">{t.label}</span>
+                      <span className="year-count">{t.items.length} Foto</span>
+                      <span className="year-arrow" aria-hidden="true">
+                        {terbuka ? "↑" : "→"}
                       </span>
                     </button>
 
                     {/* Foto di tahun yang ciut tidak dirender sama sekali. */}
                     {terbuka && (
-                      <div className="mt-3">
+                      <div id={panelId} className="year-panel">
                         <Reveal className="gallery-grid">
                           {t.items.map((item) => (
                             <div

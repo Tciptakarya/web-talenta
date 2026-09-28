@@ -325,10 +325,16 @@ teks JSX (tidak valid XML) membuat parser berhenti. Perbaikan: tulis
 
 Troubleshooting graphify:
 
-- Crash `0xC0000005` (access violation) = transien; ulangi perintahnya.
-  Graphify adalah uv tool; `.codex/hooks.json` menjalankan `graphify
-  hook-check` pada setiap panggilan Bash, jadi hindari dua proses graphify
-  berjalan bersamaan saat `graphify update .`.
+- Crash `0xC0000005` (access violation) saat `graphify update .` — akar
+  masalah **terkonfirmasi 2026-09-28**: cache AST di `graphify-out/cache/`
+  membuat pembacaan fase `update` mati di Windows. Terjadi **setiap kali
+  cache ada** (termasuk cache yang baru ditulis run sebelumnya), sementara
+  `graphify --version` / `god-nodes` / `check-update .` tetap exit 0.
+  Workaround: `Rename-Item graphify-out\cache cache.bak` →
+  `graphify update .` → hapus `cache.bak` bila hijau (cache = data
+  turunan, selalu dibuat ulang). Dugaan lama "bentrok `graphify
+  hook-check`" **tidak terbukti**. Detail: `AI_CONTEXT/CURRENT_STATE.md`
+  → Issue 9.
 - `graphify label` **tidak butuh API key** bila memakai backend lokal:
   `graphify label . --backend=ollama --missing-only` (atau `--backend=claude`).
   Nama community default (nama node hub) justru informatif — tidak wajib

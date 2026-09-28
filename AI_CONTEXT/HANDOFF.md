@@ -22,21 +22,89 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `6accd2a` (2026-09-27) **sudah ter-push**; isi: task **struktur
-  galeri PROGRAM → TAHUN → FOTO** (`368d947` source + `AI_CONTEXT/`) +
-  refresh graph (`6accd2a`). Ter-deploy & terverifikasi live.
+- HEAD `47908f5` (2026-09-27) **sudah ter-push**; isi: docs sinkron
+  (`47908f5`), refresh graph (`6accd2a`), task **struktur galeri PROGRAM
+  → TAHUN → FOTO** (`368d947` source + `AI_CONTEXT/`). Ter-deploy &
+  terverifikasi live.
+- **Working tree (BELUM di-commit): task visual galeri editorial + fix 2
+  bug hasil review user** (2026-09-28) — `components/site/GalleryGrid.tsx`,
+  `app/globals.css`, `app/(public)/kelas/[slug]/page.tsx`, `AI_CONTEXT/*`,
+  `graphify-out/*`. Isi fix: (a) kop program `<header>` → `<div>` (rule
+  global navbar `header{position:fixed}` membuat kedua kop program
+  menumpuk di tepi kiri atas); (b) crash `/admin` "Application error"
+  **bukan bug kode** — `npm run dev` berjalan bersamaan dengan
+  `npm run start` dan menghapus chunk produksi di `.next/` → semua
+  `/_next/static/*` dibalas 400; sudah di-build ulang & diverifikasi.
+  tsc 0, build hijau, E2E kedua mode lolos; **menunggu persetujuan
+  commit user**.
 - `npx tsc --noEmit` = 0 error; `npm run build` = hijau, 22 routes.
 - Server lokal **sedang berjalan** (port 3000) — `taskkill /F /IM node.exe`
-  sebelum build.
+  sebelum build. **Jangan jalankan `npm run dev` bersamaan** dengan
+  `npm run start` — keduanya berbagi `.next/` (insiden 2026-09-28; lihat
+  *Important Decisions* & `DECISIONS.md`).
 - Data (Neon, **dipakai juga production**): 8 kategori, 11 program,
-  **30 foto galeri** (`year`: 2026:5, 2025:4, 2024:7, 2023:5, 2022:1,
-  NULL:8), 2 testimoni, 1 admin; **jadwal 0, pendaftaran 0, materi 0,
-  pesan 0**. Foto uji task ini sudah dihapus semua.
-- `graphify-out/`: 766 node / 1303 edge / 45 community (sudah update).
+  **30 foto galeri** — per 2026-09-28 **semua sudah punya `year`**
+  (2026:13, 2025:4, 2024:7, 2023:5, 2022:1; tak ada grup "Tanpa Tahun";
+  chips `Pelatihan Barista (24)` + `Kursus Komputer (6)`), 2 testimoni,
+  1 admin; **jadwal 0, pendaftaran 0, materi 0, pesan 0**.
+- `graphify-out/`: **798 node / 1339 edge / 50 community** (rebuild
+  terakhir oleh hook `post-commit` setelah cache AST dipindah aside;
+  angka edge/community bergeser tipis antar rebuild, backup
+  `graphify-out/2026-09-28/`; sudah ter-commit).
 
 ## LAST COMPLETED
 
-**Task terbaru (source code, SUDAH ter-push `368d947` + `6accd2a`, LIVE):
+**Task terbaru (source code, BELUM di-commit — menunggu persetujuan
+user): fix 2 bug hasil review user** (2026-09-28) —
+
+1. **Kop program galeri tumpang-tindih di tepi kiri atas** — kop ditulis
+   `<header className="gallery-program">` kena rule global tak-ber-layer
+   `header{position:fixed; top:0; left:0; right:0; z-index:100;
+   padding:20px 0}` (khusus navbar) → kedua kop (Pelatihan Barista +
+   Kursus Komputer) fixed & menumpuk di kiri atas, garis pembatas jadi
+   coretan melintasi navbar. Fix: **`<header>` → `<div>`** di
+   `GalleryGrid.tsx`. Teruji: 2 kop `position:static`, docTop 3428/4406
+   (flow, tak tumpang-tindih), `left:32px` dalam container, gap chip→kop
+   32px, garis→label tahun 27px, mode terang (h3 `rgb(22,33,74)` @30px,
+   h2 47.36px) & gelap (h3 `rgb(236,239,249)`), 0 console error.
+2. **Crash `/admin` "Application error: a client-side exception"** —
+   **bukan bug kode**: `npm run dev` (port 3001) jalan bersamaan dengan
+   `npm run start` (port 3000) → `next dev` menimpa `.next/`
+   (`.next/static/chunks` tersisa 1 file `polyfills.js`, seluruh chunk
+   produksi terhapus) → semua `/_next/static/*` dibalas **400** →
+   `ChunkLoadError: Loading chunk 631 failed`
+   (`app/admin/(dashboard)/pendaftaran/page-*.js`). Fix: matikan kedua
+   server, `npm run build` ulang (40 chunk pulih), jalankan **satu**
+   server. Teruji: 8/8 script HTML `/admin/pendaftaran` → 200; navigasi
+   klien `/admin` → klik Pendaftaran normal; direct load
+   `/admin/pendaftaran` ✓; sapuan `/admin`, `/admin/galeri`,
+   `/admin/program`, `/admin/pesan` 0 crash (React #418 pre-existing
+   hanya di `/admin/program`); regresi `/kelas/barista` (0 kop, 0 chip,
+   H1→H2→H3→H2, 0 error). tsc 0, build hijau. Keputusan baru:
+   `DECISIONS.md` → *Kop program galeri memakai `<div>`…* dan *Hanya
+   SATU server Next pada satu waktu…*.
+
+**Task sebelumnya (source code, BELUM di-commit — menunggu persetujuan
+user): visual galeri editorial/premium minimal** (2026-09-28) —
+`GalleryGrid.tsx` + `globals.css` + `kelas/[slug]/page.tsx`: chip
+`.gal-chip` (token adaptif dark mode, tinggi 27px, aktif `--color-navy` +
+putih); kop program `.gallery-program{,-title,-kategori}` — **class CSS,
+bukan utility Tailwind**, karena rule global `h3{font-size:1.17em}`
+tak-ber-layer selalu menang (dulu judul program cuma 18,72px); baris
+tahun editorial (thumbnail foto pertama 64×48/52×39 `lazy` **tanpa ubah
+DB**, garis aktif 2px `--color-navy` + padding dikompensasi → tanpa
+layout jump, `:focus-visible` emas); `.gallery-title` clamp 30–48px;
+kartu radius 12px + hover 1.02/0.2s + `prefers-reduced-motion`.
+**Fix mode gelap**: `var(--navy)` tidak adaptif (tak terlihat di bg
+#0E1322) → diganti `text-navy` / `var(--color-navy)` / `var(--blue)`; chip
+`bg-white`+`text-navy/70` ≈1,6:1 → `.gal-chip`. Teruji: tsc 0, build
+hijau, E2E **gelap & terang** per elemen, akordeon (`scrollYDelta=0`),
+filter chips, lightbox (Escape → tutup → body unlock → fokus kembali ke
+foto), 8 breakpoint 1920…360 tanpa overflow, regresi `/kelas/barista` +
+`/admin/galeri`, **0 console error**; graphify **776 node / 1320 edge /
+48 community**.
+
+**Task sebelumnya (source code, SUDAH ter-push `368d947` + `6accd2a`, LIVE):
 struktur galeri PROGRAM → TAHUN → FOTO** — kolom `GalleryImage.year Int?` (db push aman,
 nullable); backfill idempoten `prisma/backfill-gallery-year.ts` membaca
 tahun **hanya dari caption** (22 terisi, **8 dibiarkan NULL** → grup
@@ -124,9 +192,17 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Tidak ada pekerjaan kode berjalan. Task galeri `PROGRAM → TAHUN → FOTO`
-**selesai, ter-push (`368d947` + `6accd2a`), dan terverifikasi live** di
-`talentaciptakarya.com` (publik + `/admin/galeri`, 0 console error).
+Task **visual galeri editorial/premium minimal + fix 2 bug review**
+(2026-09-28) **selesai diverifikasi** — tsc 0, build hijau (build ulang
+setelah insiden `.next/`), E2E mode gelap + terang (posisi kop + warna),
+verifikasi posisi elemen galeri, navigasi klien & sapuan 4 halaman
+admin, regresi `/kelas/barista`, 0 console error (React #418
+pre-existing hanya di `/admin/program`) — tetapi **BELUM di-commit**:
+`git status` akan menunjukkan `components/site/GalleryGrid.tsx`,
+`app/globals.css`, `app/(public)/kelas/[slug]/page.tsx`, `AI_CONTEXT/*`,
+`graphify-out/*`. **Menunggu persetujuan user** sebelum commit.
+**Operasi**: server lokal (`npm run start`, port 3000) berjalan —
+**jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).
 Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
@@ -149,8 +225,16 @@ Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
    (2026-09-26): `&` mentah di teks JSX diganti `&amp;`
    (`kategori/page.tsx:19`, `JadwalManager.tsx:504`). Warning hilang, graph
    713 node. Teks tetap tampil sama.
-9. `graphify update .` sesekali crash `0xC0000005` (transien, aman diulang;
-   dugaan: bentrok dengan `graphify hook-check` dari PreToolUse hook).
+9. ~~**`graphify update .` crash `0xC0000005`**~~ — **AKAR MASALAH
+   TERKONFIRMASI (2026-09-28): cache AST di `graphify-out/cache/` membuat
+   pembacaan fase `update` mati di Windows** — terjadi **setiap kali
+   cache ada** (termasuk cache yang baru ditulis run sebelumnya).
+   Workaround: `Rename-Item graphify-out\cache cache.bak` → `graphify
+   update .` → **hijau** (proven 2×: **798 node / 1342 edge / 51
+   community**) → hapus `cache.bak`. Cache lama dipindah ke
+   `%LOCALAPPDATA%\Temp\opencode\graphify-cache-*`. Dugaan lama "bentrok
+   `hook-check`" **tidak terbukti**. Detail: `AGENTS.md` → *Troubleshooting
+   graphify* & `CURRENT_STATE.md` → Issue 9.
 10. Nama community graphify = nama node hub (`prisma.ts`, `data.ts`) —
     informatif, tidak wajib LLM. Bisa dilabeli semantik gratis lokal:
     `graphify label . --backend=ollama --missing-only`.
@@ -165,12 +249,26 @@ Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
 14. **React error #418 (hydration)** di console `/admin/kategori` dan
     `/admin/program` — **pre-existing**, sudah dibuktikan identik di
     production (kode lama); bukan regresi task galeri. Halaman tetap jalan.
-15. **8 foto galeri belum punya `year`** (NULL) → tampil di grup "Tanpa
-    Tahun". Isi lewat Edit `/admin/galeri` **hanya bila tahunnya benar
-    diketahui** — jangan ditebak.
+15. ~~**8 foto galeri belum punya `year`**~~ — **TERPANTAU SELESAI**
+    (2026-09-28): galeri publik tak punya grup "Tanpa Tahun" lagi; 30
+    foto semua bertahun (2026:13, 2025:4, 2024:7, 2023:5, 2022:1).
+    Dilakukan admin via Edit `/admin/galeri` di luar sesi AI. Bila perlu
+    dipastikan: ringkasan "belum punya tahun" di admin harus 0.
 16. **Race `urutan` batch upload paralel** (`max+1` per request) bisa
     membuat 2 foto memperoleh `urutan` sama — pre-existing, bukan dari
     task tahun.
+17. **Console error `staticmap.openstreetmap.de`
+    `ERR_TUNNEL_CONNECTION_FAILED`** — gambar peta section Lokasi di
+    homepage (resource eksternal; pre-existing, di luar scope galeri).
+    Hanya muncul bila jaringan/proxy memblokir domain tersebut.
+18. **Insiden 2026-09-28: `next dev` + `next start` bersamaan menghapus
+    chunk produksi** — `.next/static/chunks` tinggal 1 file, semua
+    `/_next/static/*` dibalas 400 → `/admin` crash "Application error"
+    (`ChunkLoadError`). **Sudah diperbaiki** (build ulang + satu server).
+    Pencegahan: **jangan jalankan dua server Next**; bila gejala berulang
+    cek `Get-Process node` + `Get-ChildItem .next\static\chunks -Recurse
+    -File`. Detail: `DECISIONS.md` → *Hanya SATU server Next pada satu
+    waktu*.
 
 ## IMPORTANT DECISIONS
 
@@ -184,6 +282,23 @@ Sisa pekerjaan lain bersifat **konfigurasi (ops, bukan kode)**.
   tahun lama **tidak boleh ditebak** (8 foto NULL → "Tanpa Tahun");
   grouping publik = program → tahun → foto, tanpa hardcode program/tahun.
   Detail: `DECISIONS.md` → *Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO*.
+- **Style galeri = class CSS di `globals.css`, bukan utility Tailwind**
+  (rule global `h1..h4` tak-ber-layer selalu mengalahkan utility; tidak
+  semua token `--*` adaptif di mode gelap — `var(--navy)` justru tidak).
+  CSS baru **jangan** `color: var(--navy)` → pakai utility `text-navy`
+  atau `var(--color-navy)` / `var(--blue)` / `var(--mist)`. Chip jangan
+  `bg-white`/`text-navy/70` (rusak di dark). Detail: `DECISIONS.md` →
+  *Style galeri berupa class CSS di globals…*.
+- **Kop program galeri = `<div>`, bukan `<header>`** — rule global
+  `header{position:fixed…}` (`globals.css` ± baris 131) khusus navbar
+  `Header.tsx`; komponen lain jangan memakai `<header>`/`<footer>` mentah
+  (akan menempel di tepi kiri atas viewport). Detail: `DECISIONS.md` →
+  *Kop program galeri memakai `<div>`, bukan `<header>`*.
+- **Satu server Next saja** — `npm run dev` dan `npm run start` berbagi
+  folder `.next/`; berjalan bersamaan membuat dev menghapus chunk
+  produksi → semua `/_next/static/*` balas 400 → `/admin` "Application
+  error" (insiden 2026-09-28). Detail: `DECISIONS.md` → *Hanya SATU
+  server Next pada satu waktu*.
 - Tidak ada payment gateway, tidak ada multi-role.
 - Seed tidak boleh menimpa password admin.
 - Modal pendaftaran tetap via portal.
@@ -204,18 +319,23 @@ Tanpa instruksi eksplisit dari user:
 
 ## NEXT ACTION
 
-**Ganti `RESEND_API_KEY` (resend.com) di `.env` lokal dan di Vercel, lalu
-Redeploy.** Setelah itu uji email reset password di `/admin/forgot-password`
-→ email terkirim; isi form pendaftaran → `/admin/pendaftaran` → kolom
-`statusEmail = sent`; sambil memverifikasi modal pendaftaran di live dan
-menambahkan MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend
-(Issue 3).
+**1. Commit + push task visual galeri + fix 2 bug review** — source
+(`GalleryGrid.tsx`, `globals.css`, `kelas/[slug]/page.tsx`) **dan**
+`AI_CONTEXT/` dalam satu commit `feat:` (perbaikan bug boleh dipisah
+commit `fix:`); `graphify-out/` menyusul commit `chore:`. **Hanya bila
+user menyetujui**; setelah push tunggu deploy Vercel lalu verifikasi
+live (galeri mode gelap + terang, 0 console error).
 
-Opsional (data): isi tahun 8 foto lama via Edit `/admin/galeri` — hanya
-bila tahunnya benar diketahui. Detail urutan: `CURRENT_STATE.md` →
-*Exact Next Step*.
+**2. Pekerjaan non-kode (butuh akses user):** ganti `RESEND_API_KEY`
+(resend.com) di `.env` lokal dan di Vercel, lalu Redeploy → uji email
+reset password di `/admin/forgot-password` → email terkirim; isi form
+pendaftaran → `/admin/pendaftaran` → kolom `statusEmail = sent`; tambah
+MX Titan di Vercel DNS (Issue 2) + verifikasi domain Resend (Issue 3);
+sambil memverifikasi modal pendaftaran di live.
 
-*(Task galeri selesai: commit `368d947` + `6accd2a`, sudah ter-push.)*
+*(Task galeri `PROGRAM → TAHUN → FOTO` selesai: commit `368d947` +
+`6accd2a`, sudah ter-push. Task visual galeri selesai diverifikasi,
+belum di-commit. Isi tahun 8 foto lama sudah terpantau beres.)*
 
 ## VERIFICATION
 
