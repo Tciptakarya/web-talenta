@@ -1,51 +1,51 @@
-# Graph Report - tciptakarya-main  (2026-09-28)
+# Graph Report - tciptakarya-main  (2026-10-02)
 
 ## Corpus Check
-- 102 files · ~206,233 words
+- 121 files · ~222,614 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 3, .css 2, .example 1)
 
 ## Summary
-- 1030 nodes · 1874 edges · 68 communities (66 shown, 2 thin omitted)
-- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 186 edges (avg confidence: 0.94)
+- 1168 nodes · 2160 edges · 101 communities (99 shown, 2 thin omitted)
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 212 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5faca562`
+- Built from commit: `b3213d0b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- siteContent.ts
+- next
 - compilerOptions
 - Decision: Galeri publik memakai container & grid sendiri
 - PRD — Migrasi Desain Visual
-- upload/route.ts
-- reset-password/page.tsx
-- TestimoniManager.tsx
+- berita/route.ts
+- program/[slug]/page.tsx
+- ActionState
 - script.js
 - package.json
 - AI HANDOFF
 - data.ts
 - JadwalManager.tsx
 - 🚀 Panduan Publish — Hostinger Web Apps + Resend
-- Current Problems
+- Architecture
 - actions.ts
 - KategoriManager.tsx
 - outbound.ts
 - { GET, POST }
 - Decision: Galeri dikaitkan lewat relasi, bukan string kategori
-- requireAdmin
+- Project Context
 - MateriManager.tsx
 - pendaftaran/route.ts
 - dependencies
 - email/page.tsx
-- TODO
-- refresh
+- NotFoundContent.tsx
+- requireAdmin
 - Decisions
 - Decision: Platform deploy
 - Decision: Versi Next.js & Prisma di-pin
-- sanitize.ts
+- UploadForm.tsx
 - Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)
 - Decision: Seed idempoten, tidak pernah menimpa password admin
 - Decision: Tidak ada payment gateway
@@ -54,68 +54,101 @@
 - Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT`
 - Decision: GitHub Pages dinonaktifkan untuk repo
 - pesan/page.tsx
-- Decision: Materi pelatihan disembunyikan dari publik
+- berita/[slug]/page.tsx
 - Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe
 - AGENTS.md
 - devDependencies
 - GaleriList.tsx
 - slugify
-- search.ts
+- ymdWib
 - Decision: Kop program galeri memakai `<div>`, bukan `<header>`
 - moveGalleryImage
 - Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)
-- Decision: Modal pendaftaran di-portal ke `document.body`
-- sync.ts
+- EmailCenter.tsx
+- imap.ts
 - prisma.ts
 - Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link`
-- webhook/route.ts
-- program/[slug]/page.tsx
+- Current Problems
+- kelas/[slug]/page.tsx
 - scripts
-- ProgramManager.tsx
+- (dashboard)/layout.tsx
 - Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)
 - Decision: Halaman publik di-cache 60 detik (ISR), admin tetap real-time
 - Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B)
 - FormPendaftaran.tsx
-- app/layout.tsx
+- Services / Utilities — `lib/`
+- sync.ts
 - allowScripts
-- ActionState
+- requestPasswordReset
+- Changelog
 - content.ts
-- getActiveCategories
-- kelas/[slug]/page.tsx
-- Decision: Rate limit in-memory diterima
+- storeImage
+- BeritaManager.tsx
+- (public)/berita/page.tsx
+- PendaftaranList.tsx
+- reset-password/page.tsx
+- [2026-09-28] — Admin Email Center (`/admin/email`)
+- resend.ts
+- Decision: Semua mutasi lewat Server Actions + `requireAdmin()`
+- Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)
+- Decision: Berita - isi teks polos, video client-direct, ID video saja
+- Decision: Materi pelatihan disembunyikan dari publik
+- generate-favicon-assets.ts
+- Frontend Architecture
+- upload/route.ts
+- Decision: Email Center — Hostinger (inbound IMAP) + Resend (outbound), cache di database
+- [2026-09-25]
+- [2026-10-02] — Section Berita (`/admin/berita`, `/berita`)
+- search.ts
+- Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai
+- contact/route.ts
+- Decision: Modal pendaftaran di-portal ke `document.body`
+- Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO
+- [2026-09-26]
+- [2026-09-27]
+- [2026-10-02] — Artwork favicon: navy rounded-square + feather putih
+- [2026-10-02] — Menu "Jadwal" di navbar + empty state Berita
+- Decision: Tidak ada lapisan auth/role selain Admin
+- [2026-09-23]
+- Decision: Kegagalan kirim email Resend harus menampilkan penyebabnya
+- auth.ts
+- sanitize.ts
+- Decision: Menu anchor di navbar wajib punya empty state; 8 menu memaksa drawer lebih awal
+- [2026-10-02] — Perbaikan halaman 404 (ditemukan saat cek bug di `/berita`)
+- Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)
 
 ## God Nodes (most connected - your core abstractions)
-1. `requireAdmin()` - 46 edges
-2. `Decisions` - 35 edges
-3. `next` - 29 edges
-4. `textOf()` - 26 edges
-5. `refresh()` - 26 edges
-6. `prisma` - 25 edges
-7. `react` - 23 edges
-8. `Project Context` - 18 edges
-9. `Services / Utilities — `lib/`` - 17 edges
-10. `compilerOptions` - 16 edges
+1. `requireAdmin()` - 49 edges
+2. `next` - 39 edges
+3. `Decisions` - 38 edges
+4. `refresh()` - 29 edges
+5. `textOf()` - 28 edges
+6. `react` - 26 edges
+7. `prisma` - 26 edges
+8. `Services / Utilities — `lib/`` - 20 edges
+9. `Project Context` - 18 edges
+10. `safe()` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Important Decisions` --references--> `requireAdmin()`  [INFERRED]
-  AI_CONTEXT/CHANGELOG.md → app/admin/actions.ts
-- `Reason` --references--> `Reveal()`  [INFERRED]
-  AI_CONTEXT/DECISIONS.md → components/site/Reveal.tsx
-- `Important Files` --references--> `requireAdmin()`  [INFERRED]
-  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Pages & Layout` --references--> `Pesan`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → components/admin/BeritaManager.tsx
+- `Services / Utilities — `lib/`` --references--> `isExpired()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → lib/passwordReset.ts
 - `Middleware & Authorization` --references--> `requireAdmin()`  [INFERRED]
   AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
-- `IMPORTANT DECISIONS` --references--> `requireAdmin()`  [INFERRED]
-  AI_CONTEXT/HANDOFF.md → app/admin/actions.ts
+- `Important Files` --references--> `requireAdmin()`  [INFERRED]
+  AI_CONTEXT/ARCHITECTURE.md → app/admin/actions.ts
+- `Technical Notes` --references--> `parseVideoLink()`  [INFERRED]
+  AI_CONTEXT/CHANGELOG.md → lib/schemas.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (68 total, 2 thin omitted)
+## Communities (101 total, 2 thin omitted)
 
-### Community 0 - "siteContent.ts"
-Cohesion: 0.05
-Nodes (74): Pages & Layout, Added, Changed, Currently In Progress, Current Implementation, Decision, Decision: Teks website publik diedit dari Admin > Tampilan Website, Important (+66 more)
+### Community 0 - "next"
+Cohesion: 0.06
+Nodes (71): Field penting, Pages & Layout, Added, Changed, Currently In Progress, Current Implementation, Decision, Decision: Teks website publik diedit dari Admin > Tampilan Website (+63 more)
 
 ### Community 1 - "compilerOptions"
 Cohesion: 0.11
@@ -129,17 +162,17 @@ Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: 
 Cohesion: 0.11
 Nodes (18): 1. Tujuan, 2. Ruang lingkup, 3.1 Token warna (`app/globals.css:7-20` dan `:root`), 3.2 Ikon & favicon, 3.3 Tipografi, 3.4 Struktur & pola, 3. Design system saat ini (baseline — fakta terukur), 4.1 Jebakan CSS global tanpa `@layer` (KRITIS) (+10 more)
 
-### Community 4 - "upload/route.ts"
-Cohesion: 0.07
-Nodes (51): Services / Utilities — `lib/`, Fixed, Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong), Last Completed Work, Alternatives Considered, Alternatives Considered, Current Implementation, Current Implementation (+43 more)
+### Community 4 - "berita/route.ts"
+Cohesion: 0.18
+Nodes (12): AdminLayout(), POST(), runtime, GET(), POST(), runtime, auth, BERITA_IMAGE_BYTES (+4 more)
 
-### Community 5 - "reset-password/page.tsx"
-Cohesion: 0.26
-Nodes (8): resetPassword(), metadata, ResetPasswordPage(), ResetPasswordForm(), generateResetToken(), hashToken(), isExpired(), ref_node_crypto
+### Community 5 - "program/[slug]/page.tsx"
+Cohesion: 0.24
+Nodes (12): dynamic, generateMetadata(), ProgramSlugPage(), Props, revalidate, waUrl(), KuotaBadge(), getJadwalByProgram() (+4 more)
 
-### Community 6 - "TestimoniManager.tsx"
+### Community 6 - "ActionState"
 Cohesion: 0.21
-Nodes (8): createTestimonial(), deleteTestimonial(), updateTestimonial(), dynamic, metadata, AdminTestimonial, EditRow(), TestimoniManager()
+Nodes (9): ActionState, createTestimonial(), deleteTestimonial(), gantiPassword(), updateTestimonial(), GantiPasswordForm(), AdminTestimonial, EditRow() (+1 more)
 
 ### Community 7 - "script.js"
 Cohesion: 0.11
@@ -147,55 +180,55 @@ Nodes (16): form, header, lightbox, lightboxCaption, lightboxClose, lightboxImag
 
 ### Community 8 - "package.json"
 Cohesion: 0.12
-Nodes (15): name, private, version, prisma, sharp, tailwindcss, @tailwindcss/postcss, tsx (+7 more)
+Nodes (15): name, private, version, imapflow, mailparser, prisma, tailwindcss, @tailwindcss/postcss (+7 more)
 
 ### Community 9 - "AI HANDOFF"
-Cohesion: 0.17
-Nodes (11): AI HANDOFF, CURRENTLY WORKING ON, DO NOT CHANGE, GIT, GRAPHIFY LOW-TOKEN, IMPORTANT DECISIONS, KNOWN ISSUES, NEXT ACTION (+3 more)
+Cohesion: 0.15
+Nodes (12): AI HANDOFF, CURRENT STATE, CURRENTLY WORKING ON, DO NOT CHANGE, GIT, GRAPHIFY LOW-TOKEN, IMPORTANT DECISIONS, KNOWN ISSUES (+4 more)
 
 ### Community 10 - "data.ts"
-Cohesion: 0.15
-Nodes (19): CategoryRow, GalleryRow, getAllPrograms(), getCategories(), getCategoriesWithCounts(), getMateriByCategory(), getUpcomingJadwal(), hhmmToMinutes() (+11 more)
+Cohesion: 0.13
+Nodes (20): 6. Draft = `isActive=false`, dan halaman detail ikut 404, BERITA_SELECT, beritaRows(), CategoryRow, fallbackCategory(), GalleryRow, getAllPrograms(), getBeritaAdmin() (+12 more)
 
 ### Community 11 - "JadwalManager.tsx"
-Cohesion: 0.17
-Nodes (11): createJadwal(), deleteJadwal(), updateJadwal(), formatTanggalYmd(), JadwalEditRow(), JadwalRow(), labelJadwal(), ProgramCategoryOption (+3 more)
+Cohesion: 0.13
+Nodes (16): createJadwal(), deleteJadwal(), updateJadwal(), dynamic, JadwalPage(), metadata, AdminJadwal, formatTanggalYmd() (+8 more)
 
 ### Community 12 - "🚀 Panduan Publish — Hostinger Web Apps + Resend"
 Cohesion: 0.10
 Nodes (19): Jika gagal build / site error, Langkah 0 — Prasyarat, Langkah 1 — Siapkan kode (pilih A atau B), Langkah 2 — Buat aplikasi di hPanel, Langkah 3 — Domain & SSL, Langkah 4 — Verifikasi pasca-deploy, Langkah 5 — Aktifkan email notifikasi (Resend, gratis 3.000/bln), Langkah 6 (disarankan) — Foto upload permanen (Vercel Blob) (+11 more)
 
-### Community 13 - "Current Problems"
-Cohesion: 0.10
-Nodes (20): Broken Features, Catatan: `graphify label` tidak butuh API key, Current Blockers, Current Development Status, Current Problems, Current State, Exact Next Step, Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB (+12 more)
+### Community 13 - "Architecture"
+Cohesion: 0.17
+Nodes (11): Architecture, Database Architecture, File Structure, File Upload Architecture (galeri & materi), Galeri (admin) — grouping KATEGORI lalu PROGRAM, Galeri publik — PROGRAM → TAHUN → FOTO (2026-09-27), High Level Architecture, Important Files (+3 more)
 
 ### Community 14 - "actions.ts"
-Cohesion: 0.09
-Nodes (33): categorySlugData(), createCategory(), parseCategory(), updateCategory(), ALLOWED_MATERI_TYPES, BLOCKED_EMAIL_EXT, CategoryInput, categorySchema (+25 more)
+Cohesion: 0.07
+Nodes (35): deleteCategory(), deleteCategoryAction(), ALLOWED_MATERI_TYPES, BERITA_ISI_MAKS, BERITA_RINGKASAN_MAKS, BeritaInput, beritaSchema, BLOCKED_EMAIL_EXT (+27 more)
 
 ### Community 15 - "KategoriManager.tsx"
-Cohesion: 0.29
-Nodes (5): dynamic, metadata, AdminCategory, CategoryRow(), KategoriManager()
+Cohesion: 0.24
+Nodes (9): categorySlugData(), createCategory(), parseCategory(), updateCategory(), dynamic, metadata, AdminCategory, CategoryRow() (+1 more)
 
 ### Community 16 - "outbound.ts"
-Cohesion: 0.06
-Nodes (44): Email Architecture, [2026-09-28] — Admin Email Center (`/admin/email`), Changed, Fixed, Fixed, Known Issues (Email Center), Performance, Performance — cache 60 detik untuk halaman publik (+36 more)
+Cohesion: 0.29
+Nodes (10): AttachmentInput, bodyToHtml(), replyContext(), sendFromPanel(), SendOutcome, panelResendKey(), isBlockedEmailFilename(), MAX_EMAIL_ATTACHMENT_BYTES (+2 more)
 
 ### Community 19 - "Decision: Galeri dikaitkan lewat relasi, bukan string kategori"
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Galeri dikaitkan lewat relasi, bukan string kategori, Important, Reason
 
-### Community 20 - "requireAdmin"
-Cohesion: 0.05
-Nodes (54): Changed, Alternatives Considered, Alternatives Considered, Current Implementation, Current Implementation, Current Implementation, Current Implementation, Decision (+46 more)
+### Community 20 - "Project Context"
+Cohesion: 0.11
+Nodes (18): Authentication, Business Goal, Current Project Status, Database, Deployment, Development Environment, External Services, Frameworks (+10 more)
 
 ### Community 21 - "MateriManager.tsx"
 Cohesion: 0.16
-Nodes (9): createMateri(), deleteMateri(), updateMateri(), AdminMateri, MateriEditRow(), MateriManager(), ProgramOption, TIPE_BADGE (+1 more)
+Nodes (9): createMateri(), deleteMateri(), materiFileFromFormData(), updateMateri(), AdminMateri, MateriEditRow(), ProgramOption, TIPE_BADGE (+1 more)
 
 ### Community 22 - "pendaftaran/route.ts"
-Cohesion: 0.15
-Nodes (15): dynamic, JadwalPage(), metadata, dynamic, metadata, PendaftaranPage(), POST(), AdminJadwal (+7 more)
+Cohesion: 0.36
+Nodes (5): POST(), buckets, isRateLimited(), sendPendaftaranNotification(), pendaftaranSchema
 
 ### Community 23 - "dependencies"
 Cohesion: 0.14
@@ -205,17 +238,17 @@ Nodes (14): dependencies, bcryptjs, imapflow, mailparser, next, next-auth, @pris
 Cohesion: 0.18
 Nodes (16): addresses(), AdminEmailPage(), buildDetail(), dynamic, listRows(), parseTab(), SearchParams, Tab (+8 more)
 
-### Community 25 - "TODO"
-Cohesion: 0.22
-Nodes (8): Bugs, Completed, Critical, In Progress, Next, Planned, Technical Debt, TODO
+### Community 25 - "NotFoundContent.tsx"
+Cohesion: 0.07
+Nodes (24): 2. `notFound()` TIDAK merender root layout (Next 15.5.25), 3. Dua file 404, bukan satu, Decision: Halaman 404 perlu mandiri, dan root layout tidak dirender di sana, Isi 404 tidak memakai `getContentMap()`, Jebakan CSS yang saya buat sendiri (catat supaya tidak terulang), Konteks, Paginasi: 404 dipakai untuk berita draft, Bugs (+16 more)
 
-### Community 26 - "refresh"
-Cohesion: 0.15
-Nodes (15): Server Actions — `app/admin/actions.ts`, deleteCategory(), deleteCategoryAction(), deleteGalleryImage(), deletePendaftaran(), deleteProgram(), deleteProgramAction(), refresh() (+7 more)
+### Community 26 - "requireAdmin"
+Cohesion: 0.18
+Nodes (20): Server Actions — `app/admin/actions.ts`, Added, Reason, beritaData(), createBerita(), createProgram(), deleteBerita(), deleteContactMessage() (+12 more)
 
 ### Community 27 - "Decisions"
-Cohesion: 0.20
-Nodes (9): Decision, Decision, Decision: Tidak ada lapisan auth/role selain Admin, Decision: `tsconfig.json` `jsx: "preserve"` di-commit, Decisions, Important, Important, Reason (+1 more)
+Cohesion: 0.18
+Nodes (10): Current Implementation, Decision, Decision, Decision: Rate limit in-memory diterima, Decision: `tsconfig.json` `jsx: "preserve"` di-commit, Decisions, Important, Important (+2 more)
 
 ### Community 28 - "Decision: Platform deploy"
 Cohesion: 0.33
@@ -225,9 +258,9 @@ Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: 
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Versi Next.js & Prisma di-pin, Important, Reason
 
-### Community 30 - "sanitize.ts"
-Cohesion: 0.22
-Nodes (9): ALLOWED_STYLES, ALLOWED_TAGS, SanitizeContext, main(), prisma, tahunDariCaption(), valid(), @prisma/client (+1 more)
+### Community 30 - "UploadForm.tsx"
+Cohesion: 0.21
+Nodes (9): AdminGalleryProgram, Antrean, AntreanStatus, formatUkuran(), pesanFromStatus(), UploadForm(), onSubmit(), setStatusFile() (+1 more)
 
 ### Community 31 - "Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)"
 Cohesion: 0.33
@@ -258,80 +291,80 @@ Cohesion: 0.40
 Nodes (5): Current Implementation, Decision, Decision: GitHub Pages dinonaktifkan untuk repo, Important, Reason
 
 ### Community 38 - "pesan/page.tsx"
-Cohesion: 0.25
-Nodes (6): deleteContactMessage(), dynamic, metadata, AdminMessage, PesanList(), STATUS_LABEL
+Cohesion: 0.29
+Nodes (5): dynamic, metadata, AdminMessage, PesanList(), STATUS_LABEL
 
-### Community 39 - "Decision: Materi pelatihan disembunyikan dari publik"
-Cohesion: 0.40
-Nodes (5): Current Implementation, Decision, Decision: Materi pelatihan disembunyikan dari publik, Important, Reason
+### Community 39 - "berita/[slug]/page.tsx"
+Cohesion: 0.19
+Nodes (14): BeritaDetailPage(), dynamic, generateMetadata(), Props, revalidate, BeritaBody(), toLines(), BeritaCard() (+6 more)
 
 ### Community 40 - "Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe"
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe, Important, Reason
 
 ### Community 41 - "AGENTS.md"
-Cohesion: 0.09
-Nodes (20): 1. Update `CURRENT_STATE.md`, 2. Update `TODO.md`, 3. Update `CHANGELOG.md`, 4. Update `DECISIONS.md`, 5. Update `ARCHITECTURE.md`, 6. Update `HANDOFF.md`, 7. Verifikasi Context, 8. Git (+12 more)
+Cohesion: 0.10
+Nodes (19): 1. Update `CURRENT_STATE.md`, 2. Update `TODO.md`, 3. Update `CHANGELOG.md`, 4. Update `DECISIONS.md`, 5. Update `ARCHITECTURE.md`, 6. Update `HANDOFF.md`, 7. Verifikasi Context, 8. Git (+11 more)
 
 ### Community 42 - "devDependencies"
 Cohesion: 0.18
 Nodes (11): devDependencies, prisma, tailwindcss, @tailwindcss/postcss, tsx, @types/mailparser, @types/node, @types/react (+3 more)
 
 ### Community 43 - "GaleriList.tsx"
-Cohesion: 0.05
-Nodes (36): API Routes (4), Architecture, Backend Architecture, Database Architecture, Field penting, File Structure, File Upload Architecture (galeri & materi), Galeri (admin) — grouping KATEGORI lalu PROGRAM (+28 more)
+Cohesion: 0.16
+Nodes (9): Current Implementation, dynamic, metadata, AdminGalleryItem, buildGroups(), GaleriCard(), GaleriList(), Group (+1 more)
 
 ### Community 44 - "slugify"
-Cohesion: 0.19
-Nodes (13): Alternatives Considered, Current Implementation, Decision, Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai, Important, Reason, slugify(), uniqueSlug() (+5 more)
-
-### Community 45 - "search.ts"
 Cohesion: 0.33
-Nodes (8): buildEmailWhere(), contains(), OPERATORS, ParsedQuery, parseSearchQuery(), SEARCH_HELP, splitToken(), termCondition()
+Nodes (8): Current Implementation, slugify(), uniqueSlug(), DEFAULT_CATEGORIES, ensureCategory(), main(), prisma, resolveSlug()
+
+### Community 45 - "ymdWib"
+Cohesion: 0.20
+Nodes (12): dynamic, metadata, PendaftaranPage(), getUpcomingJadwal(), hhmmToMinutes(), tanggalJamMinutes(), wibNow(), wibStampMinutes() (+4 more)
 
 ### Community 46 - "Decision: Kop program galeri memakai `<div>`, bukan `<header>`"
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Kop program galeri memakai `<div>`, bukan `<header>`, Important, Reason
 
 ### Community 47 - "moveGalleryImage"
-Cohesion: 0.07
-Nodes (30): [2026-09-23], [2026-09-24], [2026-09-25], [2026-09-26], [2026-09-27], [2026-09-28] — Active state sidebar, logo, dan anchor hash, Added, Added (+22 more)
+Cohesion: 0.38
+Nodes (7): Alternatives Considered, Current Implementation, Decision, Decision: Grouping galeri di klien + urutan scoped per subgroup, Important, Reason, moveGalleryImage()
 
 ### Community 48 - "Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)"
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`), Important, Reason
 
-### Community 49 - "Decision: Modal pendaftaran di-portal ke `document.body`"
-Cohesion: 0.40
-Nodes (5): Alternatives Considered, Current Implementation, Decision: Modal pendaftaran di-portal ke `document.body`, Important, Reason
+### Community 49 - "EmailCenter.tsx"
+Cohesion: 0.20
+Nodes (17): Changed, Current Implementation, Current Implementation, deleteEmailAction(), saveDraftAction(), sendEmailAction(), setEmailReadAction(), syncEmailInboxAction() (+9 more)
 
-### Community 50 - "sync.ts"
-Cohesion: 0.11
-Nodes (30): dynamic, GET(), RFC-5322, auth, fetchAttachment(), fetchMessageByUid(), fetchRecentMessages(), IMAP_NOT_CONFIGURED (+22 more)
+### Community 50 - "imap.ts"
+Cohesion: 0.22
+Nodes (15): dynamic, GET(), fetchAttachment(), fetchMessageByUid(), IMAP_NOT_CONFIGURED, imapConfig, MailboxMessage, MailError (+7 more)
 
 ### Community 51 - "prisma.ts"
-Cohesion: 0.15
-Nodes (9): dynamic, metadata, dynamic, metadata, CARDS, dynamic, globalForPrisma, prisma (+1 more)
+Cohesion: 0.10
+Nodes (16): dynamic, metadata, CARDS, dynamic, dynamic, metadata, dynamic, metadata (+8 more)
 
 ### Community 52 - "Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link`"
 Cohesion: 0.33
 Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link`, Important, Reason
 
-### Community 53 - "webhook/route.ts"
-Cohesion: 0.60
-Nodes (4): dynamic, POST(), statusFromEvent(), verifySignature()
+### Community 53 - "Current Problems"
+Cohesion: 0.10
+Nodes (20): Broken Features, Catatan: `graphify label` tidak butuh API key, Current Blockers, Current Development Status, Current Problems, Current State, Exact Next Step, Issue 11 — Batas 4,5 MB Vercel vs UI yang menulis 8 MB (+12 more)
 
-### Community 54 - "program/[slug]/page.tsx"
-Cohesion: 0.27
-Nodes (10): dynamic, generateMetadata(), ProgramSlugPage(), Props, revalidate, waUrl(), KuotaBadge(), getJadwalByProgram() (+2 more)
+### Community 54 - "kelas/[slug]/page.tsx"
+Cohesion: 0.17
+Nodes (13): KelasIndexPage(), metadata, revalidate, dynamic, generateMetadata(), KelasSlugPage(), Props, revalidate (+5 more)
 
 ### Community 55 - "scripts"
 Cohesion: 0.25
 Nodes (8): scripts, build, db:push, db:seed, db:setup, db:studio, dev, start
 
-### Community 56 - "ProgramManager.tsx"
-Cohesion: 0.24
-Nodes (8): createProgram(), updateProgram(), dynamic, metadata, AdminCategory, AdminProgram, ProgramManager(), ProgramRow()
+### Community 56 - "(dashboard)/layout.tsx"
+Cohesion: 0.21
+Nodes (9): 1. 404 bawaan Next.js menyuntik CSS sendiri, LAST COMPLETED, Riwayat sebelumnya, dynamic, AdminNav(), NAV, SignOutButton(), ThemeToggle() (+1 more)
 
 ### Community 57 - "Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)"
 Cohesion: 0.33
@@ -349,53 +382,185 @@ Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: 
 Cohesion: 0.25
 Nodes (5): Decision, FormPendaftaran(), PendaftaranTarget, State, react-dom
 
-### Community 61 - "app/layout.tsx"
-Cohesion: 0.33
-Nodes (4): app_globals, fraunces, jakarta, metadata
+### Community 61 - "Services / Utilities — `lib/`"
+Cohesion: 0.45
+Nodes (10): Services / Utilities — `lib/`, Fixed, Last Completed Work, Decision, assertStorageReady(), classifyStorageError(), describeStorageFailure(), isEphemeralFs() (+2 more)
+
+### Community 62 - "sync.ts"
+Cohesion: 0.22
+Nodes (13): RFC-5322, fetchRecentMessages(), previewFromText(), Addr, AddrInput, allAddresses(), DEFAULT_SYNC, firstAddress() (+5 more)
 
 ### Community 63 - "allowScripts"
 Cohesion: 0.40
 Nodes (5): allowScripts, esbuild@0.28.2, prisma@6.19.3, @prisma/client@6.19.3, @prisma/engines@6.19.3
 
-### Community 64 - "ActionState"
-Cohesion: 0.14
-Nodes (14): Components, Design System & Halaman, Form Handling & Validation, Frontend Architecture, Hooks & State Management, Routing, ActionState, gantiPassword() (+6 more)
+### Community 64 - "requestPasswordReset"
+Cohesion: 0.24
+Nodes (8): Security Rules, Email Architecture, getClientIp(), requestPasswordReset(), metadata, ForgotPasswordForm(), sendPasswordResetEmail(), siteUrl()
+
+### Community 65 - "Changelog"
+Cohesion: 0.25
+Nodes (7): [2026-09-24], [2026-09-28] — Active state sidebar, logo, dan anchor hash, Changed, Changelog, Fixed, Important Decisions, Technical Notes
 
 ### Community 66 - "content.ts"
 Cohesion: 0.16
 Nodes (12): CATEGORIES, DefaultCategory, DefaultGalleryImage, DefaultProgram, DefaultTestimonial, GALLERY_IMAGES, PROGRAMS, TESTIMONIALS (+4 more)
 
-### Community 67 - "getActiveCategories"
-Cohesion: 0.40
-Nodes (4): KelasIndexPage(), metadata, revalidate, getActiveCategories()
+### Community 67 - "storeImage"
+Cohesion: 0.22
+Nodes (11): API Routes, Backend Architecture, Middleware & Authorization, Issue 10 — Upload foto mustahil di production (`BLOB_READ_WRITE_TOKEN` kosong), Alternatives Considered, Current Implementation, Decision: Penyimpanan foto wajib Vercel Blob di hosting ephemeral + error bertipe, Important (+3 more)
 
-### Community 69 - "kelas/[slug]/page.tsx"
+### Community 68 - "BeritaManager.tsx"
+Cohesion: 0.14
+Nodes (15): BeritaPage(), dynamic, metadata, AdminBerita, BeritaManager(), EditRow(), formatBytes(), IMAGE_TYPES (+7 more)
+
+### Community 69 - "(public)/berita/page.tsx"
+Cohesion: 0.32
+Nodes (7): BeritaIndexPage(), dynamic, metadata, revalidate, BeritaList(), getBerita(), getBeritaCategories()
+
+### Community 70 - "PendaftaranList.tsx"
+Cohesion: 0.25
+Nodes (8): deletePendaftaran(), updateStatusPendaftaran(), AdminPendaftaran, EMAIL_STYLE, PendaftaranList(), STATUS_STYLE, waFollowUp(), PENDAFTARAN_STATUS_LIST
+
+### Community 71 - "reset-password/page.tsx"
 Cohesion: 0.26
-Nodes (10): dynamic, generateMetadata(), KelasSlugPage(), Props, revalidate, waUrl(), getCategoryBySlug(), getGalleryByCategory() (+2 more)
+Nodes (8): resetPassword(), metadata, ResetPasswordPage(), ResetPasswordForm(), generateResetToken(), hashToken(), isExpired(), ref_node_crypto
 
-### Community 71 - "Decision: Rate limit in-memory diterima"
+### Community 72 - "[2026-09-28] — Admin Email Center (`/admin/email`)"
+Cohesion: 0.22
+Nodes (9): [2026-09-28] — Admin Email Center (`/admin/email`), Changed, Fixed, Known Issues (Email Center), Performance, Performance — cache 60 detik untuk halaman publik, Technical Notes, Verified (draft, hapus, pencarian) (+1 more)
+
+### Community 73 - "resend.ts"
+Cohesion: 0.28
+Nodes (8): EmailStatus, PanelAttachment, panelFrom(), PanelSendResult, PanelSendStatus, sendPanelEmail(), textFromHtml(), resend
+
+### Community 74 - "Decision: Semua mutasi lewat Server Actions + `requireAdmin()`"
+Cohesion: 0.33
+Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Semua mutasi lewat Server Actions + `requireAdmin()`, Important, Reason
+
+### Community 75 - "Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)"
+Cohesion: 0.33
+Nodes (6): Alternatives Considered, Current Implementation, Decision, Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`), Important, Reason
+
+### Community 76 - "Decision: Berita - isi teks polos, video client-direct, ID video saja"
+Cohesion: 0.22
+Nodes (9): 1. Isi artikel = teks polos, bukan HTML, 2. Video = unggah (client-direct) ATAU link YouTube/Vimeo, 3. Route upload berita TERPISAH dari route galeri, 4. Hanya ID video yang disimpan, bukan URL penuh, 5. Filter kategori di browser, bukan `?kategori=`, Batas yang belum diperbaiki (ditemukan saat task ini), Decision: Berita - isi teks polos, video client-direct, ID video saja, Jebakan yang terulang (penting!) (+1 more)
+
+### Community 77 - "Decision: Materi pelatihan disembunyikan dari publik"
 Cohesion: 0.40
-Nodes (5): Current Implementation, Decision, Decision: Rate limit in-memory diterima, Important, Reason
+Nodes (5): Current Implementation, Decision, Decision: Materi pelatihan disembunyikan dari publik, Important, Reason
+
+### Community 78 - "generate-favicon-assets.ts"
+Cohesion: 0.33
+Nodes (8): composeIcon(), main(), roundedSquare(), whiteSilhouette(), writeIco(), ref_node_fs, ref_node_path, sharp
+
+### Community 79 - "Frontend Architecture"
+Cohesion: 0.33
+Nodes (6): Components, Design System & Halaman, Form Handling & Validation, Frontend Architecture, Hooks & State Management, Routing
+
+### Community 80 - "upload/route.ts"
+Cohesion: 0.32
+Nodes (7): isPrismaError(), POST(), runtime, ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES, isBlobUrl(), removeImage()
+
+### Community 81 - "Decision: Email Center — Hostinger (inbound IMAP) + Resend (outbound), cache di database"
+Cohesion: 0.40
+Nodes (5): Alternatives Considered, Decision, Decision: Email Center — Hostinger (inbound IMAP) + Resend (outbound), cache di database, Important, Reason
+
+### Community 82 - "[2026-09-25]"
+Cohesion: 0.40
+Nodes (5): [2026-09-25], Added, Changed, Fixed, Technical Notes
+
+### Community 83 - "[2026-10-02] — Section Berita (`/admin/berita`, `/berita`)"
+Cohesion: 0.40
+Nodes (5): [2026-10-02] — Section Berita (`/admin/berita`, `/berita`), Fixed, Known issues (di luar cakupan task ini), Technical Notes, Verified
+
+### Community 84 - "search.ts"
+Cohesion: 0.19
+Nodes (13): Alternatives Considered, Decision, Decision: Email Center — draft, hapus, dan pencarian akurat, Important, Reason, buildEmailWhere(), contains(), OPERATORS (+5 more)
+
+### Community 85 - "Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai"
+Cohesion: 0.40
+Nodes (5): Alternatives Considered, Decision, Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai, Important, Reason
+
+### Community 86 - "contact/route.ts"
+Cohesion: 0.67
+Nodes (3): POST(), sendContactNotification(), contactSchema
+
+### Community 87 - "Decision: Modal pendaftaran di-portal ke `document.body`"
+Cohesion: 0.40
+Nodes (5): Alternatives Considered, Current Implementation, Decision: Modal pendaftaran di-portal ke `document.body`, Important, Reason
+
+### Community 88 - "Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO"
+Cohesion: 0.40
+Nodes (5): Alternatives Considered, Decision, Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO, Important, Reason
+
+### Community 89 - "[2026-09-26]"
+Cohesion: 0.50
+Nodes (4): [2026-09-26], Added, Changed, Technical Notes
+
+### Community 90 - "[2026-09-27]"
+Cohesion: 0.50
+Nodes (4): [2026-09-27], Added, Changed, Technical Notes
+
+### Community 91 - "[2026-10-02] — Artwork favicon: navy rounded-square + feather putih"
+Cohesion: 0.50
+Nodes (4): [2026-10-02] — Artwork favicon: navy rounded-square + feather putih, Added, Changed, Technical Notes
+
+### Community 92 - "[2026-10-02] — Menu "Jadwal" di navbar + empty state Berita"
+Cohesion: 0.29
+Nodes (7): [2026-10-02] — Menu "Jadwal" di navbar + empty state Berita, Added, Catatan jujur, Changed, Fixed, Technical Notes, Verified
+
+### Community 93 - "Decision: Tidak ada lapisan auth/role selain Admin"
+Cohesion: 0.50
+Nodes (4): Decision, Decision: Tidak ada lapisan auth/role selain Admin, Important, Reason
+
+### Community 94 - "[2026-09-23]"
+Cohesion: 0.67
+Nodes (3): [2026-09-23], Added, Changed
+
+### Community 95 - "Decision: Kegagalan kirim email Resend harus menampilkan penyebabnya"
+Cohesion: 0.29
+Nodes (8): Fixed, Alternatives Considered, Current Implementation, Decision, Decision: Kegagalan kirim email Resend harus menampilkan penyebabnya, Important, Reason, panelErrorMessage()
+
+### Community 97 - "auth.ts"
+Cohesion: 0.15
+Nodes (10): metadata, LoginForm(), authConfig, credentialsSchema, handlers, signIn, signOut, { auth } (+2 more)
+
+### Community 98 - "sanitize.ts"
+Cohesion: 0.22
+Nodes (9): ALLOWED_STYLES, ALLOWED_TAGS, SanitizeContext, main(), prisma, tahunDariCaption(), valid(), @prisma/client (+1 more)
+
+### Community 99 - "Decision: Menu anchor di navbar wajib punya empty state; 8 menu memaksa drawer lebih awal"
+Cohesion: 0.40
+Nodes (5): 1. Menu berbasis anchor harus punya kondisi kosong yang jelas, 2. Menambah menu ke navbar ada batas lebar yang pasti (matematis), 3. Blok drawer 960px adalah SALINAN, bukan pemindahan, 4. Verifikasi layout navbar harus menunggu font & logo, Decision: Menu anchor di navbar wajib punya empty state; 8 menu memaksa drawer lebih awal
+
+### Community 100 - "[2026-10-02] — Perbaikan halaman 404 (ditemukan saat cek bug di `/berita`)"
+Cohesion: 0.50
+Nodes (4): [2026-10-02] — Perbaikan halaman 404 (ditemukan saat cek bug di `/berita`), Added, Fixed, Verified
+
+### Community 101 - "Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)"
+Cohesion: 0.50
+Nodes (4): Current Implementation, Decision, Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token), Important
 
 ## Knowledge Gaps
-- **486 isolated node(s):** `Fixed`, `Changed`, `Verified (draft, hapus, pencarian)`, `Performance`, `Performance — cache 60 detik untuk halaman publik` (+481 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 538 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **534 isolated node(s):** `High Level Architecture`, `Routing`, `Design System & Halaman`, `Components`, `Hooks & State Management` (+529 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 587 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `requireAdmin()` connect `requireAdmin` to `siteContent.ts`, `ActionState`, `TestimoniManager.tsx`, `pesan/page.tsx`, `AGENTS.md`, `AI HANDOFF`, `GaleriList.tsx`, `JadwalManager.tsx`, `actions.ts`, `moveGalleryImage`, `sync.ts`, `MateriManager.tsx`, `ProgramManager.tsx`, `refresh`?**
-  _High betweenness centrality (0.218) - this node is a cross-community bridge._
-- **Why does `Decisions` connect `Decisions` to `siteContent.ts`, `Decision: Galeri publik memakai container & grid sendiri`, `upload/route.ts`, `outbound.ts`, `Decision: Galeri dikaitkan lewat relasi, bukan string kategori`, `requireAdmin`, `Decision: Platform deploy`, `Decision: Versi Next.js & Prisma di-pin`, `Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)`, `Decision: Seed idempoten, tidak pernah menimpa password admin`, `Decision: Tidak ada payment gateway`, `Decision: Database PostgreSQL (Neon), bukan SQLite`, `Decision: Prisma `db push` tanpa file migrasi`, `Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT``, `Decision: GitHub Pages dinonaktifkan untuk repo`, `Decision: Materi pelatihan disembunyikan dari publik`, `Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe`, `GaleriList.tsx`, `slugify`, `Decision: Kop program galeri memakai `<div>`, bukan `<header>``, `moveGalleryImage`, `Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)`, `Decision: Modal pendaftaran di-portal ke `document.body``, `Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link``, `Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)`, `Decision: Halaman publik di-cache 60 detik (ISR), admin tetap real-time`, `Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B)`, `Decision: Rate limit in-memory diterima`?**
-  _High betweenness centrality (0.216) - this node is a cross-community bridge._
-- **Why does `Decision: Semua mutasi lewat Server Actions + `requireAdmin()`` connect `requireAdmin` to `Decisions`?**
-  _High betweenness centrality (0.105) - this node is a cross-community bridge._
+- **Why does `Decisions` connect `Decisions` to `next`, `Decision: Galeri publik memakai container & grid sendiri`, `Decision: Galeri dikaitkan lewat relasi, bukan string kategori`, `NotFoundContent.tsx`, `Decision: Platform deploy`, `Decision: Versi Next.js & Prisma di-pin`, `Decision: Email tidak boleh memblokir penyimpanan data (PRD §8)`, `Decision: Seed idempoten, tidak pernah menimpa password admin`, `Decision: Tidak ada payment gateway`, `Decision: Database PostgreSQL (Neon), bukan SQLite`, `Decision: Prisma `db push` tanpa file migrasi`, `Decision: Sinkronisasi `SOURCE CODE` + `AI_CONTEXT``, `Decision: GitHub Pages dinonaktifkan untuk repo`, `Decision: Style galeri berupa class CSS di globals (bukan utility Tailwind) + aturan warna dark-safe`, `Decision: Kop program galeri memakai `<div>`, bukan `<header>``, `moveGalleryImage`, `Decision: Hanya SATU server Next pada satu waktu (`next dev` ≠ bersamaan dengan `next start`)`, `Decision: Active state menu admin dari `usePathname()` + satu pola `.admin-nav-link``, `Decision: Logo dipakai dalam 2 varian (teks gelap & teks putih)`, `Decision: Halaman publik di-cache 60 detik (ISR), admin tetap real-time`, `Decision: Fragment anchor dibersihkan dari address bar setelah klik (Opsi B)`, `storeImage`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `Decision: Sidebar admin fixed lewat flex + `h-dvh` (bukan `position: fixed`)`, `Decision: Berita - isi teks polos, video client-direct, ID video saja`, `Decision: Materi pelatihan disembunyikan dari publik`, `Decision: Email Center — Hostinger (inbound IMAP) + Resend (outbound), cache di database`, `search.ts`, `Decision: Kategori dinamis dari DB + slug unik otomatis + larangan hapus bila terpakai`, `Decision: Modal pendaftaran di-portal ke `document.body``, `Decision: Galeri publik dikelompokkan PROGRAM → TAHUN → FOTO`, `Decision: Tidak ada lapisan auth/role selain Admin`, `Decision: Kegagalan kirim email Resend harus menampilkan penyebabnya`, `Decision: Menu anchor di navbar wajib punya empty state; 8 menu memaksa drawer lebih awal`, `Decision: tools graphify dipakai untuk navigasi codebase (dengan disiplin token)`?**
+  _High betweenness centrality (0.247) - this node is a cross-community bridge._
+- **Why does `requireAdmin()` connect `requireAdmin` to `requestPasswordReset`, `Changelog`, `next`, `storeImage`, `berita/route.ts`, `ActionState`, `PendaftaranList.tsx`, `AGENTS.md`, `Decision: Semua mutasi lewat Server Actions + `requireAdmin()``, `AI HANDOFF`, `JadwalManager.tsx`, `Architecture`, `actions.ts`, `KategoriManager.tsx`, `moveGalleryImage`, `EmailCenter.tsx`, `Project Context`, `MateriManager.tsx`?**
+  _High betweenness centrality (0.168) - this node is a cross-community bridge._
+- **Why does `next` connect `next` to `berita/route.ts`, `program/[slug]/page.tsx`, `package.json`, `actions.ts`, `pendaftaran/route.ts`, `NotFoundContent.tsx`, `UploadForm.tsx`, `berita/[slug]/page.tsx`, `GaleriList.tsx`, `EmailCenter.tsx`, `imap.ts`, `prisma.ts`, `kelas/[slug]/page.tsx`, `(dashboard)/layout.tsx`, `requestPasswordReset`, `(public)/berita/page.tsx`, `reset-password/page.tsx`, `upload/route.ts`, `contact/route.ts`, `auth.ts`?**
+  _High betweenness centrality (0.128) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `requireAdmin()` (e.g. with `Development Rules` and `Security Rules`) actually correct?**
   _`requireAdmin()` has 15 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 2 inferred relationships involving `textOf()` (e.g. with `Services / Utilities — `lib/`` and `Current Implementation`) actually correct?**
-  _`textOf()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `refresh()` (e.g. with `Form Handling & Validation` and `Current Implementation`) actually correct?**
   _`refresh()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Fixed`, `Changed`, `Verified (draft, hapus, pencarian)` to the rest of the system?**
-  _486 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Are the 2 inferred relationships involving `textOf()` (e.g. with `Services / Utilities — `lib/`` and `Current Implementation`) actually correct?**
+  _`textOf()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `High Level Architecture`, `Routing`, `Design System & Halaman` to the rest of the system?**
+  _534 weakly-connected nodes found - possible documentation gaps or missing edges._
