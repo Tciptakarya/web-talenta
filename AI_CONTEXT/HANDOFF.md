@@ -75,7 +75,39 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-**Task terbaru: Admin Email Center** (2026-09-28, source BELUM di-commit) —
+- **Menu "Jadwal" + empty state Berita** (2026-10-02) — belum di-commit.
+  `nav.jadwal` → `/#jadwal-terdekat` di Header & Footer; section Kabar dan
+  `/berita` menampilkan "Belum ada berita untuk saat ini" saat kosong
+  (sebelumnya `return null` sehingga klik menu tidak melakukan apa-apa).
+  **Konsekuensi**: 8 menu butuh ≥895px, sedangkan lebar konten di 960px hanya
+  896px → navbar sempat nabrak di 850px. Diperbaiki dengan mengencangkan navbar
+  di 941–1200px + mengaktifkan drawer di ≤960px. Menu hamburger di tablet
+  adalah keputusan yang menunggu persetujuan user (lihat `TODO.md` →
+  *Planned*).
+- **Perbaikan halaman 404** (2026-10-02) — belum di-commit. Bug lama (bukan
+  efek fitur Berita): 404 bawaan Next menyuntik `body{background:#000}` saat
+  OS gelap; `notFound()` tidak merender root layout sehingga
+  `lang`/font/CSS/tema hilang. Diperbaiki dengan `app/not-found.tsx` +
+  `app/(public)/not-found.tsx` + `components/site/NotFoundContent.tsx` +
+  `components/site/ThemeEnforcer.tsx` + `lib/themeScript.ts` + CSS
+  `.notfound-*`. Route catch-all `[...not-found]` sudah dicoba dan **dibuang**
+  (tidak memperbaiki, malah merusak).
+- **Section Berita** (2026-10-02) — **selesai & terverifikasi, BELUM di-commit**
+  (user ingin cek dulu). Admin `/admin/berita` (draft, foto, video), publik
+  `/berita` + `/berita/[slug]` (keduanya static ISR 60 detik), section "Kabar
+  Terbaru" di beranda, `POST /api/upload/berita` (foto),
+  `POST /api/blob-token` (video client-direct), `lib/tanggal.ts` +
+  `lib/berita-types.ts`. Hasil verifikasi lengkap di `CHANGELOG.md` → 2026-10-02.
+  Data uji sudah dihapus (tabel `Berita` kosong).
+- **Favicon** (2026-10-02) — sudah ter-push (`5faca56` + `e903f22`).
+  `/favicon.ico` ditambahkan (sebelumnya 404 → ikon globe generik di hasil
+  pencarian Google), lalu artwork di-redesign: navy rounded-square + feather
+  putih. Sumber di `assets/favicon-feather.png`, regenerasi lewat
+  `npx tsx prisma/generate-favicon-assets.ts`. Logo header/footer tidak disentuh.
+
+### Riwayat sebelumnya
+
+**Admin Email Center** (2026-09-28) —
 `/admin/email` sesuai spesifikasi user: Inbox (Hostinger IMAP, cache DB),
 baca, tandai read/unread, cari, balas (dengan header `In-Reply-To`/
 `References` asli), teruskan, tulis email (To/Cc/Bcc), tab Terkirim, lampiran
@@ -283,44 +315,20 @@ pada `.reveal` membuat `position: fixed` ter-parenting).
 
 ## CURRENTLY WORKING ON
 
-Task **Tampilan Website** (edit teks publik dari admin, 2026-09-28) selesai &
-terverifikasi penuh, **BELUM di-commit** — `/admin/konten` + registry
-`lib/siteContent.ts` (68 field, 10 bagian) + `Rich.tsx` (escape HTML lalu
-`**tebal**`) + `KontenEditor.tsx` + tabel `SiteContent` + 2 Server Action.
-`revalidatePath` membuat perubahan langsung berlaku. XSS diuji: `<script>`
-menjadi teks biasa.
+Section **Berita** + perbaikan **halaman 404** baru selesai (2026-10-02) dan
+**sudah terverifikasi penuh, tetapi BELUM di-commit** — user minta memeriksa
+dulu di browser sebelum di-commit/push. Kalau working tree bersih saat kamu
+mulai, berarti user sudah puas dan task-nya sudah di-commit oleh sesi
+sebelumnya.
 
-Tiga task selesai diimplementasikan & diverifikasi, **ketiganya BELUM
-di-commit** — menunggu persetujuan user:
-
-0. **Admin Email Center** (`/admin/email`) — selesai & terverifikasi lokal
-   (outgoing nyata via Resend). **Menunggu `MAIL_IMAP_*`** untuk menguji
-   inbound. Ringkasan di *LAST COMPLETED*. Berkode di `lib/mail/*`,
-   `components/admin/EmailCenter.tsx`,
-   `app/admin/(dashboard)/email/page.tsx`,
-   `app/api/admin/email/attachment/[id]/route.ts`,
-   `app/api/resend/webhook/route.ts`, `lib/adminCounts.ts`.
-1. **Active state menu sidebar admin** (spesifikasi 12 bagian) —
-   `components/admin/AdminNav.tsx` (baru) + `app/admin/(dashboard)/layout.tsx`
-   + `app/globals.css`. `tsc` 0, build hijau 22 routes; logika 17/17 kasus;
-   **9/9 route admin** tepat 1 menu aktif yang benar + `aria-current="page"`;
-   child route `/admin/galeri/edit/[id]` terbukti (route QA sementara sudah
-   dihapus); nav mobile 390px benar; sidebar tetap fixed (top 0, tetap 0
-   setelah area konten di-scroll 4493px, window scroll 0); gap account
-   section 24px & email 1 baris; counter Galeri "30" tetap; tanpa horizontal
-   overflow; 0 console error (React #418 pre-existing).
-2. **Ganti logo ke artwork baru** — `tsc` 0, build hijau, E2E kedua mode,
-   keenam aset 200, tinggi header tetap 240px, 0 console error.
-
-Task **bersihkan fragment anchor** sudah **di-commit & ter-push**
-(`6cf75de` + `19a2d3c`) dan **terverifikasi live** di
-`https://talentaciptakarya.com` (6 link nav → hash kosong, URL tetap `/`,
-tiap section 170px dari atas, 0 console error). Task **redesign galeri
-editorial + fix 2 bug** juga sudah live (`c318627` + `b61d5c4`).
+Ringkas: admin `/admin/berita`, publik `/berita` + `/berita/[slug]`, section
+"Kabar Terbaru" di beranda, route `POST /api/upload/berita` (foto),
+`POST /api/blob-token` (video client-direct), plus `lib/tanggal.ts` &
+`lib/berita-types.ts` (pecahan client-safe dari `lib/data.ts` yang
+`server-only`). Detail & hasil verifikasi di `CHANGELOG.md` → 2026-10-02.
 
 **Operasi**: server lokal (`npm run start`, port 3000) boleh berjalan —
 **jangan jalankan `npm run dev` bersamaan** (berbagi `.next/`).
-Sisa pekerjaan berikutnya seluruhnya **konfigurasi (ops, bukan kode)**.
 
 ## KNOWN ISSUES
 

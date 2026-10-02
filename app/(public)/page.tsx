@@ -3,6 +3,7 @@ import Layanan from "@/components/site/Layanan";
 import GalleryGrid from "@/components/site/GalleryGrid";
 import { Lokasi } from "@/components/site/Lokasi";
 import Testimoni from "@/components/site/Testimoni";
+import Berita from "@/components/site/Berita";
 import Kontak from "@/components/site/Kontak";
 import Reveal from "@/components/site/Reveal";
 import Rich from "@/components/site/Rich";
@@ -14,6 +15,7 @@ import {
   getTestimonials,
   getActiveCategories,
   getUpcomingJadwal,
+  getBerita,
 } from "@/lib/data";
 
 // Selalu render dari DB terbaru supaya hasil edit dashboard langsung terlihat.
@@ -35,13 +37,16 @@ import {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [programs, testimonials, gallery, categories, upcomingJadwal, c] =
+  const [programs, testimonials, gallery, categories, upcomingJadwal, berita, c] =
     await Promise.all([
       getPrograms(),
       getTestimonials(),
       getGallery(),
       getActiveCategories(),
       getUpcomingJadwal(8),
+      // Kabar terbaru - 3 berita aktif terakhir. Section disembunyikan
+      // otomatis kalau belum ada berita (lihat components/site/Berita.tsx).
+      getBerita(3),
       // Teks statis yang bisa diedit dari Admin > Tampilan Website.
       getContentMap(),
     ]);
@@ -77,6 +82,10 @@ export default async function HomePage() {
           </section>
         )}
       </div>
+
+      {/* Kabar Terbaru - anchor #berita untuk menu "Berita" di Header/Footer.
+          Ditaruh setelah Galeri, sebelum Lokasi. */}
+      <Berita items={berita} c={c} />
 
       <Lokasi c={c} />
       <Testimoni items={testimonials} c={c} />

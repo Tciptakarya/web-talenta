@@ -44,7 +44,64 @@ Sisa pekerjaan non-kode (butuh aksi user di dashboard):
 
 ## Last Completed Work
 
-**Task terbaru: favicon** (2026-10-02) — dua commit, keduanya sudah
+**Task terbaru: menu "Jadwal" di navbar + empty state Berita** (2026-10-02) —
+**selesai & terverifikasi, BELUM di-commit**:
+
+- Menu "Jadwal" (`/#jadwal-terdekat`) ditambahkan di navbar **dan** footer,
+  labelnya bisa diedit dari Admin > Tampilan Website (`nav.jadwal`).
+  Urutan menu mengikuti urutan section di beranda.
+- Section Kabar + halaman `/berita` sekarang menampilkan **"Belum ada berita
+  untuk saat ini"** saat kosong (sebelumnya section `return null`, jadi klik
+  menu "Berita" tidak melakukan apa-apa).
+- **Konsekuensi yang harus diketahui user**: dengan 8 menu, navbar penuh
+  membutuhkan ≥895px, sedangkan lebar konten di 960px cuma 896px. Di 850px
+  logo terlihat **nabrak** menu. Diperbaiki dengan (a) mengencangkan navbar
+  di 941–1200px, (b) mengaktifkan menu drawer lebih awal di ≤960px (salinan
+  rules 760px, jadi ≤760px tidak berubah). Menu hamburger di tablet adalah
+  **konsekuensi tak diminta** — dicatat di `TODO.md` → *Planned* supaya user
+  bisa memutuskan.
+- Verifikasi: 15 lebar diuji (1440→390) — tidak ada navbar bertumpuk, tidak
+  ada overflow horizontal. Drawer di 850px menampilkan 8 menu dengan rapi.
+  Regresi nol di `/`, `/kelas`, `/berita`, `/kelas/barista` (0 console error).
+
+**Task sebelumnya: perbaikan halaman 404** (2026-10-02) — **selesai &
+terverifikasi, BELUM di-commit**. Bug ini dilaporkan user saat memeriksa fitur
+Berita, dan ternyata **bukan** bug baru: 404 bawaan Next.js sudah merusak
+`/kelas/[slug]`, `/program/[slug]`, dan `/berita/[slug]` sejak dulu.
+
+- **Latar hitam pekat** → 404 bawaan Next menyuntik
+  `body{background:#000}` saat OS gelap, mengabaikan design system & toggle
+  tema situs. Diganti `not-found.tsx` buatan sendiri.
+- **Isi halaman kosong** → `notFound()` tidak merender root layout, jadi
+  `<html id="__next_error__">` tanpa `lang="id"`, tanpa font, tanpa
+  `<link rel="stylesheet">`.
+- **Dark mode mati total di 404** → skrip tema tidak ikut. Diperbaiki dengan
+  `lib/themeScript.ts` (satu sumber, dipakai root layout **dan** 404) +
+  `components/site/ThemeEnforcer.tsx` (pasang ulang setelah hidrasi, karena
+  React menormalkan `className` `<html>`).
+- Route catch-all `[...not-found]` **dicoba lalu dibuang** — tidak memperbaiki
+  di Next 15.5.25 dan merusak route yang tadinya benar.
+- **Verifikasi**: 4 kasus 404 × light/dark — semua benar (latar, warna teks,
+  `lang`, title, `background-clip`). Regresi nol di `/`, `/kelas`,
+  `/kelas/barista`, `/program/pelatihan-barista`, `/berita` (0 console error).
+- Detail lengkap: `CHANGELOG.md` + `DECISIONS.md` (entri 2026-10-02).
+
+**Task sebelumnya: Section Berita** (2026-10-02) — **selesai & terverifikasi
+penuh, tetapi BELUM di-commit** (user ingin memeriksa dulu sebelum
+di-commit/push):
+
+- Admin `/admin/berita` (tambah/edit/hapus, draft, foto, video) + Server Action.
+- Publik `/berita` (daftar + filter kategori) & `/berita/[slug]` (detail) —
+  keduanya static ISR 60 detik.
+- Section "Kabar Terbaru" di beranda (3 berita terbaru) + menu "Berita" di
+  Header & Footer (labelnya bisa diedit dari Tampilan Website).
+- Isi artikel = teks polos, baris kosong jadi paragraf, `**tebal**`/`*miring*`.
+- Video: bisa **unggah** (client-direct ke Vercel Blob, batas 4,5MB Vercel
+  dilewati) **atau** tempel link YouTube/Vimeo.
+- Detail lengkap di `CHANGELOG.md` → entri 2026-10-02.
+- **Data uji sudah dihapus semua** (tabel `Berita` = 0 baris).
+
+**Task sebelumnya: favicon** (2026-10-02) — dua commit, keduanya sudah
 ter-push:
 
 1. `fix(favicon): tambahkan /favicon.ico agar tidak tampil ikon globe di
@@ -508,7 +565,7 @@ Status verifikasi:
 
 Task **Tampilan Website (edit teks publik dari admin)** (2026-09-28) selesai
 diimplementasikan & diverifikasi penuh, **BELUM di-commit** —
-`/admin/konten`, 10 bagian / 68 field, registry `lib/siteContent.ts`, tabel
+`/admin/konten`, 11 bagian / 69 field, registry `lib/siteContent.ts`, tabel
 `SiteContent`, komponen `Rich.tsx` + `KontenEditor.tsx`.
 Bukti: 68 field tampil di editor; simpan → teks langsung berubah di halaman
 publik tanpa menunggu 60 detik (`revalidatePath`); `**tebal**` jadi

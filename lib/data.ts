@@ -1,6 +1,8 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 import { HARI_LIST } from "@/lib/schemas";
+import type { BeritaRow } from "@/lib/berita-types";
+import { formatTanggalYmd, ymdWib } from "@/lib/tanggal";
 import {
   CATEGORIES,
   GALLERY_IMAGES,
@@ -50,6 +52,9 @@ export type TestimonialRow = {
   pesan: string;
   urutan: number;
 };
+
+/** Berita/kabar kegiatan. Field `videoLink` = ID video, bukan URL penuh. */
+export type { BeritaRow } from "@/lib/berita-types";
 
 /**
  * Query data publik. Jika database belum tersedia (mis. belum `npm run db:setup`),
@@ -306,36 +311,7 @@ export function sisaKursi(j: KuotaAware): SisaKursi | null {
 }
 
 /** "2026-09-30" → "30 Sep 2026"; parsing manual agar tidak bergeser zona waktu. */
-export function formatTanggalYmd(ymd: string): string {
-  const [y, m, d] = ymd.split("-").map(Number);
-  const namaBulan = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-  return `${d} ${namaBulan[(m ?? 1) - 1] ?? ""} ${y}`.trim();
-}
-
-/** Date → "YYYY-MM-DD" di zona Asia/Jakarta (tanpa geser zona). */
-export function ymdWib(d: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Jakarta",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(d);
-  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
-  return `${get("year")}-${get("month")}-${get("day")}`;
-}
+export { formatTanggalYmd, ymdWib, formatTanggalIndo } from "@/lib/tanggal";
 
 /** Menit sejak tengah malam WIB — untuk membandingkan tanggal+jam satu kali. */
 function wibStampMinutes(d: Date): number {
@@ -635,4 +611,113 @@ export async function getTestimonials(): Promise<TestimonialRow[]> {
     },
     TESTIMONIALS.map((t, i) => ({ id: i + 1, urutan: i + 1, ...t }))
   );
+}
+
+/* ── Berita ────────────────────────────────────────────────────── */
+
+/** Kolom yang boleh diambil untuk query publik. */
+
+/** Kolom yang boleh diambil untuk query publik. */
+const BERITA_SELECT = {
+  id: true,
+  judul: true,
+  slug: true,
+  ringkasan: true,
+  isi: true,
+  imageUrl: true,
+  imageAlt: true,
+  videoUrl: true,
+  videoLink: true,
+  tanggal: true,
+  kategori: true,
+  isActive: true,
+} as const;
+
+/**
+ * `videoLink` di database hanya berisi ID video (lihat `parseVideoLink`),
+ * sedangkan `BeritaRow` juga butuh `videoHost`. Di sini ID di-prefix `yt:` /
+ * `vm:` supaya host ikut tersimpan di satu kolom — tanpa kolom terpisah,
+ * dan tanpa menyimpan URL penuh yang bisa disuntikkan admin.
+ */
+function beritaRows(rows: {
+  id: number;
+  judul: string;
+  slug: string;
+  ringkasan: string;
+  isi: string;
+  imageUrl: string | null;
+  imageAlt: string | null;
+  videoUrl: string | null;
+  videoLink: string | null;
+  tanggal: Date;
+  kategori: string | null;
+  isActive: boolean;
+}[]): BeritaRow[] {
+  return rows.map((r) => {
+    const raw = r.videoLink?.trim() ?? "";
+    let videoLink: string | null = null;
+    let videoHost: string | null = null;
+    if (raw) {
+      const m = raw.match(/^(yt|vm):(.+)$/);
+      if (m) {
+        videoHost = m[1] === "yt" ? "youtube" : "vimeo";
+        videoLink = m[2];
+      } else {
+        // Data lama tanpa prefix: coba tebak dari panjang ID.
+        videoHost = raw.length === 11 ? "youtube" : "vimeo";
+        videoLink = raw;
+      }
+    }
+    return { ...r, videoLink, videoHost };
+  });
+}
+
+/** Daftar berita aktif untuk halaman publik (terbaru di atas). */
+export async function getBerita(limit?: number): Promise<BeritaRow[]> {
+  return safe(async () => {
+    const rows = await prisma.berita.findMany({
+      where: { isActive: true },
+      orderBy: [{ tanggal: "desc" }, { createdAt: "desc" }],
+      select: BERITA_SELECT,
+      ...(limit ? { take: limit } : {}),
+    });
+    return beritaRows(rows);
+  }, []);
+}
+
+/** Satu berita aktif by slug — `null` bila tidak ada (atau masih draft). */
+export async function getBeritaBySlug(slug: string): Promise<BeritaRow | null> {
+  return safe(async () => {
+    const row = await prisma.berita.findFirst({
+      where: { slug, isActive: true },
+      select: BERITA_SELECT,
+    });
+    return row ? (beritaRows([row])[0] ?? null) : null;
+  }, null);
+}
+
+/** Semua berita termasuk draft — hanya untuk admin. */
+export async function getBeritaAdmin(): Promise<BeritaRow[]> {
+  return safe(async () => {
+    const rows = await prisma.berita.findMany({
+      orderBy: [{ tanggal: "desc" }, { createdAt: "desc" }],
+      select: BERITA_SELECT,
+    });
+    return beritaRows(rows);
+  }, []);
+}
+
+/** Daftar kategori berita yang benar-benar dipakai — untuk filter di /berita. */
+export async function getBeritaCategories(): Promise<string[]> {
+  return safe(async () => {
+    const rows = await prisma.berita.findMany({
+      where: { isActive: true, kategori: { not: null } },
+      select: { kategori: true },
+      distinct: ["kategori"],
+      orderBy: { kategori: "asc" },
+    });
+    return rows
+      .map((r) => r.kategori?.trim() ?? "")
+      .filter((k) => k.length > 0);
+  }, []);
 }

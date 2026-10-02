@@ -48,11 +48,15 @@ Karakteristik: **server-side rendering dengan ISR 60 detik** (sebelumnya
 ```
 app/
 ├── layout.tsx                 # root layout (font Google, metadata global, skrip anti-FOUC tema)
+├── not-found.tsx              # 404 untuk URL yang TIDAK cocok route (standalone)
 ├── (public)/                  # route group: situs publik (navbar + footer)
 │   ├── layout.tsx             #   Header + anchor #top + Footer + ToTop + AnchorHashCleaner
+│   ├── not-found.tsx          #   404 saat notFound() dipanggil (dapat navbar+footer)
 │   ├── page.tsx               #   Beranda
 │   ├── kelas/page.tsx         #   Daftar kategori (chip filter)
 │   ├── kelas/[slug]/page.tsx  #   Detail kategori + program
+│   ├── berita/page.tsx        #   Daftar berita + filter kategori (client-side)
+│   ├── berita/[slug]/page.tsx #   Detail berita + "Berita lainnya"
 │   └── program/[slug]/page.tsx#   Detail program + jadwal + daftar
 ├── admin/
 │   ├── login/                 #   (publik, dibuka middleware)
@@ -60,13 +64,17 @@ app/
 │   ├── reset-password/        #   (publik, butuh token)
 │   └── (dashboard)/           #   (terproteksi) layout + sidebar
 │       ├── page.tsx           #   Dashboard statistik
-│       ├── kategori/ program/ galeri/ jadwal/ materi/
-│       └── pendaftaran/ pesan/ testimoni/
+│       ├── kategori/ program/ galeri/ jadwal/ materi/ berita/
+│       └── pendaftaran/ pesan/ testimoni/ email/ konten/
 └── api/
     ├── auth/[...nextauth]/    # NextAuth handlers
     ├── contact/               # POST (publik)
     ├── pendaftaran/           # POST (publik)
-    └── upload/                # POST (butuh session)
+    ├── upload/                # POST (butuh session) — galeri
+    │   └── berita/            #   POST foto utama berita + GET thumbnail YouTube
+    ├── blob-token/            # POST tukar token upload video (client-direct)
+    ├── admin/email/attachment/# GET lampiran (cek auth() sendiri)
+    └── resend/webhook/        # POST signature Resend
 ```
 
 ### Design System & Halaman
@@ -74,6 +82,20 @@ app/
 - Kontrak desain ada di **AI_CONTEXT/PRD_DESIGN_MIGRASI.md** (token, jebakan
   CSS global, rencana migrasi bertahap). Baca itu sebelum mengubah
   tampilan. Wireframe disimpan di mockups/.
+- **Menu navbar/footer (8 item)**: Tentang Kami, Visi & Misi, Layanan,
+  **Jadwal** (`/#jadwal-terdekat`), Galeri, Berita, Lokasi, Testimoni —
+  urut mengikuti urutan section di beranda. Semua pakai anchor
+  `/#[id-section]`, label diambil dari registry (`nav.*`).
+- **Aturan: section yang punya menu anchor tidak boleh `return null`.** Kalau
+  datanya kosong, section tetap dirender dengan pesan "Belum ada … untuk saat
+  ini" — kalau hilang, mengklik menu tidak melakukan apa-apa dan pengguna
+  bingung. Berlaku untuk section Kabar (`components/site/Berita.tsx`).
+- **Navbar_FULL tidak muat di bawah ~940px** (8 menu butuh ≥895px sedangkan
+  lebar konten di 960px hanya 896px). Kurz deshalb menu drawer
+  (hamburger) diaktifkan di **≤960px** — bukan 760px seperti semula. Rules-nya
+  **salinan** dari blok 760px (nilai identik) supaya perilaku ≤760px tidak
+  berubah. Di 941–1200px navbar diperketat (gap 20px, font 13px, logo 140px).
+  Angka & cara ukurnya: `DECISIONS.md` → *Menu anchor di navbar*.
 
 ### Pages & Layout
 
@@ -84,9 +106,9 @@ app/
   (Animasi `Reveal` dipakai **di dalam tiap halaman / komponen**, bukan di
   layout — mis. `JadwalTerdekat.tsx`.)
 - `admin/(dashboard)/layout.tsx` → **satu-satunya** sumber sidebar untuk
-  seluruh 11 halaman admin (`Dashboard`, `Galeri`, `Email`, `Tampilan Website`,
-  `Testimoni`, `Program`, `Jadwal`, `Pendaftaran`, `Materi`, `Kategori`,
-  `Pesan`). Tidak ada duplikat
+  seluruh 12 halaman admin (`Dashboard`, `Galeri`, `Email`, `Tampilan Website`,
+  `Berita`, `Testimoni`, `Program`, `Jadwal`, `Pendaftaran`, `Materi`,
+  `Kategori`, `Pesan`). Tidak ada duplikat
   `<aside>` di file lain. Isinya:
   - **Sidebar navy** (`w-64`, `hidden md:flex flex-col`, `p-6`): brand →
     **`<AdminNav>`** (menu + badge jumlah pesan/foto/pendaftaran/**email
@@ -136,10 +158,18 @@ components/
 │   ├── FormPendaftaran.tsx  # modal pendaftaran (createPortal ke body)
 │   ├── GalleryGrid.tsx      # filter chip + lightbox navigable
 │   ├── KuotaBadge.tsx       # badge Tersedia / Sisa N / Penuh
+│   ├── Berita.tsx           # section "Kabar Terbaru" di beranda (3 berita)
+│   ├── BeritaList.tsx       # (client) daftar + filter kategori di browser
+│   ├── BeritaCard.tsx       # satu kartu berita
+│   ├── BeritaMedia.tsx      # foto / <video> / <iframe> YouTube-Vimeo
+│   ├── BeritaBody.tsx       # render aman isi artikel (paragraf + **tebal**)
+│   ├── NotFoundContent.tsx  # isi halaman 404 (dipakai 2 file not-found)
+│   ├── ThemeEnforcer.tsx    # (client) pasang tema SETELAH hidrasi (wajib di 404)
 │   └── ProgramIcon.tsx
 └──admin/   # 1 manager per resource, dipakai halaman /admin/*
     ├── KategoriManager, ProgramManager, GaleriList, JadwalManager,
     │   MateriManager, PendaftaranList, PesanList, TestimoniManager
+    ├── BeritaManager    # /admin/berita: CRUD + draft + upload foto/video
     ├── LoginForm, ForgotPasswordForm, ResetPasswordForm,
     │   GantiPasswordForm, SignOutButton, UploadForm,
     │   AdminNav          # menu sidebar + active state (usePathname),
@@ -171,16 +201,30 @@ components/
 
 ## Backend Architecture
 
-### API Routes (4)
+### API Routes
 
 | Route | Method | Auth | Fungsi |
 |---|---|---|---|
 | `app/api/auth/[...nextauth]/route.ts` | GET/POST | — | NextAuth handlers |
 | `app/api/contact/route.ts` | POST | publik | Simpan `ContactMessage` → email Resend (boleh gagal) |
 | `app/api/pendaftaran/route.ts` | POST | publik | Zod → cek jadwal+kuota → simpan `Pendaftaran` → email |
-| `app/api/upload/route.ts` | POST | session | Upload foto: pre-flight storage → sharp → Blob/`public/uploads` → `GalleryImage` |
+| `app/api/upload/route.ts` | POST | session | Upload foto **galeri**: pre-flight storage → sharp → Blob/`public/uploads` → `GalleryImage` |
+| `app/api/upload/berita/route.ts` | POST | session | Upload **1 foto utama berita**: sharp → kompres → `storeImage` → **balik URL saja, tidak menyentuh DB** |
+| `app/api/upload/berita/route.ts` | GET | session | Ambil **thumbnail YouTube** dari link (`?konten=youtube&v=<url>`); server hanya mengekstrak ID lalu membangun URL sendiri (tidak pernah mengunduh) |
+| `app/api/blob-token/route.ts` | POST | session | Tukar token **client-direct upload** video berita (`@vercel/blob/client` → `handleUpload`). Melewati batas 4,5 MB Vercel Functions |
 | `app/api/admin/email/attachment/[id]/route.ts` | GET | session (**cek `auth()` sendiri**) | Ambil lampiran email masuk dari IMAP → stream (kredensial tidak ke browser) |
 | `app/api/resend/webhook/route.ts` | POST | signature Resend | Status pengiriman nyata (`delivered`/`bounced`/`failed`); menolak event bila `RESEND_WEBHOOK_SECRET` kosong |
+
+> **Kenapa route upload berita tidak digabung ke `/api/upload`?** Route galeri
+> hardcode `prisma.galleryImage.create` dan mewajibkan kategori + tahun. Satu
+> route dengan parameter `tipe` membuat foto berita bisa salah terimpan sebagai
+> foto galeri. Lihat `DECISIONS.md` → *Berita*.
+>
+> **Kenapa video tidak lewat route biasa?** Batas keras Vercel Functions
+> **4,5 MB per request** (Route Handler & Server Action alike, tidak bisa
+> dikonfigurasi). Video melebihi itu, jadi dikirim browser → Vercel Blob
+> langsung; server hanya menukar token. `onUploadCompleted` **tidak jalan di
+> localhost**, jadi DB tidak boleh ditulis dari callback itu.
 
 ### Server Actions — `app/admin/actions.ts`
 
@@ -199,8 +243,8 @@ export async function xxx(formData: FormData): Promise<ActionState> {
 ```
 
 Pembagian: Testimoni (3), Kategori (3 + `deleteCategoryAction`), Program
-(3 + `deleteProgramAction`), Galeri (3), Ganti password (1), Reset password
-(2), Jadwal (3), Materi (3), Pendaftaran (2), Pesan (1).
+(3 + `deleteProgramAction`), Galeri (3), **Berita (3)**, Ganti password (1),
+Reset password (2), Jadwal (3), Materi (3), Pendaftaran (2), Pesan (1).
 
 `requireAdmin()` adalah helper privat: melempar error bila `auth()` kosong.
 
@@ -214,12 +258,15 @@ Pembagian: Testimoni (3), Kategori (3 + `deleteCategoryAction`), Program
 | `lib/data.ts` | Semua query publik bertipe + logika kuota (`sisaKursi`, tanggal WIB) |
 | `lib/schemas.ts` | Seluruh skema Zod (satu sumber kebenaran validasi) |
 | `lib/slug.ts` | `slugify` + `uniqueSlug` (slug unik auto: `-2`, `-3`, …) |
+| `lib/tanggal.ts` | `formatTanggalIndo` / `formatTanggalYmd` / `ymdWib`. **Tanpa `server-only`** → boleh dipakai Client Component. Dipisah dari `lib/data.ts` karena Prisma hanya jalan di server; `lib/data.ts` meng-export ulang |
+| `lib/berita-types.ts` | Tipe `BeritaRow` (client-safe, tanpa `server-only`); `lib/data.ts` meng-export ulang |
+| `lib/themeScript.ts` | `THEME_BOOTSTRAP_SCRIPT` — **satu sumber** skrip anti-FOUC tema. Dipakai `app/layout.tsx` **dan** `NotFoundContent.tsx`, karena halaman 404 tidak merender root layout (lihat `DECISIONS.md`) |
 | `lib/storage.ts` | `storeImage`/`removeImage` — Blob bila token ada, fallback `public/uploads`; `StorageUnavailableError` + `describeStorageFailure()` (pesan aman), `isEphemeralFs()`, `assertStorageReady()` |
 | `lib/resend.ts` | 3 fungsi email: kontak, reset password, pendaftaran → status `sent\|failed\|skipped` |
 | `lib/passwordReset.ts` | `generateResetToken`, `hashToken` (SHA256), `isExpired` |
 | `lib/rateLimit.ts` | Rate limiter in-memory sliding window |
 | `lib/content.ts` | Konten statis v1 (PROGRAMS, TESTIMONIALS, CATEGORIES, GALLERY_IMAGES) sebagai fallback/data awal |
-| `lib/siteContent.ts` | **Registry teks publik** (10 bagian, 68 field) + `textOf()`, `renderInline()`, `getContentMap()`, `saveContentValues()`, `resetContentValues()`. Berbeda dengan `lib/content.ts` di atas — jangan digabung |
+| `lib/siteContent.ts` | **Registry teks publik** (11 bagian, 69 field) + `textOf()`, `renderInline()`, `getContentMap()`, `saveContentValues()`, `resetContentValues()`. Berbeda dengan `lib/content.ts` di atas — jangan digabung |
 
 ### Middleware & Authorization
 
@@ -248,6 +295,7 @@ Category ──1:N── Program ──1:N── JadwalPelatihan ──1:N──
     └──1:N── GalleryImage
 
 Testimonial        (berdiri sendiri, urut via `urutan`)
+Berita            (berdiri sendiri — kabar kegiatan; TIDAK berelasi ke Program)
 ContactMessage     (berdiri sendiri — inbox kontak)
 AdminUser ──1:N── PasswordResetToken   (Cascade hapus)
 ```
@@ -265,6 +313,11 @@ Dijelaskan per relasi:
 - **JadwalPelatihan → Pendaftaran** (`Cascade`): satu batch jadwal punya
   banyak pendaftar. Ini inti fitur pemesanan.
 - **AdminUser → PasswordResetToken** (`Cascade`): token dihapus bila akun dihapus.
+- **Berita berdiri sendiri** — sengaja **tidak** direlasikan ke `Program` atau
+  `Category`, supaya berita soal kemitraan/sosial/pengumuman tidak dipaksa
+  masuk kategori pelatihan. `kategori` cuma `String?` bebas (untuk filter).
+  `isActive=false` = **draft**: tidak tampil di daftar dan `/berita/[slug]`-nya
+  404.
 
 ### Field penting
 
@@ -284,13 +337,17 @@ Dijelaskan per relasi:
 | `PasswordResetToken` | `tokenHash @unique`, `expiresAt`, `usedAt?` | hanya hash tersimpan; 30 menit; sekali pakai |
 | `AdminUser` | `email @unique`, `passwordHash` | bcrypt |
 | `GalleryImage` | `year Int?` | tahun kegiatan foto → sub-grup TAHUN di galeri publik; `null` = foto lama belum diatur (grup "Tanpa Tahun") |
+| `Berita` | `slug @unique`, `isi` (**teks polos, bukan HTML**), `ringkasan`, `tanggal`, `kategori?`, `isActive` | kabar kegiatan; `slug` di URL `/berita/[slug]`; `isi` di-render aman oleh `renderInline()` (`components/site/BeritaBody.tsx`) |
+| | `videoLink?` = **`yt:<id>` \| `vm:<id>`** | **hanya ID video**, bukan URL penuh — komponen publik membangun sendiri URL embed, jadi admin tak bisa menyuntikkan domain lain |
+| | `imageUrl?`, `imageAlt?`, `videoUrl?` | foto utama + video terunggah (Vercel Blob / `/uploads`); `videoUrl` & `videoLink` **tidak boleh** aktif bersamaan (Zod `.refine`) |
 
 ### Index
 
 `PasswordResetToken(adminUserId, expiresAt)` ·
 `JadwalPelatihan(programId, tanggal)` ·
 `Pendaftaran(jadwalId, status)` ·
-`MateriPelatihan(programId)`
+`MateriPelatihan(programId)` ·
+`Berita(isActive, tanggal)` · `Berita(kategori)`
 
 ### Galeri (admin) — grouping KATEGORI lalu PROGRAM
 

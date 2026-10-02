@@ -9,11 +9,16 @@ import { textOf, type ContentMap } from "@/lib/siteContent";
 // Anchor memakai path absolut (/#about) supaya tetap berfungsi dari
 // halaman lain di luar beranda (mis. dari /kelas).
 // `key` = key di registry Tampilan Website; label diambil dari sana.
+//
+// URUTAN MENGIKUTI urutan section di beranda, supaya menu dan halaman terasa
+// sama: Layanan → Jadwal → Galeri → Berita → Lokasi → Testimoni.
 const NAV_LINKS = [
   { href: "/#about", key: "nav.about" },
   { href: "/#visimisi", key: "nav.visimisi" },
   { href: "/#layanan", key: "nav.layanan" },
+  { href: "/#jadwal-terdekat", key: "nav.jadwal" },
   { href: "/#galeri", key: "nav.galeri" },
+  { href: "/#berita", key: "nav.berita" },
   { href: "/#lokasi", key: "nav.lokasi" },
   { href: "/#testimoni", key: "nav.testimoni" },
 ];

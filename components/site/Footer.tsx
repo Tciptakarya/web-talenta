@@ -4,11 +4,14 @@ import { textOf, withYear, type ContentMap } from "@/lib/siteContent";
 
 // Anchor memakai path absolut (/#about) supaya berfungsi juga dari
 // halaman di luar beranda (mis. /kelas).
+// Urutan sama dengan Header & urutan section di beranda.
 const NAV_LINKS = [
   { href: "/#about", key: "nav.about" },
   { href: "/#visimisi", key: "nav.visimisi" },
   { href: "/#layanan", key: "nav.layanan" },
+  { href: "/#jadwal-terdekat", key: "nav.jadwal" },
   { href: "/#galeri", key: "nav.galeri" },
+  { href: "/#berita", key: "nav.berita" },
   { href: "/#lokasi", key: "nav.lokasi" },
   { href: "/#testimoni", key: "nav.testimoni" },
 ];

@@ -92,6 +92,33 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## Planned
 
+- [ ] **Menu "Jadwal" di navbar → 8 menu, navbar tidak muat di bawah ~940px**
+      — **SELESAI 2026-10-02, tapi menyisakan keputusan desain untuk user.**
+      Menu "Jadwal" (→ `/#jadwal-terdekat`) ditambahkan sesuai permintaan,
+      labelnya bisa diedit dari Admin > Tampilan Website (`nav.jadwal`).
+      Konsekuensi tidak terduga: dengan 8 menu, lebar minimum navbar penuh =
+      logo 141 + nav 554 + CTA 160 + 2x gap 20 = **895px**, sedangkan lebar
+      konten di 960px cuma 896px. Di 850px logo terlihat **nabrak** menu
+      "Tentang Kami" (gap 0px, terverifikasi `getBoundingClientRect`).
+
+      Yang sudah dikerjakan (tanpa mengubah desain di atas 960px):
+      - `@media (min-width:941px) and (max-width:1200px)`: `nav.main-nav`
+        gap 34→20px, font link 14.5→13px, logo 200→140px. Terbukti aman:
+        gap 130px (1200) → 13px (961).
+      - `@media (max-width:960px)`: menu drawer (hamburger) diaktifkan lebih
+        awal. Rules-nya **salinan identik** dari blok 760px yang sudah ada,
+        jadi perilaku `<=760px` tidak berubah sama sekali. Di 850px drawer
+        menampilkan 8 menu dengan rapi.
+
+      **Kalau user tidak suka hamburger di tablet/small laptop**, opsi:
+      (a) turunkan lagi ke ~1100px supaya lebih jarang, atau (b) kembalikan
+      760px dan menerima navbar rapat di 761-960px, atau (c) pindahkan
+      "Kontak" dari tombol CTA ke dalam nav supaya CTA tidak memakan 160px.
+
+- [ ] **Daftarkan `sitemap.xml`** — belum ada `app/sitemap.ts`, jadi halaman
+      `/berita` (dan halaman lain) sulit ditemukan mesin pencari. Bonus:
+      structured data `NewsArticle` untuk `/berita/[slug]`.
+
 - [ ] **Migrasi desain bertahap** (panduan: AI_CONTEXT/PRD_DESIGN_MIGRASI.md) —
       1) amankan CSS global (header/ooter/h1..h6 -> .site-header/
       .site-footer + @layer base), 2) token ukuran (--radius-*,
@@ -115,6 +142,11 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
       (`CURRENT_STATE.md` → Issue 5)
 
 ## Bugs
+
+- [ ] **Uji publish draft jadi tayang lewat UI admin** — transisi sudah terbukti
+      jalan saat diubah langsung di database (halaman `/berita/[slug]` ter-render
+      dalam satu jendela ISR 60 detik), tapi belum diuji lewat tombol "Simpan"
+      di `/admin/berita` yang memanggil `revalidatePath`. Butuh sesi admin.
 
 - [ ] **React error #418 (hydration text mismatch)** muncul di console
       `/admin/kategori` dan `/admin/program` — **pre-existing** (2026-09-27
@@ -148,6 +180,19 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 
 ## Technical Debt
 
+- [ ] **Samakan batas upload foto dengan batas Vercel (4,5MB)** — ditemukan
+      2026-10-02 saat membuat fitur Berita, **belum diperbaiki**.
+      `MAX_IMAGE_BYTES = 8 * 1024 * 1024` di `lib/schemas.ts` **melebihi batas
+      infrastruktur Vercel Functions yang hanya 4,5 MB per request**. Jadi foto
+      galeri 4,5–8 MB akan gagal 413 di produksi, padahal validasi
+      mengizinkan. Pesan errornya sudah ada di `UploadForm.tsx`
+      (`pesanFromStatus(413)`) jadi bukan bug baru, tapi batasnya belum
+      konsisten. Dua pilihan: (a) turunkan `MAX_IMAGE_BYTES` jadi 4MB supaya
+      pesan validasi jujur, atau (b) ganti galeri ke pola *client-direct*
+      seperti yang sudah dipakai `POST /api/blob-token` untuk video berita.
+      Sengaja tidak disentuh pada task Berita karena menyangkut route galeri
+      yang sedang berjalan.
+
 - [ ] Tidak ada perintah `lint` dan `test` di `package.json` — verifikasi
       harus memakai `npx tsc --noEmit` + `npm run build` + pemeriksaan browser.
       Pertimbangkan menambahkan ESLint bila diinginkan.
@@ -162,6 +207,14 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
       `AI_CONTEXT/`.
 
 ## Completed
+
+- [x] ~~**Halaman 404 custom (bukan bawaan Next)**~~ — **SELESAI**
+      (2026-10-02). 404 bawaan Next menyuntik `body{background:#000}` saat OS
+      gelap, mengabaikan design system + toggle tema situs; dan
+      `notFound()` tidak merender root layout sehingga `lang`/font/CSS/tema
+      hilang (dark mode mati di semua 404). Diganti `app/not-found.tsx` +
+      `app/(public)/not-found.tsx` + `NotFoundContent` + `ThemeEnforcer` +
+      `lib/themeScript.ts`. Detail di `CHANGELOG.md` & `DECISIONS.md`.
 
 Berdasarkan history git (terverifikasi):
 

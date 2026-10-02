@@ -69,7 +69,116 @@ export const testimonialSchema = z.object({
   urutan: z.coerce.number().int().min(0).max(999).default(0),
 });
 
-/** Ganti password admin — wajib ada di produksi (hosting managed tanpa akses shell). */
+/* ---------------------------------- Berita ---------------------------------- */
+
+/**
+ * Batas-batas berita. Dipisah dari `MAX_CONTENT_VALUE` (2.000 karakter) yang
+ * milik teks statis Tampilan Website — isi berita jauh lebih panjang, jadi
+ * batasnya sendiri.
+ */
+export const BERITA_ISI_MAKS = 20_000;
+export const BERITA_RINGKASAN_MAKS = 400;
+
+/**
+ * Tipe MIME foto berita. Sama seperti galeri (AVIF sengaja tidak dipakai:
+ * thumbnail `<img>` dari AVIF tidak dioptimasi Next).
+ */
+export const BERITA_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+/** Batas foto berita 8 MB SEBELUM dikompres. */
+export const BERITA_IMAGE_BYTES = 8 * 1024 * 1024;
+
+/** Tipe MIME video berita — hanya yang bisa diputar langsung di browser. */
+export const BERITA_VIDEO_TYPES = ["video/mp4", "video/webm"];
+/**
+ * Batas video 200 MB. Video dikirim browser → Vercel Blob LANGSUNG
+ * (client-direct lewat `@vercel/blob/client`), jadi batas 4,5 MB per Function
+ * milik Vercel TIDAK berlaku untuk video.
+ */
+export const BERITA_VIDEO_BYTES = 200 * 1024 * 1024;
+
+/** Pola ID video — hanya 11 karakter (YouTube) atau 6-12 digit (Vimeo). */
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
+const VIMEO_ID = /^\d{6,12}$/;
+
+/**
+ * Ubah URL YouTube/Vimeo jadi `{ host, id }`, atau `null` bila bukan
+ * keduanya.
+ *
+ * **Hanya ID yang disimpan ke database**, bukan URL penuh. Ini disengaja:
+ * komponen publik membangun sendiri URL embed dari ID, jadi admin tidak bisa
+ * menyuntikkan domain atau parameter lain lewat kolom ini.
+ *
+ * Yang diterima: `youtube.com/watch?v=ID`, `youtu.be/ID`,
+ * `youtube.com/shorts/ID`, `youtube.com/embed/ID`, `player.vimeo.com/video/ID`.
+ */
+export function parseVideoLink(
+  raw: string
+): { host: "youtube" | "vimeo"; id: string } | null {
+  const s = raw.trim();
+  if (!s) return null;
+
+  const yt = s.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+  );
+  if (yt && YOUTUBE_ID.test(yt[1])) return { host: "youtube", id: yt[1] };
+
+  const vm = s.match(/vimeo\.com\/(?:video\/)?(\d{6,12})/);
+  if (vm && VIMEO_ID.test(vm[1])) return { host: "vimeo", id: vm[1] };
+
+  return null;
+}
+
+/** URL thumbnail YouTube — diturunkan dari ID, bukan dari input admin. */
+export function videoPosterUrl(videoId: string, host: "youtube" | "vimeo"): string | null {
+  if (host === "youtube") return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  return null; // Vimeo tidak menyediakan thumbnail gratis tanpa API key
+}
+
+/**
+ * Berita/kabar kegiatan — CRUD dari Admin > Berita.
+ *
+ * `isi` sengaja TIDAK diperlakukan sebagai HTML: isinya teks polos yang
+ * di-render aman oleh `renderParagraphs()` di `components/site/BeritaBody.tsx`
+ * (escape dulu, baru `**tebal**`/`*miring*`). Jadi tidak ada jalur yang bisa
+ * memasukkan HTML mentah.
+ */
+export const beritaSchema = z
+  .object({
+    judul: z.string().trim().min(4, "Judul minimal 4 karakter").max(180),
+    ringkasan: z
+      .string()
+      .trim()
+      .min(10, "Ringkasan minimal 10 karakter")
+      .max(BERITA_RINGKASAN_MAKS, `Ringkasan maksimal ${BERITA_RINGKASAN_MAKS} karakter`),
+    isi: z
+      .string()
+      .trim()
+      .min(20, "Isi berita minimal 20 karakter")
+      .max(
+        BERITA_ISI_MAKS,
+        `Isi berita maksimal ${BERITA_ISI_MAKS.toLocaleString("id-ID")} karakter`
+      ),
+    imageUrl: z.string().trim().max(500).optional().or(z.literal("")),
+    imageAlt: z.string().trim().max(300, "Alt teks maksimal 300 karakter").optional().or(z.literal("")),
+    videoUrl: z.string().trim().max(500).optional().or(z.literal("")),
+    videoLink: z.string().trim().max(300).optional().or(z.literal("")),
+    tanggal: z
+      .string()
+      .trim()
+      .min(1, "Tanggal wajib diisi")
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Format tanggal tidak valid"),
+    kategori: z.string().trim().max(40).optional().or(z.literal("")),
+    isActive: z.boolean(),
+  })
+  .refine((d) => !(d.videoUrl && d.videoLink), {
+    message:
+      "Pilih salah satu: video yang diunggah ATAU link YouTube/Vimeo — jangan keduanya.",
+    path: ["videoLink"],
+  });
+
+export type BeritaInput = z.infer<typeof beritaSchema>;
+
+/** Ganti password admin - wajib ada di produksi (hosting managed tanpa akses shell). */
 export const gantiPasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Password lama wajib diisi"),

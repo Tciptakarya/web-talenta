@@ -1534,8 +1534,11 @@ Teks statis situs publik (judul, paragraf, label menu, angka, alamat) kini bisa
 diubah dari **Admin > Tampilan Website** (`/admin/konten`), tanpa menyentuh kode.
 
 1. **Registry = satu-satunya daftar key** (`lib/siteContent.ts`,
-   `CONTENT_SECTIONS`). 10 bagian, 68 field: Hero, Tentang Kami, Visi & Misi,
-   Layanan, Jadwal, Galeri, Lokasi, Testimoni, Kontak, Navbar & Footer.
+   `CONTENT_SECTIONS`). 11 bagian, 69 field: Hero, Tentang Kami, Visi & Misi,
+   Layanan, Jadwal, Galeri, Berita, Lokasi, Testimoni, Kontak, Navbar &
+   Footer. (Angka dihitung ulang dari kode pada 2026-10-02; section "Berita"
+   ditambahkan saat fitur berita dibuat, key `nav.jadwal` saat menu Jadwal
+   ditambahkan.)
 2. **Nilai bawaan (`defaultValue`) = isi website saat ini.** Kalau admin belum
    pernah mengubah suatu key, halaman publik memakai nilai bawaan. Jadi tabel
    `SiteContent` **boleh tetap kosong** dan situs tidak pernah gagal render.
@@ -1599,7 +1602,301 @@ publik, hak akses, dan konfirmasi; memisahkan presentation dengan
 - Jangan pernah mengembalikan `dangerouslySetInnerHTML` tanpa `renderInline()`
   (escape dulu, baru sisipkan tag).
 - Teks yang sengaja dibiarkan hardcode (tanpa key) tetap tampil sebagai teks biasa; bila mau diedit, tambahkan key-nya ke registry.
-  sebagai teks biasa; bila mau diedit, tambahkan key-nya ke registry.
 - Jumlah program pada judul "Sebelas jalur pelatihan" **tidak** ikut berubah
   otomatis — itu keputusan sadar, dengan catatan di UI agar admin mengubahnya
   sendiri bila jumlah program bertambah.
+
+
+---
+
+## Decision: Berita - isi teks polos, video client-direct, ID video saja
+
+**Tanggal**: 2026-10-02 · **Status**: diterapkan
+
+### Konteks
+
+User meminta section berita yang bisa diisi admin untuk memperbarui kabar
+kegiatan di Talenta Cipta Karya. Keputusan di bawah diambil setelah memeriksa
+kode yang sudah ada dan **dokumentasi resmi Vercel tentang batas request
+body**.
+
+### 1. Isi artikel = teks polos, bukan HTML
+
+Baris kosong menjadi paragraf baru, `**tebal**` dan `*miring*` tetap
+didukung. Tidak ada editor visual, tidak ada HTML.
+
+**Alasan:** `renderInline()` sudah terbukti aman (XSS `<script>` ter-escape
+jadi teks biasa — sudah diuji ulang pada task ini, 0 elemen script di DOM).
+Menambah editor visual berarti menambah jalur HTML baru yang harus disanitasi,
+tanpa manfaat nyata untuk berita singkat.
+
+**Konsekuensi:** `BeritaBody.tsx` (server component) memecah teks per baris
+kosong lalu memanggil `renderInline()` **per baris** — penting, karena
+`renderInline()` mengganti `\n` dengan `<br />`, jadi kalau dipanggil sekali
+untuk seluruh blok, baris kosong akan jadi dua `<br />` bertumpuk, bukan
+paragraf baru.
+
+### 2. Video = unggah (client-direct) ATAU link YouTube/Vimeo
+
+**Batas 4,5 MB Vercel Functions itu nyata dan tidak bisa dikonfigurasi**
+(berlaku untuk Route Handler *dan* Server Action alike). Video hampir selalu
+melebihinya, jadi video tidak bisa lewat server.
+
+Solusinya pola *client-direct upload*: `upload()` dari `@vercel/blob/client`
+mengirim file browser → Vercel Blob langsung; server hanya menukar token
+berumur singkat lewat `handleUpload()` di `POST /api/blob-token`. Batas 4,5 MB
+tidak relevan karena file tidak pernah melewati function, tapi autentikasi
+tetap server-side di `onBeforeGenerateToken` (tanpa itu siapa pun bisa
+mengunggah).
+
+`@vercel/blob/client` **sudah ada** di project (`@vercel/blob@2.8.0`) — tidak
+ada dependensi baru.
+
+**Konsekuensi yang harus diingat:**
+- `onUploadCompleted` **tidak jalan di localhost** (Vercel tidak bisa
+  menghubungi `localhost`). Jadi database **tidak boleh** ditulis dari
+  callback itu — kalau tidak, baris berita yatim akan muncul setiap kali
+  admin mengunggah lalu membatalkan. URL-nya diambil browser lalu disimpan
+  lewat Server Action.
+- Foto tetap lewat server (`POST /api/upload/berita`) karena 8 MB masih di
+  bawah 4,5 MB setelah dikompres, dan kompres `sharp` memang harus jalan di
+  server.
+
+### 3. Route upload berita TERPISAH dari route galeri
+
+`POST /api/upload` sudah hardcode `prisma.galleryImage.create` dan mewajibkan
+kategori + tahun. Memakai satu route dengan parameter `tipe` berarti foto
+berita bisa salah tersimpan sebagai foto galeri, dan route yang sedang
+berjalan tidak boleh diutak-atik.
+
+Route berita juga **tidak menyimpan ke database** — hanya mengembalikan URL,
+lalu Server Action yang menempelkannya ke baris berita. Mengunggah lalu
+membatalkan tidak meninggalkan data sampah.
+
+### 4. Hanya ID video yang disimpan, bukan URL penuh
+
+Kolom `videoLink` berisi `yt:<id>` atau `vm:<id>`. Komponen publik
+(`BeritaMedia.tsx`) membangun sendiri URL embed dari ID + host.
+
+**Alasan:** kalau URL penuh disimpan, `src` iframe berisi input admin dan
+bisa disuntikkan. Dengan ID saja, satu-satunya string yang masuk `src` adalah
+hasil yang dibangun server dari ID tervalidasi. `parseVideoLink()` menolak
+`evil.example.com` dan `javascript:` — **terverifikasi** dengan 10 kasus.
+
+Bonus: prefix `yt:`/`vm:` membuat tabel tidak perlu kolom `videoHost` terpisah.
+
+### 5. Filter kategori di browser, bukan `?kategori=`
+
+**Alasan:** `searchParams` membuat Next 15 merender halaman on-demand lalu
+mengirim `no-store` — persis masalah TTFB yang sudah pernah diperbaiki di
+project ini (lihat *Halaman publik di-cache 60 detik*). Data berita kecil
+(puluhan baris, sudah ikut ter-cache di HTML), jadi menyaring di browser
+(`BeritaList.tsx`, client component) jauh lebih murah dan `/berita` tetap
+fully static.
+
+### 6. Draft = `isActive=false`, dan halaman detail ikut 404
+
+Query publik selalu `where: { isActive: true }`. Draft tidak muncul di daftar
+**dan** `/berita/[slug]`-nya menghasilkan 404, jadi tidak bisa dibuka lewat
+URL. Query admin (`app/admin/(dashboard)/berita/page.tsx`) memakai
+`prisma.berita.findMany()` langsung, bukan `getBeritaAdmin()`, supaya jelas
+memang ada bypass — bukan kebetulan.
+
+### Jebakan yang terulang (penting!)
+
+`app/globals.css:131` punya rule global
+`header{position:fixed; top:0; z-index:100}`. Elemen `<header>` di dalam konten
+langsung menjadi fixed dan menutupi isi halaman. Ini sudah menimpa **dua kali**
+sebelumnya (kop program galeri) dan **ketiga kali** pada task ini —
+`<header className="berita-detail-head">` membuat judul artikel menumpuk di
+atas layar, terbukti lewat `getComputedStyle` → `position: fixed`.
+
+**Aturan:** jangan pernah pakai tag `<header>`/`<footer>` di dalam konten.
+Pakai `<div>` dan andalkan class. Diagnosis cepat: `getComputedStyle(el).position`.
+
+### Batas yang belum diperbaiki (ditemukan saat task ini)
+
+`MAX_IMAGE_BYTES = 8MB` di `lib/schemas.ts` sudah **melebihi** batas produksi
+4,5 MB, jadi foto galeri 4,5–8 MB akan gagal 413 walaupun validasi
+mengizinkan. Ditulis di `TODO.md` → *Technical Debt*. Sengaja tidak disentuh
+karena menyangkut route galeri yang sedang berjalan.
+
+
+---
+
+## Decision: Halaman 404 perlu mandiri, dan root layout tidak dirender di sana
+
+**Tanggal**: 2026-10-02 · **Status**: diterapkan
+
+### Konteks
+
+User melaporkan halaman `/berita/tidak-ada` tampil kosong dengan latar hitam
+pekat. Saat menelusuri, ternyata bukan bug satu, tapi **tiga lapis masalah**,
+dan **dua di antaranya sudah lama ada** (bukan efek fitur berita).
+
+### 1. 404 bawaan Next.js menyuntik CSS sendiri
+
+Halaman 404 bawaan Next menyertakan:
+
+```css
+body{color:#000;background:#fff;margin:0}
+@media (prefers-color-scheme:dark){
+  body{color:#fff;background:#000}
+  .next-error-h1{border-right:1px solid rgba(255,255,255,.3)}
+}
+```
+
+Ini **membypass design system** sepenuhnya dan memakai preto/putih murni
+mengikuti preferensi **sistem operasi** — bukan toggle dark mode situs
+(`ThemeToggle` + kelas `dark` di `<html>`).ользователь yang memakai situs di
+mode terang tapi OS-nya gelap akan melihat latar `#000` yang sama sekali tidak
+cocok dengan navbar/footer di atasnya.
+
+Dokumentasi Next sendiri mengakui hal ini dan menyarankan dua jalan: tambah
+rule CSS ber-spesifitas lebih tinggi, atau sediakan `not-found.js` sendiri.
+Project ini memilih jalan kedua, supaya teks 404 pun bisa berbahasa Indonesia.
+
+### 2. `notFound()` TIDAK merender root layout (Next 15.5.25)
+
+Dokumen yang dikirim untuk halaman 404 adalah `<html id="__next_error__">` —
+**tanpa** `lang="id"`, **tanpa** kelas font `next/font`, **tanpa**
+`<link rel="stylesheet">` (CSS baru disuntik React saat hidrasi → kedip tanpa
+gaya), dan **tanpa** skrip anti-FOUC tema.
+
+Konsekuensi yang paling merusak: `localStorage.theme = "dark"` tidak pernah
+diterapkan, jadi **dark mode mati total di semua halaman 404**. Terverifikasi
+lewat `getComputedStyle(document.body).backgroundColor` → `rgb(0,0,0)` dan
+`document.documentElement.className` tanpa `dark`.
+
+Workaround `[...not-found]/page.tsx` yang direkomendasikan komunitas **sudah
+dicoba dan tidak memperbaiki** di 15.5.25 — root layout tetap tidak dirender,
+dan route yang tadinya benar ikut rusak. **Tidak dipakai.**
+
+Solusi yang dipakai — halaman 404 harus mandiri:
+
+| Kebutuhan | Tidak dipenuhi oleh | Solusi |
+| --- | --- | --- |
+| Tampilan sesuai design system | 404 bawaan Next | `components/site/NotFoundContent.tsx` + CSS `.notfound-*` |
+| Skrip tema sebelum paint | root layout tidak dirender | `lib/themeScript.ts` — satu sumber, dipakai `app/layout.tsx` **dan** 404 |
+| Tema bertahan setelah hidrasi | React menormalkan `className` `<html>` | `components/site/ThemeEnforcer.tsx` (`useEffect`) |
+| `lang="id"` | shell error tidak menyertakannya | diset di `THEME_BOOTSTRAP_SCRIPT` + dijaga ulang di `ThemeEnforcer` |
+| `<link rel="stylesheet">` | root layout tidak dirender | `import "@/app/globals.css"` di `NotFoundContent` (Next men-dedup, aman) |
+
+**Pola yang harus diingat:** skrip pre-paint saja **tidak cukup** — hidrasi
+React menulis ulang `className` `<html>` ke nilai server dan menghapus class
+yang baru dipasang skrip. Karena shell error tidak punya
+`suppressHydrationWarning` (yang ada di root layout normal), apa pun yang
+dipasang skrip akan hilang. Karena itu diperlukan penguat setelah hidrasi.
+
+### 3. Dua file 404, bukan satu
+
+- `app/(public)/not-found.tsx` — dipakai saat `notFound()` dipanggil dari page
+  route publik. Otomatis dibungkus `(public)/layout.tsx` → navbar + footer.
+- `app/not-found.tsx` — dipakai untuk URL yang **tidak cocok route sama
+  sekali** (`/foo/bar`). Hanya punya root layout, jadi tanpa navbar/footer;
+  makanya variabel `standalone` dan komponennya menyediakan latar sendiri.
+
+Keduanya memakai `metadata` dengan `robots: { index: false }` supaya halaman
+404 tidak diindeks mesin pencari.
+
+### Isi 404 tidak memakai `getContentMap()`
+
+Halaman 404 harus tetap bisa dirender walau database tidak bisa dijangkau.
+Jadi teksnya ditulis di komponen, **sama seperti** teks halaman `/kelas` yang
+juga statis. Yang tetap bisa diedit admin adalah label menu navbar/footer lewat
+`lib/siteContent.ts`.
+
+### Jebakan CSS yang saya buat sendiri (catat supaya tidak terulang)
+
+Untuk angka "404" bergradien dipakai:
+
+```css
+background-image: linear-gradient(...);
+background-clip: text;
+color: transparent;
+```
+
+Override dark-mode awalnya ditulis dengan shorthand
+`background: linear-gradient(...)` — dan **shorthand `background` me-reset
+`background-clip` ke `border-box`**. Akibatnya gradien memenuhi seluruh kotak
+dan angka "404" tampil sebagai **blok warna solid**. Terverifikasi lewat
+`getComputedStyle` → `backgroundClip: "border-box"`.
+
+**Aturan:** kalau sebuah elemen memakai `background-clip: text`, jangan pernah
+menuliskannya ulang dengan shorthand `background` — pakai `background-image`.
+
+### Paginasi: 404 dipakai untuk berita draft
+
+`/berita/[slug]` memanggil `notFound()` bila berita tidak ada **atau masih
+draft** (`isActive=false`). Ini yang membuat draft tidak bisa dibuka lewat URL.
+Konsekuensinya, halaman 404 jalur `[slug]` **wajib** diperbaiki — bukan hanya
+route tak dikenal.
+
+
+---
+
+## Decision: Menu anchor di navbar wajib punya empty state; 8 menu memaksa drawer lebih awal
+
+**Tanggal**: 2026-10-02 · **Status**: diterapkan (bagian "menu hamburger di
+tablet" masih menunggu persetujuan user)
+
+### 1. Menu berbasis anchor harus punya kondisi kosong yang jelas
+
+Menu navbar/footer semuanya memakai anchor (`/#about`, `/#berita`, …). Menu
+"Berita" sekarang arah ke `/#berita`, sementara section "Kabar Terbaru"
+sebelumnya `return null` kalau belum ada berita.
+
+Hasilnya: pengguna menekan menu, **tidak terjadi apa-apa** — tidak ada
+perubahan layar dan tidak ada penjelasan. Menu feels "rusak" bukan "kosong".
+
+**Aturan:** kalau sebuah section punya menu anchor, section itu **tidak boleh
+`return null`**. Harus selalu dirender, dengan pesan yang jelas saat kosong.
+
+Section Galeri masih memakai pola lama (`{gallery.length > 0 && …}`) dan
+**belum diubah** — di luar cakupan task ini, tapi aturan yang sama sebaiknya
+diterapkan kalau menu Galeri ever bermasalah.
+
+### 2. Menambah menu ke navbar ada batas lebar yang pasti (matematis)
+
+Dihitung dari `getBoundingClientRect` (setelah `document.fonts.ready` +
+`onload` logo):
+
+```
+8 menu, styling asli : logo 201 + nav 701 + CTA 160 = 1062px  → butuh ≥1150px
+8 menu, diperketat    : logo 141 + nav 554 + CTA 160 =  855px  → butuh ≥ 940px
+```
+
+Jadi 8 menu **tidak mungkin** muat di bawah ~940px. Menyembunyikan tombol
+"Kontak" (160px) pun masih kurang di 761px. Verified: di 850px logo nabrak
+menu "Tentang Kami" (gap 0px).
+
+Solusi dua lapis, keduanya hanya menyentuh CSS:
+
+| Lebar | Perlakuan |
+| --- | --- |
+| > 1200px | styling asli (gap 34px, font 14.5px, logo 200px) — sudah lapang |
+| 941–1200px | `gap` 34→20px, font 14.5→13px, logo 200→140px (gap 130→13px) |
+| ≤ 960px | menu drawer (hamburger) |
+
+### 3. Blok drawer 960px adalah SALINAN, bukan pemindahan
+
+Aturan `@media (max-width:960px)` menyalin rules drawer yang sudah ada di blok
+`@media (max-width:760px)` **dengan nilai identik**. Blok aslinya tidak
+dihapus.
+
+**Alasan:** memindahkan rules bisavez salah urut dan merusak perilaku
+≤760px yang sudah berjalan & teruji. Dengan menyalin, perilaku ≤760px
+**dijamin tidak berubah** (nilai CSS identik, specificity identik). Kalau
+nilainya nanti mau dibedakan, barulah blok 760px boleh dihapus.
+
+### 4. Verifikasi layout navbar harus menunggu font & logo
+
+Pengukuran lewat iframe sempat **menyesatkan dua kali**: sebelum
+`document.fonts.ready` dan sebelum logo selesai dimuat, lebar yang sama
+terukur berbeda (nav 623px lalu 584px; brand 201px lalu 0px). Akses
+fallback font lebih sempit dari Plus Jakarta Sans, dan `<img>` yang belum
+dimuat punya lebar 0.
+
+Jadi semua angka di atas diukur **setelah** `Promise.all([fonts.ready,
+logo.onload])` + jeda pendek. Assertion yang dipakai: `gapKiri > 0 || hamburger
+terlihat`, di 15 lebar dari 1440 sampai 390.

@@ -72,7 +72,48 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 }
 
-/// Cadangan pesan form kontak — tetap tersimpan meski pengiriman email gagal (§8)
+/// Berita / kabar kegiatan - ditulis admin di /admin/berita, tampil di
+/// /berita (daftar) + /berita/[slug] (detail) + section "Kabar Terbaru"
+/// di beranda.
+///
+/// Berbeda dari `Testimonial`: berita punya slug (URL sendiri), tanggal
+/// kegiatan, media, dan bisa berstatus draft (`isActive=false` = belum
+/// tayang, tidak muncul di publik sama sekali).
+///
+/// `isi` = TEKS POLOS (bukan HTML): baris kosong = paragraf baru, hanya
+/// penanda `**tebal**` / `*miring*` yang didukung. Render aman lewat
+/// `renderInline()` di `lib/siteContent.ts` - admin tidak bisa menyuntik
+/// HTML/JS (lihat DECISIONS.md).
+///
+/// Media: `imageUrl` (foto utama, hasil `storeImage`) + `videoUrl` (video
+/// yang diunggah ke Vercel Blob) ATAU `videoLink` (embed YouTube/Vimeo).
+///
+/// `videoLink` hanya berisi ID video dengan prefix host — `yt:<id>` atau
+/// `vm:<id>` — bukan URL penuh. Alasannya: komponen publik membangun sendiri
+/// URL embed dari ID, jadi admin tidak bisa menyuntikkan domain atau
+/// parameter lain lewat kolom ini. Thumbnail YouTube juga diturunkan dari ID.
+model Berita {
+  id        Int      @id @default(autoincrement())
+  judul     String
+  slug      String   @unique // otomatis dari judul, unik (uniqueSlug)
+  ringkasan String // 1-2 kalimat, tampil di kartu daftar
+  isi       String // isi artikel (teks polos, bukan HTML)
+  imageUrl  String? // foto utama (Vercel Blob / /uploads)
+  imageAlt  String? // alt teks foto utama (aksesibilitas)
+  videoUrl  String? // video yang diunggah (Vercel Blob)
+  videoLink String? // "yt:<id>" | "vm:<id>" - alternatif videoUrl
+  tanggal   DateTime @default(now()) // tanggal kegiatan (bukan tanggal tulis)
+  kategori  String? // mis. "Pelatihan" | "Kemitraan" | "Sosial" (bebas)
+  /// false = draft: tersimpan di admin, TIDAK tampil di halaman publik.
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, tanggal])
+  @@index([kategori])
+}
+
+/// Cadangan pesan form kontak - tetap tersimpan meski pengiriman email gagal (§8)
 model ContactMessage {
   id          Int      @id @default(autoincrement())
   nama        String

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/themeScript";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -52,13 +53,10 @@ export default function RootLayout({
       className={`${fraunces.variable} ${jakarta.variable}`}
     >
       <body>
-        {/* Terapkan tema tersimpan sebelum paint — cegah kedip light→dark. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              '(function(){try{var t=null;try{t=localStorage.getItem("theme")}catch(e){}if(t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();',
-          }}
-        />
+        {/* Terapkan tema tersimpan sebelum paint — cegah kedip light→dark.
+            Src: lib/themeScript.ts (dipakai juga oleh halaman 404, yang
+            tidak merender root layout ini). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
         {children}
       </body>
     </html>

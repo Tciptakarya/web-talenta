@@ -22,6 +22,8 @@ import {
   resetPasswordSchema,
   emailSendSchema,
   emailDraftSchema,
+  beritaSchema,
+  parseVideoLink,
 } from "@/lib/schemas";
 import { slugify, uniqueSlug } from "@/lib/slug";
 import { generateResetToken, hashToken } from "@/lib/passwordReset";
@@ -281,6 +283,155 @@ export async function deleteCategory(
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }
+}
+
+/* ------------------------------------ Berita ----------------------------------- */
+
+/**
+ * Bentuk data berita dari FormData, termasuk verifikasi link video.
+ *
+ * Dua hal yang dijamin di sini (bukan dipercaya dari form):
+ * 1. `slug` selalu unik dan otomatis dari judul (uniqueSlug, excludeId =
+ *    record yang sedang diedit supaya slug tidak berubah saat judul dikoreksi).
+ * 2. `videoLink` disimpan sebagai `yt:<id>` / `vm:<id>` — hanya ID hasil
+ *    `parseVideoLink()`. URL ngawur ditolak, bukan disimpan mentah.
+ */
+async function beritaData(formData: FormData, excludeId?: number) {
+  const raw = {
+    judul: formData.get("judul"),
+    ringkasan: formData.get("ringkasan"),
+    isi: formData.get("isi"),
+    imageUrl: formData.get("imageUrl") ?? "",
+    imageAlt: formData.get("imageAlt") ?? "",
+    videoUrl: formData.get("videoUrl") ?? "",
+    videoLink: formData.get("videoLink") ?? "",
+    tanggal: formData.get("tanggal") ?? "",
+    kategori: formData.get("kategori") ?? "",
+    isActive: formData.get("isActive") === "on",
+  };
+
+  const parsed = beritaSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Data berita tidak valid." } as const;
+  }
+
+  // `.optional().or(z.literal(""))` membuat nilainya `string | undefined`.
+  const rawLink = parsed.data.videoLink ?? "";
+  const link = parseVideoLink(rawLink);
+  if (rawLink && !link) {
+    return {
+      error:
+        "Link video tidak dikenali. Tempel URL YouTube (youtube.com/watch?v=...) atau Vimeo (vimeo.com/...).",
+    } as const;
+  }
+
+  // schema refine sudah menolak dua-duanya, tapi dicek lagi di sini supaya
+  // storage tidak ikut dibersihkan kalau nanti aturan berubah.
+  if (link && parsed.data.videoUrl) {
+    return {
+      error: "Pilih salah satu sumber video: unggah ATAU link YouTube/Vimeo.",
+    } as const;
+  }
+
+  const slug = await uniqueSlug(
+    parsed.data.judul,
+    async (s) => Boolean(await prisma.berita.findUnique({ where: { slug: s }, select: { id: true } })),
+    excludeId,
+    async (s) =>
+      (await prisma.berita.findUnique({ where: { slug: s }, select: { id: true } }))?.id ?? null
+  );
+
+  // Tanggal disimpan sebagai tengah malam WIB supaya tidak bergeser hari
+  // saat ditampilkan (lihat formatTanggalIndo di lib/data.ts).
+  const [y, m, d] = parsed.data.tanggal.split("-").map(Number);
+  const tanggal = new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1));
+
+  const { videoLink: _ignored, ...rest } = parsed.data;
+  return {
+    data: {
+      ...rest,
+      slug,
+      imageUrl: parsed.data.imageUrl || null,
+      imageAlt: parsed.data.imageAlt || null,
+      videoUrl: parsed.data.videoUrl || null,
+      videoLink: link ? `${link.host === "youtube" ? "yt" : "vm"}:${link.id}` : null,
+      kategori: parsed.data.kategori || null,
+      tanggal,
+    },
+  } as const;
+}
+
+export async function createBerita(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const hasil = await beritaData(formData);
+    if ("error" in hasil) return { ok: false, error: hasil.error };
+
+    await prisma.berita.create({ data: hasil.data });
+    refresh();
+    return { ok: true, message: "Berita ditambahkan." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function updateBerita(
+  _prev: ActionState | undefined,
+  formData: FormData
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const id = Number(formData.get("id"));
+    if (!Number.isFinite(id)) return { ok: false, error: "ID berita tidak valid." };
+
+    const hasil = await beritaData(formData, id);
+    if ("error" in hasil) return { ok: false, error: hasil.error };
+
+    const lama = await prisma.berita.findUnique({
+      where: { id },
+      select: { imageUrl: true, videoUrl: true },
+    });
+    if (!lama) return { ok: false, error: "Berita tidak ditemukan." };
+
+    await prisma.berita.update({ where: { id }, data: hasil.data });
+
+    // Media yang diganti tidak boleh meninggalkan file yatim di storage.
+    // Kegagalan hapus file tidak boleh menggagalkan penyimpanan (PRD §8).
+    if (lama.imageUrl && lama.imageUrl !== hasil.data.imageUrl) {
+      await removeImage(lama.imageUrl);
+    }
+    if (lama.videoUrl && lama.videoUrl !== hasil.data.videoUrl) {
+      await removeImage(lama.videoUrl);
+    }
+
+    refresh();
+    return { ok: true, message: "Berita diperbarui." };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function deleteBerita(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+
+  const lama = await prisma.berita.findUnique({
+    where: { id },
+    select: { imageUrl: true, videoUrl: true },
+  });
+
+  await prisma.berita.delete({ where: { id } }).catch(() => undefined);
+
+  // File dihapus setelah barisnya hilang, jadi gagal hapus tidak pernah
+  // membuat berita tidak terhapus.
+  if (lama?.imageUrl) await removeImage(lama.imageUrl);
+  if (lama?.videoUrl) await removeImage(lama.videoUrl);
+
+  refresh();
 }
 
 /* ------------------------------------ Program ---------------------------------- */

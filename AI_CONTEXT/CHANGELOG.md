@@ -50,6 +50,261 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-10-02] — Menu "Jadwal" di navbar + empty state Berita
+
+### Added
+
+- **Menu "Jadwal"** di navbar **dan** footer → anchor `/#jadwal-terdekat`
+  (section "Jadwal Kelas Terdekat" di beranda). Label didaftarkan sebagai
+  `nav.jadwal` di registry `lib/siteContent.ts`, jadi **bisa diedit dari
+  Admin > Tampilan Website** seperti menu lain.
+  Urutan menu sekarang mengikuti urutan section di beranda: Tentang Kami →
+  Visi & Misi → Layanan → **Jadwal** → Galeri → Berita → Lokasi → Testimoni.
+- **Empty state "Belum ada berita untuk saat ini"** di dua tempat:
+  - Section "Kabar Terbaru" di beranda (`components/site/Berita.tsx`)
+  - Halaman `/berita`
+  Bentuknya: panel garis-putus + ikon + judul + keterangan + tombol ajakan.
+  Teks sengaja **sama persis** di kedua tempat supaya kondisi yang sama tidak
+  menampilkan dua kalimat berbeda.
+
+### Fixed
+
+- **Klik menu "Berita" saat belum ada berita = tidak terjadi apa-apa.**
+  Section Kabar Sebelumnya `return null` kalau `items.length === 0`, padahal
+  menu-nya memakai anchor `/#berita`. Pengguna menekan tombol, tidak ada
+  perubahan layar, dan tidak ada penjelasan kenapa. Sekarang section
+  **selalu dirender** dan menampilkan pesan yang jelas kalau kosong.
+- **Navbar rusak di lebar 761-960px** setelah menu ke-8 ditambahkan. Direct
+  measurement: di 850px logo **nabrak** menu "Tentang Kami" (gap 0px).
+  Perbaikan dua bagian (lihat "Technical Notes").
+
+### Changed
+
+- `@media (min-width:941px) and (max-width:1200px)` — navbar diperketat
+  (gap 34→20px, font 14.5→13px, logo 200→140px) **hanya di rentang itu**.
+  Di atas 1200px styling asli tetap dipakai (gap 27px, sudah lapang).
+- `@media (max-width:960px)` — menu drawer (hamburger) diaktifkan lebih awal
+  dari 760px. Rules-nya **salinan identik** dari blok 760px yang sudah ada,
+  sehingga perilaku `<=760px` **tidak berubah sama sekali**.
+
+### Technical Notes
+
+- **Kenapa 8 menu tidak mungkin muat di bawah ~940px.** Dihitung dari
+  `getBoundingClientRect` setelah font & logo selesai dimuat:
+  `logo 141 + nav 554 + CTA 160 + 2x gap 20 = 895px`, sedangkan lebar
+  konten di 960px hanya 896px (viewport − scrollbar − 2×32px padding).
+  Menghemat 160px dengan menyembunyikan tombol "Kontak" pun masih kurang
+  di 761px. Jadi drawer **memang diperlukan**, bukan sekadar prettiness.
+- Pengukuran navbar sempat menyesatkan **dua kali** karena iframe belum
+  menunggu `document.fonts.ready` + `onload` logo — menghasilkan angka
+  yang tidak konsisten (nav 623px lalu 584px untuk lebar sama). Semua
+  angka di atas diukur **setelah** keduanya selesai.
+
+### Verified
+
+- 8 menu di navbar **dan** footer, urut benar, semua `href` benar
+  (`/#jadwal-terdekat` & `/#berita` diuji diklik nyata dari `/kelas`:
+  navigasi ke `/#berita`, section berhenti di 170px dari atas — di bawah
+  header).
+- **Responsif navbar** (diuji di 15 lebar lewat iframe, setelah font+logo siap):
+  | Lebar | Hasil |
+  |---|---|
+  | 1440 / 1280 / 1201 | navbar penuh, gap 27px (styling asli) |
+  | 1200 → 961 | navbar penuh, gap 130px → 13px |
+  | 960 → 390 | drawer (hamburger) |
+  **Semua lebar: tidak ada navbar bertumpuk, tidak ada overflow horizontal.**
+- **Drawer berfungsi**: di 850px klik hamburger → panel 320px terbuka,
+  **8 link tampil**, tombol close ada, `body` overflow terkunci (`hidden`),
+  logo menyusut ke 130px.
+- **Empty state**: tampil di beranda & `/berita`, benar di light **dan**
+  dark mode (panel, ikon, judul, keterangan, tombol).
+- **Regresi nol**: `/`, `/kelas`, `/berita`, `/kelas/barista` → 200, footer
+  ada, 8 menu, **0 console error**. Halaman 404 tetap benar.
+- `npx tsc --noEmit` 0 error · `npm run build` hijau.
+
+### Catatan jujur
+
+- Menu hamburger di tablet/small laptop (≤960px) adalah **konsekuensi
+  tak diminta** dari menambah menu ke-8. Saya kerjakan karena navbar yang
+  bertumpuk di 850px jelas rusak, tapi ini keputusan desain — boleh dikembalikan
+  kalau Anda lebih suka navbar penuh di lebar mana pun. Opsi tercatat di
+  `TODO.md` → *Planned*.
+- Blok `@media (max-width:960px)` sengaja **menyalin** rules yang sudah ada
+  di blok 760px, bukan memindahkannya, agar risiko regresi pada ≤760px nol.
+
+---
+
+## [2026-10-02] — Perbaikan halaman 404 (ditemukan saat cek bug di `/berita`)
+
+### Fixed
+
+- **Halaman 404 kosong & berlatar hitam pekat** (dilaporkan user via
+  screenshot `/berita/tidak-ada`). Tiga lapis masalah, semuanya sudah
+  diperbaiki dan diverifikasi:
+
+  1. **404 bawaan Next menyuntik `<style>` sendiri**:
+     `body{color:#000;background:#fff}` + `@media (prefers-color-scheme:dark)
+     {body{color:#fff;background:#000}}`. Style itu **membypass seluruh
+     design system** dan mengikuti preferensi **OS** — bukan toggle dark mode
+     milik situs. Akibatnya user light-mode dengan OS gelap melihat latar
+     `rgb(0,0,0)`. → Diganti `not-found.tsx` buatan sendiri
+     (`components/site/NotFoundContent.tsx`).
+
+  2. **`notFound()` tidak merender root layout.** Dokumen yang dikirim adalah
+     `<html id="__next_error__">` — tanpa `lang="id"`, tanpa kelas font,
+     **tanpa `<link rel="stylesheet">`** (CSS baru disuntik React saat
+     hidrasi → kedip tanpa gaya), dan **tanpa skrip anti-FOUC tema**.
+     Terverifikasi lewat `curl` + `getComputedStyle`. Terjadi di
+     `/berita/[slug]`, `/kelas/[slug]`, `/program/[slug]` — **bukan** hanya
+     di route berita, jadi ini bug lama yang baru terlihat.
+     → `lib/themeScript.ts` (bootstrap tema jadi satu sumber, dipakai
+     `app/layout.tsx` **dan** halaman 404) + `components/site/ThemeEnforcer.tsx`
+     (client component yang memasang class `dark` **setelah** hidrasi, karena
+     hidrasi React menormalkan ulang `className` `<html>` dan menghapus
+     apa pun yang dipasang skrip).
+
+  3. **Angka "404" tampil sebagai blok gradient solid** (bug yang saya
+     buat sendiri saat menulis override dark-mode): memakai shorthand
+     `background: linear-gradient(...)` yang **me-reset** `background-clip`
+     ke `border-box`, sehingga gradien memenuhi seluruh kotak dan teks
+     transparan tidak terlihat. → Diganti longhand `background-image`.
+
+- **Route catch-all `[...not-found]` dicoba lalu DIBUANG.** Workaround yang
+  direkomendasikan komunitas untuk kasus serupa **tidak memperbaiki** root
+  layout di Next 15.5.25 — sudah diuji dan `__next_error__` tetap; malah
+  membuat URL yang tadinya benar ikut rusak. Tidak dipakai.
+
+### Added
+
+- `app/(public)/not-found.tsx` — untuk `notFound()` di route publik (dapat
+  navbar + footer dari `(public)/layout.tsx`).
+- `app/not-found.tsx` — untuk URL yang **tidak cocok route** (`standalone`,
+  tanpa navbar/footer, latarnya sendiri). Keduanya punya `metadata` dengan
+  `robots: { index: false }` supaya 404 tidak diindeks.
+- `components/site/NotFoundContent.tsx` — isi 404 (kicker, angka 404 bergradien,
+  judul, keterangan, 2 tombol). Tanpa query DB, supaya tetap bisa dirender
+  walau database tak terjangkau.
+- `components/site/ThemeEnforcer.tsx` — pasang tema setelah hidrasi.
+- `lib/themeScript.ts` — `THEME_BOOTSTRAP_SCRIPT`, satu sumber untuk
+  `app/layout.tsx` + 404.
+- `app/globals.css` — blok CSS `.notfound-*` (light + dark).
+
+### Verified
+
+- 4 kasus 404 (`/berita/tidak-ada`, `/kelas/tidak-ada`, `/program/tidak-ada`,
+  `/halaman-hantu-xyz`) × 2 mode: `dark` class benar, latar benar
+  (`#0E1322` / `#151B2E` gelap, `#FFFFFF` / `#F5F7FC` terang), warna teks
+  benar, `lang="id"`, title benar, `background-clip: text`.
+- HTTP status 404 pada semua kasus 404; 200 pada halaman normal.
+- Header + footer muncul di 404 route publik, tidak di root 404 (sesuai
+  desain).
+- **Regresi nol**: `/`, `/kelas`, `/kelas/barista`, `/program/pelatihan-barista`,
+  `/berita` → 200, footer ada, **0 console error**.
+- `npx tsc --noEmit` 0 error · `npm run build` hijau.
+
+---
+
+## [2026-10-02] — Section Berita (`/admin/berita`, `/berita`)
+
+### Added
+
+- **Model `Berita`** (`prisma/schema.prisma`) — `judul`, `slug` (unik, otomatis),
+  `ringkasan`, `isi`, `imageUrl`, `imageAlt`, `videoUrl`, `videoLink`, `tanggal`,
+  `kategori`, `isActive` (= draft), `createdAt`, `updatedAt`.
+  `@@index([isActive, tanggal])`. Additive → `prisma db push` aman, data lama utuh.
+- **Admin `/admin/berita`** — `components/admin/BeritaManager.tsx` +
+  `app/admin/(dashboard)/berita/page.tsx` + 3 Server Action
+  (`createBerita`, `updateBerita`, `deleteBerita`) + item menu di `AdminNav`.
+  Admin tidak bisa melihat draft orang lain; query halaman bypass
+  `getBerita()` supaya `isActive=false` tidak bocor.
+- **Publik `/berita`** (daftar + filter kategori) dan `/berita/[slug]` (detail +
+  "Berita lainnya"). Keduanya `revalidate = 60` + `force-static`.
+- **Section "Kabar Terbaru"** di beranda — 3 berita aktif terbaru, disembunyikan
+  otomatis kalau belum ada berita.
+- **Route `POST /api/upload/berita`** — unggah 1 foto utama (sharp → kompres
+  WebP → `storeImage`). **Route terpisah** dari `/api/upload` galeri, yang
+  hardcode `prisma.galleryImage.create`.
+- **Route `POST /api/blob-token`** — tukar token *client-direct upload* untuk
+  video (lihat "Technical Notes").
+- **`lib/tanggal.ts`** — `formatTanggalIndo`, `formatTanggalYmd`, `ymdWib`.
+  Dipisah dari `lib/data.ts` yang `server-only`.
+- **`lib/berita-types.ts`** — tipe `BeritaRow` (client-safe).
+- **`lib/schemas.ts`** — `beritaSchema`, `parseVideoLink()`, batas
+  `BERITA_IMAGE_BYTES` (8MB) & `BERITA_VIDEO_BYTES` (200MB).
+- **`lib/siteContent.ts`** — key baru: `nav.berita`, `berita.kicker`,
+  `berita.title`, `berita.lihatSemua` (registry **64 → 68 field**, 10 → 11
+  bagian; dihitung ulang dari kode, bukan diperkirakan).
+- Komponen: `Berita.tsx`, `BeritaCard.tsx`, `BeritaList.tsx`, `BeritaMedia.tsx`,
+  `BeritaBody.tsx`. CSS `.berita-*` di `app/globals.css` (light + dark +
+  responsif 1440/980/760/390).
+
+### Fixed
+
+- **Judul artikel menumpuk di header fixed** — `<header className=
+  "berita-detail-head">` terkena rule global `header{position:fixed;
+  top:0; z-index:100}` (`app/globals.css:131`). Terbukti lewat `getComputedStyle`:
+  `position: fixed`, `top: 0` (padahal `padding-top: 280px` sudah terpasang).
+  Diubah ke `<div>`. **Ini jebakan yang sama seperti kop program galeri** —
+  sudah terjadi 3× di project ini.
+
+### Technical Notes
+
+- **Kenapa video tidak bisa lewat server:** Vercel Functions punya batas keras
+  **4,5 MB per request** (Route Handler *dan* Server Action alike, tidak bisa
+  dikonfigurasi). Video hampir selalu lebih besar. Solusinya pola
+  *client-direct upload*: `upload()` dari `@vercel/blob/client` ( sudah jadi
+  dependensi project, `@vercel/blob@2.8.0`) mengirim file browser → Blob
+  langsung; server hanya menukar token lewat `handleUpload()`. Autentikasi
+  tetap server-side di `onBeforeGenerateToken`. Batas video 200 MB.
+- **`onUploadCompleted` tidak jalan di localhost** (Vercel tak bisa menghubungi
+  `localhost`) — jadi URL video diambil browser lalu disimpan lewat Server
+  Action, bukan ditulis ke DB dari callback. Menulis dari callback akan
+  menghasilkan baris berita yatim kalau admin membatalkan.
+- **`videoLink` hanya menyimpan ID** (`yt:<id>` / `vm:<id>`), bukan URL penuh.
+  Komponen publik membangun sendiri URL embed dari ID, jadi admin tak bisa
+  menyuntikkan domain lain. `parseVideoLink()` menolak `evil.example.com`
+  dan `javascript:` — **terverifikasi** (10 kasus).
+- **Filter kategori di browser, bukan `?kategori=`** — `searchParams` akan
+  membuat `/berita` mengirim `no-store` dan TTFB halaman berita jauh lebih
+  lambat, persis masalah yang sudah pernah diperbaiki di project ini.
+  `BeritaList.tsx` (client) menyaring data yang sudah ikut ter-cache di HTML.
+- **Transisi draft → tayang terbukti jalan.** `/berita/[slug]` di-*prerender*
+  saat build, jadi halaman draft ikut ter-*bake* sebagai 404. Setelah
+  `isActive` diubah jadi `true` (melewati DB, tanpa `revalidatePath`), halaman
+  **berhasil ter-render** dalam satu jendela ISR 60 detik.
+
+### Verified
+
+- `npx tsc --noEmit` 0 error · `npm run build` hijau. Routing build:
+  `/berita` & `/berita/[slug]` = `○` (static, 1m), `/admin/berita` = `ƒ`.
+- **Draft tidak bocor**: 3 berita uji (2 aktif + 1 draft) → `/berita` hanya
+  menampilkan 2; URL draft → **404**.
+- **XSS ditolak**: `isi` berisi `<script>`, `<img onerror>`, `<iframe>`,
+  `javascript:` → **0 elemen script/iframe/img**, `window.__XSS` & `__XSS2`
+  tetap `undefined`, HTML ter-escape jadi teks (`&lt;script&gt;`).
+  `**tebal**` → `<strong>`, `*miring*` → `<em>`, 6 paragraf dari 6 blok.
+- **Auth API**: `POST /api/blob-token`, `POST /api/upload/berita`,
+  `GET /api/upload/berita?konten=youtube` → semuanya **401** tanpa sesi.
+  `/admin/berita` → redirect ke `/admin/login`.
+- **Responsif** (diuji lewat iframe agar media query benar-benar aktif):
+  1440px → 3 kolom · 980px → 2 kolom · 760px → 1 kolom · 390px → 1 kolom.
+  **Tanpa overflow horizontal** di semua lebar.
+- **0 console error** di `/berita`, `/berita/[slug]`, `/`, `/kelas`.
+- Tanggal tampil bahasa Indonesia ("02 Oktober 2026"), zona Asia/Jakarta —
+  tidak bergeser meski server UTC.
+- Data uji sudah dihapus semua (tabel `Berita` = 0 baris).
+
+### Known issues (di luar cakupan task ini)
+
+- **`MAX_IMAGE_BYTES = 8MB` di `lib/schemas.ts` sudah melebihi batas produksi
+  4,5 MB.** Foto galeri berukuran 4,5–8 MB akan gagal 413 di Vercel.
+  Pesan errornya sudah ada di `UploadForm.tsx` (`pesanFromStatus(413)`), jadi
+  ini bukan bug baru — tapi batasnya belum konsisten (validasi bilang 8MB,
+  infrastruktur hanya menerima 4,5MB). **Belum diperbaiki** karena menyangkut
+  route galeri yang sedang berjalan.
+
+---
+
 ## [2026-09-28] — Admin Email Center (`/admin/email`)
 
 ### Fixed

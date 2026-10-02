@@ -205,6 +205,16 @@ export const CONTENT_SECTIONS: ContentSection[] = [
     ],
   },
   {
+    id: "berita",
+    title: "Berita",
+    description: "Label dan judul bagian Kabar Terbaru di beranda. Isi berita disunting di menu Berita.",
+    fields: [
+      { key: "berita.kicker", label: "Label bagian", defaultValue: "Kabar Terbaru" },
+      { key: "berita.title", label: "Judul (H2)", defaultValue: "Cerita terbaru dari kami" },
+      { key: "berita.lihatSemua", label: "Teks tombol", defaultValue: "Lihat Semua Berita" },
+    ],
+  },
+  {
     id: "kontak",
     title: "Kontak",
     description: "Label, judul, keterangan, dan teks tombol kontak.",
@@ -226,9 +236,11 @@ export const CONTENT_SECTIONS: ContentSection[] = [
       { key: "nav.about", label: "Menu - Tentang Kami", defaultValue: "Tentang Kami" },
       { key: "nav.visimisi", label: "Menu - Visi & Misi", defaultValue: "Visi & Misi" },
       { key: "nav.layanan", label: "Menu - Layanan", defaultValue: "Layanan" },
+      { key: "nav.jadwal", label: "Menu - Jadwal", defaultValue: "Jadwal" },
       { key: "nav.galeri", label: "Menu - Galeri", defaultValue: "Galeri" },
       { key: "nav.lokasi", label: "Menu - Lokasi", defaultValue: "Lokasi" },
       { key: "nav.testimoni", label: "Menu - Testimoni", defaultValue: "Testimoni" },
+      { key: "nav.berita", label: "Menu - Berita", defaultValue: "Berita" },
       { key: "nav.kontak", label: "Menu - Kontak", defaultValue: "Kontak" },
       { key: "footer.copyright", label: "Teks hak cipta", hint: "Tulisan {year} diganti otomatis dengan tahun berjalan.", defaultValue: "© {year} Talenta Cipta Karya. Semua hak dilindungi." },
     ],

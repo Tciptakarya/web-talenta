@@ -599,6 +599,218 @@
   .testi-who span{font-size:13px; color:var(--mist); font-weight:600;}
   .testi-who strong{display:block; font-size:14.5px; color:var(--navy);}
 
+  /* ---------- Berita (daftar + detail) ---------- */
+  .wrap-artikel{max-width:820px;}
+
+  .berita-kembali{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:14px; color:var(--navy); margin-bottom:26px;
+  }
+  .berita-kembali:hover{color:var(--gold);}
+
+  .berita-index-sub{
+    font-size:16.5px; color:#3B4568; margin-top:16px; max-width:560px;
+    margin-left:auto; margin-right:auto;
+  }
+
+  /* Grid: 3 kolom di desktop, 1 di mobile. Kartu memakai .reveal dari Reveal. */
+  .berita-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px;}
+  .berita-grid--page{margin-top:34px;}
+
+  .berita-card{
+    background:#fff; border:1px solid var(--line); border-radius:22px;
+    overflow:hidden; display:flex; flex-direction:column; height:100%;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s;
+  }
+  .berita-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--gold);
+    box-shadow:0 22px 46px -26px rgba(22,33,74,0.45);
+  }
+  .berita-card-media{display:block; line-height:0;}
+  .berita-card-body{padding:24px 24px 26px; display:flex; flex-direction:column; flex:1;}
+
+  .berita-meta{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    font-size:12.5px; font-weight:600; color:var(--mist);
+  }
+  .berita-meta--center{justify-content:center;}
+  .berita-kategori{
+    background:rgba(216,162,61,0.16); color:#8A6114;
+    padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .berita-card-title{
+    font-family:var(--font-fraunces),serif;
+    font-size:21px; font-weight:600; color:var(--navy);
+    margin-top:12px; line-height:1.3;
+  }
+  .berita-card-ringkas{
+    font-size:14.5px; color:#3B4568; line-height:1.6; margin-top:10px;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .berita-card-more{
+    margin-top:auto; padding-top:18px;
+    font-size:13.5px; font-weight:700; color:var(--gold);
+  }
+  .berita-card-more:hover{color:var(--blue);}
+
+  .berita-lihat-semua{text-align:center; margin-top:52px;}
+  .berita-lihat-semua .btn-ghost{display:inline-flex;}
+
+  /* Chip filter kategori. Tombol, bukan <a>: filter jalan di browser
+     (components/site/BeritaList.tsx) supaya /berita tetap static. */
+  .berita-filter{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:8px;
+  }
+  .berita-filter button{
+    display:inline-flex; align-items:center;
+    padding:9px 18px; border-radius:999px;
+    border:1.5px solid var(--line); background:#fff;
+    font-size:13.5px; font-weight:600; color:var(--navy);
+    transition:border-color .2s, background .2s, color .2s;
+  }
+  .berita-filter button:hover{border-color:var(--blue); color:var(--blue);}
+  .berita-filter button.is-active{background:var(--navy); border-color:var(--navy); color:#fff;}
+
+  .berita-kosong{
+    text-align:center; color:var(--mist); padding:56px 0; font-size:15px;
+  }
+
+  /* Empty state berita. WAJIB ada (bukan `return null`), karena menu
+     navbar/footer "Berita" memakai anchor /#berita — kalau section hilang,
+     mengklik menu tidak melakukan apa pun dan pengguna bingung. */
+  .berita-kosong-panel{
+    text-align:center;
+    max-width:520px;
+    margin:0 auto;
+    padding:48px 32px;
+    border:1.5px dashed var(--line);
+    border-radius:22px;
+    background:#fff;
+  }
+  .berita-kosong-icon{
+    width:44px; height:44px;
+    color:var(--mist);
+    opacity:0.55;
+    margin:0 auto 18px;
+    display:block;
+  }
+  .berita-kosong-judul{
+    font-family:var(--font-fraunces),serif;
+    font-size:21px; font-weight:600; color:var(--navy);
+  }
+  .berita-kosong-ket{
+    font-size:14.5px; color:#3B4568; line-height:1.65;
+    margin-top:12px; max-width:400px; margin-left:auto; margin-right:auto;
+  }
+  .berita-kosong-cta{margin-top:26px;}
+
+  /* ---------- Detail artikel ---------- */
+  .berita-detail-head{text-align:center; margin-bottom:32px;}
+  .berita-detail-title{
+    font-family:var(--font-fraunces),serif;
+    font-size:clamp(28px,4.4vw,42px); font-weight:600; color:var(--navy);
+    margin-top:16px; line-height:1.22;
+  }
+  .berita-detail-ringkas{
+    font-size:17px; color:#3B4568; line-height:1.65; margin-top:18px;
+  }
+  .berita-detail-media{
+    border-radius:22px; overflow:hidden; margin-bottom:38px;
+    border:1px solid var(--line);
+  }
+
+  /* Isi artikel. Baris kosong = <p> baru, dihasilkan BeritaBody.tsx.
+     Styling di sini TIDAK memakai <header>/<footer> sebagai pembungkus
+     (jebakan rule global di baris 131 & 646). */
+  .berita-isi{font-size:16.5px; line-height:1.78; color:#2E3856;}
+  .berita-isi p{margin-bottom:22px;}
+  .berita-isi p:last-child{margin-bottom:0;}
+  .berita-isi strong{color:var(--navy); font-weight:700;}
+
+  .berita-terkait{
+    margin-top:56px; padding-top:36px; border-top:1px solid var(--line);
+  }
+  .berita-terkait-title{
+    font-family:var(--font-fraunces),serif;
+    font-size:22px; font-weight:600; color:var(--navy); margin-bottom:20px;
+  }
+  .berita-terkait-list{list-style:none; display:grid; gap:12px;}
+  .berita-terkait-item{
+    display:block; padding:16px 18px; border:1px solid var(--line);
+    border-radius:14px; background:#fff; transition:border-color .2s;
+  }
+  .berita-terkait-item:hover{border-color:var(--gold);}
+  .berita-terkait-judul{
+    display:block; margin-top:8px; font-weight:600; font-size:16px; color:var(--navy);
+  }
+  .berita-terkait-tanggal{display:block; margin-top:6px; font-size:12.5px; color:var(--mist);}
+
+  /* ---------- 404 ----------
+     Menggantikan halaman 404 bawaan Next.js, yang menyuntik
+     `body{color:#000;background:#fff}` + `prefers-color-scheme:dark ->
+     background:#000` dan karena itu membypass design system + toggle dark
+     mode situs (terverifikasi: latar body jadi rgb(0,0,0) pekat).
+     Token warna disalin utuh dari :root / :root.dark supaya 404 punya
+     tampilan yang sama dengan halaman lain di kedua mode. */
+  .notfound{
+    text-align:center;
+    padding:56px 0 72px;
+    max-width:620px;
+    margin:0 auto;
+  }
+  /* Dipakai root app/not-found.tsx: tanpa navbar/footer, jadi harus
+     menyediakan latar sendiri. */
+  .notfound-standalone{
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:96px 20px;
+    background:var(--paper);
+  }
+  .notfound-kicker{justify-content:center;}
+  .notfound-angka{
+    font-family:var(--font-fraunces),serif;
+    font-size:clamp(88px,17vw,168px);
+    font-weight:600;
+    line-height:1;
+    letter-spacing:-0.02em;
+    margin:6px 0 0;
+    /* WAJIB longhand `background-image`, bukan `background`. Shorthand
+       `background` me-RESET `background-clip` ke `border-box`, sehingga
+       gradien memenuhi seluruh kotak dan angka "404" tampil sebagai blok
+       warna solid, bukan digit. */
+    background-image:linear-gradient(180deg,var(--blue) 0%,var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+  }
+  .notfound-judul{
+    font-family:var(--font-fraunces),serif;
+    font-size:clamp(23px,3.2vw,32px);
+    font-weight:600;
+    color:var(--navy);
+    margin-top:14px;
+    line-height:1.3;
+  }
+  .notfound-keterangan{
+    font-size:16px;
+    color:#3B4568;
+    margin-top:16px;
+    line-height:1.65;
+  }
+  .notfound-aksi{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    margin-top:34px;
+  }
+
   /* ---------- Kontak ---------- */
   .kontak-grid{display:grid; grid-template-columns:0.8fr 1.2fr; gap:56px;}
   .kontak-side{color:#fff;}
@@ -679,19 +891,72 @@
   .to-top svg{width:20px; height:20px;}
 
   /* ---------- Responsive ---------- */
+  /* Navbar dengan 8 menu (Tentang Kami, Visi & Misi, Layanan, Jadwal,
+     Galeri, Berita, Lokasi, Testimoni) butuh ruang yang jauh lebih besar
+     daripada 7 menu. Dihitung dari `getBoundingClientRect` (setelah font
+     & logo selesai dimuat):
+
+       logo 201px + nav 701px + CTA 160px = 1062px, plus 2x gap 27px
+       -> butuh viewport >= 1150px supaya tetap lapang.
+
+     Di 761-1200px spacing semula membuat gap logo-ke-menu dan menu-ke-CTA = 0px
+     (bertumpuk). Diperbaiki dengan mengencangkan jarak, ukuran font, dan
+     tinggi logo HANYA di rentang 941-1200px. Di atas 1200px styling asli
+     tetap dipakai (gap 27px, sudah lapang).
+
+     PENTING: 8 menu TIDAK MUNGKIN muat di bawah ~940px — jumlah lebar
+     minimumnya (logo 141 + nav 554 + CTA 160 + 2x gap 20) = 895px sudah
+     melebihi lebar konten di 940px. Zona 761-940 masih memakai menu
+     hamburger yang ada, tapi baru aktif <=760px; zona itu masih rapat dan
+     sengaja TIDAK diubah di sini karena itu keputusan desain (lihat
+     TODO.md). */
+  @media (min-width:941px) and (max-width:1200px){
+    nav.main-nav{gap:20px;}
+    nav.main-nav a{font-size:13px;}
+    .brand img{height:140px;}
+  }
   @media (max-width:980px){
     .hero .wrap, .about-grid, .vm-grid, .lokasi-grid, .kontak-grid{grid-template-columns:1fr; }
     .hero-art{height:300px; order:-1;}
     .gallery-grid{grid-template-columns:repeat(2,1fr);}
     .testi-grid{grid-template-columns:1fr;}
+    .berita-grid{grid-template-columns:repeat(2,1fr);}
     .misi-list{grid-template-columns:1fr;}
     .about-panel{order:2;}
+  }
+  /* Menu drawer (hamburger) untuk lebar <=960px.
+     Kenapa 960 dan bukan 760 (nilai aslinya): dengan 8 menu, lebar minimum
+     navbar penuh = logo 141 + nav 554 + CTA 160 + 2x gap 20 = 895px, sedangkan
+     lebar konten di 960px hanya 896px. Jadi di bawah ~960px MUSTAHIL
+     menampilkan semua menu tanpa bertumpuk — terverifikasi di 850px: logo
+     menempel dan nabrak menu "Tentang Kami" (gap 0px).
+
+     Rules ini SALINAN dari blok `@media (max-width:760px)` di bawah dengan
+     nilai identik, jadi perilaku pada <=760px tidak berubah sama sekali.
+     Sengaja aslinya tidak dihapus agar risiko regresi nol. */
+  @media (max-width:960px){
+    .brand img{height:130px;}
+    .hero{padding-top:200px;}
+    .section-page{padding-top:190px;}
+    nav.main-nav{
+      position:fixed; top:0; right:0; height:100vh; width:78%; max-width:320px;
+      background:#fff; flex-direction:column; align-items:flex-start; padding:100px 32px 40px;
+      gap:26px; transform:translateX(100%); transition:transform .45s var(--ease); box-shadow:-20px 0 60px rgba(22,33,74,0.2);
+    }
+    nav.main-nav.open{transform:translateX(0);}
+    .mobile-nav-close{display:block;}
+    .menu-toggle{display:block;}
+    .nav-cta .btn-ghost{display:none;}
+    :root.dark nav.main-nav{background:var(--paper-alt);}
   }
   @media (max-width:760px){
     .brand img{height:130px;}
     header.is-scrolled .brand img{height:90px;}
     .hero{padding-top:200px;}
     .section-page{padding-top:190px;}
+    .berita-grid{grid-template-columns:1fr;}
+    .berita-card-body{padding:20px 20px 22px;}
+    .berita-lihat-semua{margin-top:36px;}
     nav.main-nav{
       position:fixed; top:0; right:0; height:100vh; width:78%; max-width:320px;
       background:#fff; flex-direction:column; align-items:flex-start; padding:100px 32px 40px;
@@ -759,6 +1024,7 @@
 :root.dark h3,
 :root.dark h4,
 :root.dark .text-navy,
+:root.dark .notfound-judul,
 :root.dark .btn-ghost,
 :root.dark nav.main-nav a,
 :root.dark .menu-toggle svg,
@@ -772,7 +1038,14 @@
 :root.dark .testi-card p.msg,
 :root.dark .testi-who strong,
 :root.dark .field label,
-:root.dark .theme-toggle{
+:root.dark .theme-toggle,
+:root.dark .berita-kembali,
+:root.dark .berita-card-title,
+:root.dark .berita-detail-title,
+:root.dark .berita-terkait-title,
+:root.dark .berita-terkait-judul,
+:root.dark .berita-filter button,
+:root.dark .berita-isi strong{
   color:#ECEFF9;
 }
 
@@ -789,10 +1062,44 @@
 :root.dark .testi-card,
 :root.dark .kontak-form,
 :root.dark .scroll-arrow,
+:root.dark .berita-card,
+:root.dark .berita-filter button,
+:root.dark .berita-terkait-item,
 :root.dark .bg-white{
   background:var(--paper-alt);
   border-color:var(--line);
 }
+
+/* Teks isi artikel & ringkasan: warna "body" di atas latar gelap. */
+:root.dark .berita-index-sub,
+:root.dark .berita-detail-ringkas,
+:root.dark .berita-card-ringkas{
+  color:#B9C3DE;
+}
+:root.dark .berita-isi{color:#D2D9EC;}
+
+:root.dark .berita-kosong-panel{
+  background:var(--paper-alt); border-color:var(--line);
+}
+:root.dark .berita-kosong-judul{color:#ECEFF9;}
+:root.dark .berita-kosong-ket{color:#B9C3DE;}
+
+/* --- 404 --- */
+:root.dark .notfound-keterangan{color:#B9C3DE;}
+/* Gradient biru→emas terlalu gelap di atas latar gelap, jadi lighten. */
+:root.dark .notfound-angka{
+  /* Longhand, bukan `background` — lihat catatan di .notfound-angka. */
+  background-image:linear-gradient(180deg,var(--blue-bright) 0%,var(--gold) 100%);
+}
+
+/* Chip aktif tetap biru terang agar kontras (navy murni terlalu redup). */
+:root.dark .berita-filter button.is-active{
+  background:var(--blue); border-color:var(--blue); color:#fff;
+}
+:root.dark .berita-kategori{
+  background:rgba(216,162,61,0.22); color:var(--gold-dim);
+}
+:root.dark .berita-detail-media{border-color:var(--line);}
 
 /* menu mobile memakai background:#fff — hanya di layar kecil */
 @media (max-width:760px){
