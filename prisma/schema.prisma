@@ -86,12 +86,14 @@ model Testimonial {
 /// HTML/JS (lihat DECISIONS.md).
 ///
 /// Media: `imageUrl` (foto utama, hasil `storeImage`) + `videoUrl` (video
-/// yang diunggah ke Vercel Blob) ATAU `videoLink` (embed YouTube/Vimeo).
+/// yang diunggah ke Vercel Blob) ATAU `videoLink` (embed YouTube/Vimeo/
+/// Instagram).
 ///
-/// `videoLink` hanya berisi ID video dengan prefix host — `yt:<id>` atau
-/// `vm:<id>` — bukan URL penuh. Alasannya: komponen publik membangun sendiri
-/// URL embed dari ID, jadi admin tidak bisa menyuntikkan domain atau
-/// parameter lain lewat kolom ini. Thumbnail YouTube juga diturunkan dari ID.
+/// `videoLink` hanya berisi ID video dengan prefix host — `yt:<id>`,
+/// `vm:<id>`, atau `ig:<shortcode>` — bukan URL penuh. Alasannya: komponen
+/// publik membangun sendiri URL embed dari ID, jadi admin tidak bisa
+/// menyuntikkan domain atau parameter lain lewat kolom ini. Thumbnail
+/// YouTube juga diturunkan dari ID.
 model Berita {
   id        Int      @id @default(autoincrement())
   judul     String
@@ -101,7 +103,11 @@ model Berita {
   imageUrl  String? // foto utama (Vercel Blob / /uploads)
   imageAlt  String? // alt teks foto utama (aksesibilitas)
   videoUrl  String? // video yang diunggah (Vercel Blob)
-  videoLink String? // "yt:<id>" | "vm:<id>" - alternatif videoUrl
+  videoLink String? // "yt:<id>" | "vm:<id>" | "ig:<shortcode>" - alternatif videoUrl
+  /// Orientasi video: "horizontal" (16:9, default) | "vertical" (9:16).
+  /// Penting untuk YouTube Shorts / Reels: player YouTube selalu 16:9, jadi
+  /// video vertikal hanya jadi "pillarbox" kecil di tengah kotak lebar.
+  orientasi String   @default("horizontal")
   tanggal   DateTime @default(now()) // tanggal kegiatan (bukan tanggal tulis)
   kategori  String? // mis. "Pelatihan" | "Kemitraan" | "Sosial" (bebas)
   /// false = draft: tersimpan di admin, TIDAK tampil di halaman publik.

@@ -50,6 +50,86 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-10-02] — Orientasi video vertikal (9:16) + dukungan Instagram Reels
+
+### Added
+
+- **Field `orientasi` di model `Berita`** (`horizontal` | `vertical`, default
+  `horizontal`). Nilainya String + validasi Zod, mengikuti konvensi project
+  (bukan Prisma enum). Kolom baru di-index, `prisma db push` additive.
+- **Pemilih orientasi di `/admin/berita`**: dua pilihan radio —
+  "Mendatar (16:9)" dan "Vertikal (9:16)". Berlaku untuk YouTube Shorts,
+  Instagram Reels, **dan** file MP4 yang diunggah.
+- **`.berita-media-vertikal` di `app/globals.css`** — `aspect-ratio: 9/16`,
+  `max-width: 420px`, dipusatkan. Menghormati orientasi di halaman detail.
+- **Dukungan Instagram Reels/IGTV/post** di `parseVideoLink()`. Prefix baru
+  `ig:` di kolom `videoLink` (`yt:` / `vm:` / `ig:`), plus renderer khusus
+   `IgEmbed` di `components/site/BeritaMedia.tsx` (blockquote + `embed.js`).
+
+### Fixed
+
+- **Video vertikal (9:16) hanya jadi kotak kecil di tengah.** Player YouTube
+  selalu 16:9 apa pun orientasi sumber. Terverifikasi dengan Shorts asli
+  (`8swwjbW0vls`): video vertikal hanya ~240px lebar di dalam kotak
+  721×406px. Setelah ada mode vertikal: kontainer **420×747px, rasio 0.563
+  = 9:16 persis** — lebar video naik ~75%. Kontrol (mode horizontal) tetap
+  754×424px, rasio 1.778 = 16:9, tidak berubah.
+
+### Technical Notes
+
+- **Kartu di daftar SELALU 16:9, apa pun orientasi videonya.** Kalau kartu
+  ikut 9:16, grid 3 kolom akan ikut meninggi dan baris kartu tidak rata.
+  Orientasi hanya dihormati di halaman detail — di situlah yang ditonton
+  sungguhan. Ini keputusan sadar, bukan kelalaian.
+- **`/p/` dipakai untuk permalink Instagram, bukan `/reel/`.** Ini justru
+  yang **lebih aman**: dokumentasi Meta menyatakan `/p/`, `/reel/`, `/tv/`
+  semua resolve ke media yang sama (prefix cuma "routing hint" untuk SEO),
+  dan ada satu pengecualian nyata — **carousel 404 kalau dipaksa `/reel/`**.
+  Karena kode hanya menyimpan shortcode (bukan tipe path), memakai `/p/`
+  menutup celah itu.
+- **Cara embed Instagram: `blockquote` + `instagram.com/embed.js`**, sama
+  seperti kode "Embed" yang Instagram berikan sendiri. Alternatifnya memanggil
+  endpoint oEmbed Meta di server — tapi itu menambah ketergantungan ke API
+  Meta tanpa mengurangi risiko.
+- **Skrip `instagram.com/embed.js` dimuat `lazyOnload` dan HANYA di halaman
+  yang benar-benar punya embed Instagram.** Ini skrip pihak ketiga yang
+  berjalan di domain kita; risikonya dibatasi seminimal mungkin.
+  Embed Instagram memang bisa mati sendiri (konten jadi privat / dihapus /
+  creator mematikan Embeds) — itu perilaku Instagram, dan teks cadangan
+  `<noscript>` sudah disediakan.
+
+### Verified
+
+- **`parseVideoLink()` 18/18 benar**: YouTube (5 format termasuk `/shorts/`,
+  Vimeo (2), Instagram (`/reel/`, `/p/`, `/tv/`, `instagr.am`). Yang
+  **ditolak**: URL profil Instagram, `/stories/`, `evil.example.com`,
+  `javascript:`, path traversal `../../etc/passwd`, dan
+  `';alert(1)--`.
+- **Orientasi lewat form**: `horizontal` & `vertical` lolos Zod, nilai
+  ngawur ditolak, kosong → default `horizontal`. Prefix host untuk ketiga
+  host benar (`yt:` / `vm:` / `ig:`).
+- **Normalisasi data rusak**: `beritaRows()` mengubah nilai `orientasi`
+  di luar daftar menjadi `horizontal`, jadi baris DB yang rusak tidak
+  sampai ke UI.
+- **Pengukuran nyata di browser** (lebar/detail): vertikal 420×747 (0.563),
+  horizontal 754×424 (1.778). Blockquote Instagram + `embed.js` termuat
+  di halaman yang tepat, dan **tidak** termuat di halaman lain.
+- `npx tsc --noEmit` 0 error · `npm run build` hijau. Data uji dihapus
+  (tabel `Berita` = 0 baris).
+
+### Yang BELUM teruji — dan alasannya
+
+- **Panel `/admin/berita` tidak bisa diuji tanpa sesi admin.** Alur
+  `orientasi` (form → Server Action → Zod → Prisma) sudah diverifikasi
+  secara programatis dengan FormData simulasi, tapi **tampilan radio button
+  di browser belum pernah dibuka** oleh saya. Perlu Dicek user.
+- **Embed Instagram belum diuji dengan shortcode ASLI.** Shortcode yang
+  dipakai saat uji fiktif, jadi yang terverifikasi adalah "blockquote +
+  script ter-render dengan benar", bukan "Instagram benar-benar memutar
+  video itu". Embed bisa juga gagal nanti kalau kontennya jadi privat.
+
+---
+
 ## [2026-10-02] — Section Berita dipindahkan ke atas "Tentang Kami"
 
 - **Posisi section "Kabar Terbaru" di beranda dipindahkan**: dari *setelah

@@ -99,21 +99,37 @@ export const BERITA_VIDEO_BYTES = 200 * 1024 * 1024;
 /** Pola ID video — hanya 11 karakter (YouTube) atau 6-12 digit (Vimeo). */
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
 const VIMEO_ID = /^\d{6,12}$/;
+/**
+ * Shortcode Instagram. Formatnya berubah beberapa kali; yang aman hanyalah
+ * "huruf, angka, garis bawah, strip" dengan panjang masuk akal. Pola longgar
+ * ini disengaja: shortcode selalu dipakai untuk membangun URL di server
+ * sendiri, jadi karakter yang bisa "keluar dari path" sudah dikecualikan.
+ */
+const IG_SHORTCODE = /^[A-Za-z0-9_-]{5,60}$/;
+
+/** Host video yang didukung. */
+export type VideoHost = "youtube" | "vimeo" | "instagram";
 
 /**
- * Ubah URL YouTube/Vimeo jadi `{ host, id }`, atau `null` bila bukan
- * keduanya.
+ * Ubah URL YouTube / Vimeo / Instagram jadi `{ host, id }`, atau `null`
+ * bila bukan salah satu dari ketiganya.
  *
  * **Hanya ID yang disimpan ke database**, bukan URL penuh. Ini disengaja:
  * komponen publik membangun sendiri URL embed dari ID, jadi admin tidak bisa
  * menyuntikkan domain atau parameter lain lewat kolom ini.
  *
- * Yang diterima: `youtube.com/watch?v=ID`, `youtu.be/ID`,
- * `youtube.com/shorts/ID`, `youtube.com/embed/ID`, `player.vimeo.com/video/ID`.
+ * Yang diterima:
+ * - YouTube: `youtube.com/watch?v=ID`, `youtu.be/ID`, `youtube.com/shorts/ID`,
+ *   `youtube.com/embed/ID`, `youtube.com/live/ID`
+ * - Vimeo: `vimeo.com/ID`, `player.vimeo.com/video/ID`
+ * - Instagram: `instagram.com/reel/KODE`, `instagram.com/p/KODE`,
+ *   `instagram.com/tv/KODE`, `instagr.am/...`
+ *
+ * **Instagram hanya bisa di-embed jika kontennya PUBLIK** dan creator tidak
+ * mematikan pengaturan Embeds. Itu checked Instagram, bukan bisa kita
+ * periksa di sini — makanya pesannya jujur, bukan menjanjikan.
  */
-export function parseVideoLink(
-  raw: string
-): { host: "youtube" | "vimeo"; id: string } | null {
+export function parseVideoLink(raw: string): { host: VideoHost; id: string } | null {
   const s = raw.trim();
   if (!s) return null;
 
@@ -125,13 +141,25 @@ export function parseVideoLink(
   const vm = s.match(/vimeo\.com\/(?:video\/)?(\d{6,12})/);
   if (vm && VIMEO_ID.test(vm[1])) return { host: "vimeo", id: vm[1] };
 
+  // Instagram: hanya path /reel, /p, /tv. Path profil & /stories TIDAK
+  // bisa di-embed (dokumentasi resmi Instagram oEmbed), jadi sengaja tidak
+  // dicocokkan — supaya admin mendapat pesan error, bukan embed kosong.
+  const ig = s.match(
+    /(?:instagram\.com|instagr\.com|instagr\.am)\/(?:reel|p|tv)\/([A-Za-z0-9_-]{5,60})/
+  );
+  if (ig && IG_SHORTCODE.test(ig[1])) return { host: "instagram", id: ig[1] };
+
   return null;
 }
 
+/** Orientasi video — `vertical` untuk YouTube Shorts / Reels (9:16). */
+export const ORIENTASI_BERITA = ["horizontal", "vertical"] as const;
+export type OrientasiBerita = (typeof ORIENTASI_BERITA)[number];
+
 /** URL thumbnail YouTube — diturunkan dari ID, bukan dari input admin. */
-export function videoPosterUrl(videoId: string, host: "youtube" | "vimeo"): string | null {
+export function videoPosterUrl(videoId: string, host: VideoHost): string | null {
   if (host === "youtube") return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  return null; // Vimeo tidak menyediakan thumbnail gratis tanpa API key
+  return null; // Vimeo & Instagram tidak menyediakan thumbnail gratis tanpa API key
 }
 
 /**
@@ -162,6 +190,7 @@ export const beritaSchema = z
     imageAlt: z.string().trim().max(300, "Alt teks maksimal 300 karakter").optional().or(z.literal("")),
     videoUrl: z.string().trim().max(500).optional().or(z.literal("")),
     videoLink: z.string().trim().max(300).optional().or(z.literal("")),
+    orientasi: z.enum(ORIENTASI_BERITA).default("horizontal"),
     tanggal: z
       .string()
       .trim()
@@ -172,7 +201,7 @@ export const beritaSchema = z
   })
   .refine((d) => !(d.videoUrl && d.videoLink), {
     message:
-      "Pilih salah satu: video yang diunggah ATAU link YouTube/Vimeo — jangan keduanya.",
+      "Pilih salah satu: video yang diunggah ATAU link YouTube/Vimeo/Instagram — jangan keduanya.",
     path: ["videoLink"],
   });
 

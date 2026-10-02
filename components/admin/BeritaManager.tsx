@@ -30,6 +30,7 @@ export type AdminBerita = {
   /** ID video (sudah dipisah dari host) atau null. */
   videoLink: string | null;
   videoHost: string | null;
+  orientasi: "horizontal" | "vertical";
   /** "YYYY-MM-DD" di zona WIB — untuk <input type="date">. */
   tanggal: string;
   kategori: string | null;
@@ -80,15 +81,22 @@ function MediaFields({
   imageAlt,
   videoUrl,
   videoLink,
+  orientasi,
+  idPrefix,
 }: {
   imageUrl: string;
   imageAlt: string;
   videoUrl: string;
   videoLink: string;
+  orientasi: "horizontal" | "vertical";
+  /** Unik per form, supaya `id` label tidak bentrok saat form tambah & edit
+      dirender bersamaan di halaman yang sama. */
+  idPrefix: string;
 }) {
   const [foto, setFoto] = useState(imageUrl);
   const [video, setVideo] = useState(videoUrl);
   const [link, setLink] = useState(videoLink);
+  const [arah, setArah] = useState<"horizontal" | "vertical">(orientasi);
   const [pesan, setPesan] = useState<Pesan>(null);
   const [progres, setProgres] = useState<number | null>(null);
   const [sibuk, setSibuk] = useState(false);
@@ -217,11 +225,11 @@ function MediaFields({
     <div className="space-y-4">
       {/* ---- Foto utama ---- */}
       <div>
-        <label className={labelCls} htmlFor={`foto-${imageUrl || "baru"}`}>
+        <label className={labelCls} htmlFor={`foto-${idPrefix}`}>
           Foto utama (opsional)
         </label>
         <input
-          id={`foto-${imageUrl || "baru"}`}
+          id={`foto-${idPrefix}`}
           ref={fileFoto}
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -251,11 +259,11 @@ function MediaFields({
           </div>
         )}
         <div className="mt-3">
-          <label className={labelCls} htmlFor={`alt-${imageUrl || "baru"}`}>
+        <label className={labelCls} htmlFor={`alt-${idPrefix}`}>
             Alt teks foto (untuk aksesibilitas)
           </label>
           <input
-            id={`alt-${imageUrl || "baru"}`}
+            id={`alt-${idPrefix}`}
             name="imageAlt"
             defaultValue={imageAlt}
             maxLength={300}
@@ -272,11 +280,11 @@ function MediaFields({
         </p>
 
         <div>
-          <label className={labelCls} htmlFor={`video-${videoUrl || "baru"}`}>
+          <label className={labelCls} htmlFor={`video-${idPrefix}-video`}>
             Unggah video (MP4/WebM, maks 200MB)
           </label>
           <input
-            id={`video-${videoUrl || "baru"}`}
+            id={`video-${idPrefix}-video`}
             ref={fileVideo}
             type="file"
             accept="video/mp4,video/webm"
@@ -306,16 +314,16 @@ function MediaFields({
         </p>
 
         <div>
-          <label className={labelCls} htmlFor={`link-${videoLink || "baru"}`}>
-            Tempel link YouTube / Vimeo
+          <label className={labelCls} htmlFor={`link-${idPrefix}-link`}>
+            Tempel link YouTube / Vimeo / Instagram
           </label>
           <div className="flex gap-2">
             <input
-              id={`link-${videoLink || "baru"}`}
+              id={`link-${idPrefix}-link`}
               name="videoLink"
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=..."
+              placeholder="https://www.youtube.com/shorts/..."
               className={inputCls}
             />
             <button
@@ -330,7 +338,53 @@ function MediaFields({
           </div>
           <p className="mt-1 text-xs text-mist">
             Untuk video panjang (&gt;200MB), pakai link YouTube — lebih ringan dan
-            tidak memakai storage website.
+            tidak memakai storage website. Instagram hanya bisa untuk konten{" "}
+            <strong>publik</strong> yang creator-nya tidak mematikan Embeds;
+            kalau tidak, Instagram menampilkan kartu cadangan berisi tautan.
+          </p>
+        </div>
+
+        {/* ---- Orientasi video ---- */}
+        <div>
+          <span className={labelCls}>Orientasi video</span>
+          <div
+            role="radiogroup"
+            aria-label="Orientasi video"
+            className="flex flex-wrap gap-2"
+          >
+            {(
+              [
+                ["horizontal", "Mendatar (16:9)", "Video biasa, foto, atau YouTube biasa."],
+                ["vertical", "Vertikal (9:16)", "YouTube Shorts & Reels."],
+              ] as const
+            ).map(([val, judul, ket]) => (
+              <label
+                key={val}
+                className={`flex-1 min-w-[190px] cursor-pointer rounded-xl border-[1.5px] px-4 py-3 transition ${
+                  arah === val ? "border-navy bg-paper" : "border-line bg-white"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="orientasi"
+                    value={val}
+                    checked={arah === val}
+                    onChange={() => setArah(val)}
+                    className="h-4 w-4 accent-navy"
+                  />
+                  <strong className="text-xs text-navy">{judul}</strong>
+                </span>
+                <span className="mt-1 block text-[11px] text-mist">{ket}</span>
+              </label>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-mist">
+            Player YouTube selalu 16:9. Untuk video 9:16, pilih{" "}
+            <strong>Vertikal</strong> supaya tidak cuma jadi kotak kecil di tengah
+            layar lebar. Berlaku juga untuk file MP4 yang diunggah. Di daftar
+            berita &amp; beranda, kartu tetap 16:9 supaya tinggi semua kartu
+            seragam.
           </p>
         </div>
       </div>
@@ -458,6 +512,8 @@ function EditRow({ item }: { item: AdminBerita }) {
           imageAlt={item.imageAlt ?? ""}
           videoUrl={item.videoUrl ?? ""}
           videoLink={item.videoLink ?? ""}
+          orientasi={item.orientasi}
+          idPrefix={`edit-${item.id}`}
         />
 
         <button
@@ -595,7 +651,14 @@ export default function BeritaManager({ items }: { items: AdminBerita[] }) {
           </div>
         </div>
 
-        <MediaFields imageUrl="" imageAlt="" videoUrl="" videoLink="" />
+        <MediaFields
+          imageUrl=""
+          imageAlt=""
+          videoUrl=""
+          videoLink=""
+          orientasi="horizontal"
+          idPrefix="baru"
+        />
 
         <button
           type="submit"

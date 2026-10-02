@@ -288,6 +288,16 @@ export async function deleteCategory(
 /* ------------------------------------ Berita ----------------------------------- */
 
 /**
+ * Prefix host di kolom `videoLink` — memetakan `VideoHost` ke kode 2 huruf
+ * supaya tidak perlu kolom `videoHost` terpisah di database.
+ */
+const HOST_PREFIX = {
+  youtube: "yt",
+  vimeo: "vm",
+  instagram: "ig",
+} as const;
+
+/**
  * Bentuk data berita dari FormData, termasuk verifikasi link video.
  *
  * Dua hal yang dijamin di sini (bukan dipercaya dari form):
@@ -305,6 +315,7 @@ async function beritaData(formData: FormData, excludeId?: number) {
     imageAlt: formData.get("imageAlt") ?? "",
     videoUrl: formData.get("videoUrl") ?? "",
     videoLink: formData.get("videoLink") ?? "",
+    orientasi: formData.get("orientasi") || "horizontal",
     tanggal: formData.get("tanggal") ?? "",
     kategori: formData.get("kategori") ?? "",
     isActive: formData.get("isActive") === "on",
@@ -321,7 +332,7 @@ async function beritaData(formData: FormData, excludeId?: number) {
   if (rawLink && !link) {
     return {
       error:
-        "Link video tidak dikenali. Tempel URL YouTube (youtube.com/watch?v=...) atau Vimeo (vimeo.com/...).",
+        "Link video tidak dikenali. Tempel URL YouTube (youtube.com/watch?v=... atau /shorts/...), Vimeo (vimeo.com/...), atau Instagram (instagram.com/reel/...).",
     } as const;
   }
 
@@ -354,7 +365,7 @@ async function beritaData(formData: FormData, excludeId?: number) {
       imageUrl: parsed.data.imageUrl || null,
       imageAlt: parsed.data.imageAlt || null,
       videoUrl: parsed.data.videoUrl || null,
-      videoLink: link ? `${link.host === "youtube" ? "yt" : "vm"}:${link.id}` : null,
+      videoLink: link ? `${HOST_PREFIX[link.host]}:${link.id}` : null,
       kategori: parsed.data.kategori || null,
       tanggal,
     },

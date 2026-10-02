@@ -628,6 +628,7 @@ const BERITA_SELECT = {
   imageAlt: true,
   videoUrl: true,
   videoLink: true,
+  orientasi: true,
   tanggal: true,
   kategori: true,
   isActive: true,
@@ -636,8 +637,8 @@ const BERITA_SELECT = {
 /**
  * `videoLink` di database hanya berisi ID video (lihat `parseVideoLink`),
  * sedangkan `BeritaRow` juga butuh `videoHost`. Di sini ID di-prefix `yt:` /
- * `vm:` supaya host ikut tersimpan di satu kolom — tanpa kolom terpisah,
- * dan tanpa menyimpan URL penuh yang bisa disuntikkan admin.
+ * `vm:` / `ig:` supaya host ikut tersimpan di satu kolom — tanpa kolom
+ * terpisah, dan tanpa menyimpan URL penuh yang bisa disuntikkan admin.
  */
 function beritaRows(rows: {
   id: number;
@@ -649,26 +650,37 @@ function beritaRows(rows: {
   imageAlt: string | null;
   videoUrl: string | null;
   videoLink: string | null;
+  orientasi: string;
   tanggal: Date;
   kategori: string | null;
   isActive: boolean;
 }[]): BeritaRow[] {
+  const PREFIX: Record<string, BeritaRow["videoHost"]> = {
+    yt: "youtube",
+    vm: "vimeo",
+    ig: "instagram",
+  };
   return rows.map((r) => {
     const raw = r.videoLink?.trim() ?? "";
     let videoLink: string | null = null;
-    let videoHost: string | null = null;
+    let videoHost: BeritaRow["videoHost"] = null;
     if (raw) {
-      const m = raw.match(/^(yt|vm):(.+)$/);
+      const m = raw.match(/^(yt|vm|ig):(.+)$/);
       if (m) {
-        videoHost = m[1] === "yt" ? "youtube" : "vimeo";
+        videoHost = PREFIX[m[1]] ?? null;
         videoLink = m[2];
       } else {
-        // Data lama tanpa prefix: coba tebak dari panjang ID.
+        // Data lama tanpa prefix: tebak dari panjang ID (YouTube = 11).
         videoHost = raw.length === 11 ? "youtube" : "vimeo";
         videoLink = raw;
       }
     }
-    return { ...r, videoLink, videoHost };
+    return {
+      ...r,
+      videoLink,
+      videoHost,
+      orientasi: r.orientasi === "vertical" ? "vertical" : "horizontal",
+    };
   });
 }
 

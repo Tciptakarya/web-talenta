@@ -44,7 +44,33 @@ Sisa pekerjaan non-kode (butuh aksi user di dashboard):
 
 ## Last Completed Work
 
-**Task terbaru: section Berita dipindah ke atas "Tentang Kami"** (2026-10-02) —
+**Task terbaru: orientasi video vertikal (9:16) + dukungan Instagram Reels**
+(2026-10-02) — **selesai, BELUM di-commit**:
+
+- Kolom baru `orientasi` di model `Berita` (`horizontal` | `vertical`,
+  default `horizontal`), validasi Zod, `prisma db push` additive.
+- Pemilih orientasi di `/admin/berita` (radio "Mendatar 16:9" / "Vertikal
+  9:16"). Berlaku untuk YouTube Shorts, Reels, **dan** file MP4 unggahan.
+- CSS `.berita-media-vertikal` (9:16, max-width 420px, dipusatkan).
+  **Kartu di daftar tetap 16:9** — hanya halaman detail yang menghormati
+  orientasi (kalau kartu ikut 9:16, grid akan tidak rata).
+- Dukungan Instagram: `parseVideoLink()` menerima `/reel/`, `/p/`, `/tv/`,
+  `instagr.am`; prefix `ig:`; renderer `IgEmbed` (blockquote +
+  `instagram.com/embed.js`, dimuat `lazyOnload` **hanya** di halaman yang
+  punya embed IG).
+- **Bukti perbaikan masalah aslinya**: dengan Shorts asli, video vertikal
+  hanya ~240px di kotak 721×406px. Sesudah mode vertikal: kontainer
+  **420×747px, rasio 0.563 = 9:16 persis**. Kontrol horizontal tetap
+  754×424px (1.778).
+- **Instagram embed dibuktikan mungkin**: endpoint oEmbed Meta dipanggil
+  tanpa token dan errornya `Media Not Found` (kode 24), bukan
+  `Invalid OAuth token` — artinya request lolos autentikasi. Tokenless
+  sejak 15 Juni 2026.
+- `parseVideoLink()` 18/18 benar (path traversal & `';alert(1)--` ditolak).
+- **Belum teruji**: panel admin (butuh sesi login) & embed IG dengan
+  shortcode asli. Detail di `CHANGELOG.md`.
+
+**Task sebelumnya: section Berita dipindah ke atas "Tentang Kami"** (2026-10-02) —
 **selesai & terverifikasi, BELUM di-commit**:
 
 - Posisi section "Kabar Terbaru" di beranda: dari setelah Galeri → **tepat di

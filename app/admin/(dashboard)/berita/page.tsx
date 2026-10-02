@@ -14,8 +14,8 @@ export default async function BeritaPage() {
     .catch(() => []);
 
   const items: AdminBerita[] = rows.map((r) => {
-    // Pisahkan "yt:<id>" / "vm:<id>" jadi id + host untuk form.
-    const m = r.videoLink?.match(/^(yt|vm):(.+)$/);
+    // Pisahkan "yt:<id>" / "vm:<id>" / "ig:<kode>" jadi id + host untuk form.
+    const m = r.videoLink?.match(/^(yt|vm|ig):(.+)$/);
     return {
       id: r.id,
       judul: r.judul,
@@ -26,7 +26,14 @@ export default async function BeritaPage() {
       imageAlt: r.imageAlt,
       videoUrl: r.videoUrl,
       videoLink: m ? m[2] : null,
-      videoHost: m ? (m[1] === "yt" ? "youtube" : "vimeo") : null,
+      videoHost: m
+        ? m[1] === "yt"
+          ? "youtube"
+          : m[1] === "vm"
+            ? "vimeo"
+            : "instagram"
+        : null,
+      orientasi: r.orientasi === "vertical" ? "vertical" : "horizontal",
       tanggal: ymdWib(r.tanggal),
       kategori: r.kategori,
       isActive: r.isActive,

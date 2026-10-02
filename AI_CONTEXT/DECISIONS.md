@@ -1993,3 +1993,105 @@ padahal sudah di-seed".
 Di produksi tidak ada penundaan: `refresh()` di `app/admin/actions.ts`
 memanggil `revalidatePath("/", "layout")` setiap admin menekan Simpan, jadi
 cache langsung dibuang.
+
+
+---
+
+## Decision: Video vertikal butuh mode orientasi sendiri; embed pakai pola Instagram
+
+**Tanggal**: 2026-10-02 · **Status**: diterapkan
+
+### Konteks
+
+User bertanya apakah berita bisa menampilkan video vertikal 9:16 seperti
+User bertanya apakah berita bisa menampilkan video vertikal 9:16 seperti
+YouTube Shorts atau Instagram Reels. Jawabannya ternyata: **YouTube sudah
+bisa, tapi tampilannya buruk; Instagram baru mungkin sejak Juni 2026.**
+
+### 1. Embed Instagram - fakta yang mengubah jawaban
+
+Dulu embed Instagram di situs pihak ketiga dianggap mustahil. Sekarang
+tidak: **sejak 15 Juni 2026 endpoint oEmbed Meta menjadi tokenless**
+(tanpa access token, tanpa App Review).
+
+Dibuktikan dengan memanggil endpoint-nya dan **membaca jenis error-nya**:
+
+```
+error_user_msg : "The requested media could not be embedded either because
+                 it does not exist or you don't have permission to embed it."
+error code     : 24 (Media Not Found)
+```
+
+Kuncinya: errornya **`Media Not Found` (kode 24)**, bukan
+`Invalid OAuth access token`. Artinya request sudah **lolos lapisan
+autentikasi** dan baru berhenti di pengecekan media. Kalau token masih
+wajib, requestnya akan berhenti jauh lebih awal dengan error auth.
+
+**Cara implementasi: `blockquote` + `instagram.com/embed.js`** — persis
+kode "Embed" yang Instagram berikan sendiri ke penggunanya. Endpoint
+oEmbed Meta **tidak** dipanggil dari server: itu hanya menambah
+ketergantungan ke API Meta tanpa mengurangi risiko (embed tetap bisa mati
+sendiri kalau kontennya jadi privat).
+
+### 2. Permalink pakai `/p/`, bukan `/reel/`
+
+Kode hanya menyimpan **shortcode**, bukan tipe path. Untuk membangun
+permalink dipilih `/p/{shortcode}/`.
+
+Dokumentasi Meta menyatakan `/p/`, `/reel/`, dan `/tv/` **semuanya resolve
+ke media yang sama** — prefix cuma "routing hint" untuk SEO. Dan ada satu
+pengecualian nyata: **carousel 404 kalau dipaksa `/reel/`**, karena
+backend Instagram melakukan sanity check "Reels harus video tunggal".
+
+Artinya `/p/` justru **pilihan yang lebih aman**, dan sekaligus satu
+keputusan yang tidak memerlukan kolom tambahan untuk menyimpan tipe path.
+
+### 3. Prefix host: `yt:` / `vm:` / `ig:`
+
+Kolom `videoLink` tetap satu kolom dengan prefix 2 huruf. Instagram menambah
+satu nilai lagi, tidak menambah kolom — jadi skema tabel tidak berubah
+selain kolom `orientasi`.
+
+### 4. Orientation default-nya "horizontal", dan kartu tetap 16:9
+
+Kolom `orientasi` default `"horizontal"` supaya berita yang sudah ada
+tidak berubah tampilan.
+
+**Kartu di daftar selalu 16:9**, apa pun orientasi videonya. Kalau kartu
+ikut 9:16, grid 3 kolom ikut meninggi dan baris kartu menjadi tidak rata —
+itu kerusakan visual yang lebih buruk daripada kotak kecil di tengah.
+Orientasi hanya dihormati di **halaman detail**, karena di situlah yang
+ditonton sungguhan.
+
+Nilai di luar daftar (`"ngawur"`, `""`) dinormalkan menjadi `horizontal`
+di `beritaRows()` — jadi data rusak di DB tidak pernah sampai ke UI.
+
+### 5. Risiko yang diterima secara sadar
+
+Embed Instagram adalah **penunjuk hidup**, bukan salinan. Kalau reel
+dihapus, dijadikan privat, atau creator mematikan pengaturan Embeds,
+embed mati tanpa bisa diperbaiki dari sisi kita. Instagram sendiri
+menampilkan kartu cadangan berisi tautan — jadi gagal dengan graceful,
+bukan tampil rusak.
+
+Skrip `instagram.com/embed.js` adalah **skrip pihak ketiga yang berjalan
+di domain kita**. Dimuat dengan `strategy="lazyOnload"` dan **hanya** di
+halaman yang benar-benar punya embed Instagram, supaya tidak ada halaman
+lain yang menanggungnya.
+
+### 6. Batas fisik yang tidak bisa dihilangkan
+
+Player YouTube **selalu 16:9**, apa pun orientasi sumbernya. Verifikasi
+dengan Shorts asli (`8swwjbW0vls`): sebelum ada mode vertikal, video
+vertikal hanya **~240px** lebar di dalam kotak 721×406px. Sesudah ada
+mode vertikal: kontainer **420×747px, rasio 0.563 = 9:16 persis** — lebar
+  player tidak bisa menampilkan video 9:16 memenuhi kotak 9:16.
+
+### 7. Yang belum terverifikasi
+
+- **Panel admin belum pernah dibuka** (butuh sesi login). Alur
+  `orientasi` sudah diuji dengan FormData simulasi, tapi tampilan radio
+  button belum dilihat di browser.
+- **Embed Instagram belum diuji dengan shortcode asli.** Yang terbukti
+  adalahblockquote + `embed.js` ter-render benar; bukan "Instagram
+  benar-benar memutar video itu".

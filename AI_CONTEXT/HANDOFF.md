@@ -75,6 +75,15 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
+- **Orientasi video vertikal (9:16) + Instagram Reels** (2026-10-02) — belum
+  di-commit. Kolom `orientasi` di model `Berita` + radio di `/admin/berita`;
+  CSS `.berita-media-vertikal` (9:16, max 420px). Kartu di daftar tetap
+  16:9 — hanya halaman detail menghormati orientasi. Instagram: `ig:` prefix
+  + `IgEmbed` (blockquote + `embed.js`, `lazyOnload`, hanya di halaman ber-embed).
+  Bukti: Shorts vertikal naik dari ~240px ke kontainer 420×747 (rasio 0.563);
+  `parseVideoLink()` 18/18 benar. Embed IG dibuktikan mungkin (error
+  `Media Not Found` dari endpoint tokenless Meta, bukan error auth).
+  **Belum teruji**: panel admin (butuh login) & embed IG shortcode asli.
 - **Section Berita dipindah ke atas "Tentang Kami"** (2026-10-02) — belum
   di-commit. Section "Kabar Terbaru" ada tepat di bawah Hero. Background-nya
   diubah dari putih ke paper supaya tidak menyatu dengan "Tentang Kami" yang

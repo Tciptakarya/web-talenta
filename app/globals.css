@@ -724,6 +724,40 @@
   /* Isi artikel. Baris kosong = <p> baru, dihasilkan BeritaBody.tsx.
      Styling di sini TIDAK memakai <header>/<footer> sebagai pembungkus
      (jebakan rule global di baris 131 & 646). */
+  /* ---------- Berita: orientasi vertikal (9:16) ----------
+     Player YouTube SELALU 16:9 apa pun orientasi sumber. Untuk Shorts/Reels
+     (9:16) itu berarti video hanya jadi "pillarbox" kecil di tengah kotak
+     lebar - terverifikasi: di kotak 721x406px video vertikal cuma ~240px
+     lebar. Kontainer 9:16 + lebar maksimum supaya video vertikal tampil
+     sebesar mungkin tanpa membuat halaman setinggi 1400px. */
+  .berita-media-vertikal{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    margin-left:auto;
+    margin-right:auto;
+    aspect-ratio:9/16;
+    overflow:hidden;
+    background:#0F1836;
+    border-radius:16px;
+  }
+  /* Ikon kamera kecil di pojok, biar jelas ini kolom vertikal. */
+  .berita-media-vertikal-bg{
+    background:
+      radial-gradient(circle at 50% 12%, rgba(78,127,240,0.18), transparent 60%),
+      #0F1836;
+  }
+  /* Embed Instagram butuh lebar penuh di dalam wrapper-nya. */
+  .berita-media-instagram{
+    width:100%;
+    overflow:hidden;
+  }
+  .berita-media-instagram.berita-media-vertikal{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
   .berita-isi{font-size:16.5px; line-height:1.78; color:#2E3856;}
   .berita-isi p{margin-bottom:22px;}
   .berita-isi p:last-child{margin-bottom:0;}
@@ -1100,6 +1134,9 @@
   background:rgba(216,162,61,0.22); color:var(--gold-dim);
 }
 :root.dark .berita-detail-media{border-color:var(--line);}
+/* Kontainer video vertikal memakai warna navy tetap di kedua mode — seperti
+   poster YouTube yang juga selalu gelap, jadi tidak perlu ikut tema. */
+:root.dark .berita-media-vertikal{background:#0B1020;}
 
 /* menu mobile memakai background:#fff — hanya di layar kecil */
 @media (max-width:760px){

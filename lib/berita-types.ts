@@ -17,12 +17,18 @@ export type BeritaRow = {
   videoUrl: string | null;
   /**
    * ID video saja (tanpa host) hasil `parseVideoLink()`, atau `null`.
-   * Di database disimpan sebagai `yt:<id>` / `vm:<id>`; pemisahan prefix
-   * terjadi di `beritaRows()` (`lib/data.ts`).
+   * Di database disimpan sebagai `yt:<id>` / `vm:<id>` / `ig:<shortcode>`;
+   * pemisahan prefix terjadi di `beritaRows()` (`lib/data.ts`).
    */
   videoLink: string | null;
-  /** "youtube" | "vimeo" — ikut tersimpan agar publik tak perlu menebak. */
-  videoHost: string | null;
+  /** "youtube" | "vimeo" | "instagram" — ikut tersimpan agar publik tak perlu menebak. */
+  videoHost: "youtube" | "vimeo" | "instagram" | null;
+  /**
+   * Orientasi video: "horizontal" (16:9) | "vertical" (9:16, untuk
+   * YouTube Shorts & Reels). Nilai di luar itu dinormalkan menjadi
+   * "horizontal" di `beritaRows()`.
+   */
+  orientasi: "horizontal" | "vertical";
   tanggal: Date;
   kategori: string | null;
   isActive: boolean;

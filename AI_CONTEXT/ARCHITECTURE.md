@@ -164,7 +164,7 @@ components/
 │   ├── Berita.tsx           # section "Kabar Terbaru" di beranda (3 berita)
 │   ├── BeritaList.tsx       # (client) daftar + filter kategori di browser
 │   ├── BeritaCard.tsx       # satu kartu berita
-│   ├── BeritaMedia.tsx      # foto / <video> / <iframe> YouTube-Vimeo
+│   ├── BeritaMedia.tsx      # foto / <video> / <iframe> YT-Vimeo / embed IG
 │   ├── BeritaBody.tsx       # render aman isi artikel (paragraf + **tebal**)
 │   ├── NotFoundContent.tsx  # isi halaman 404 (dipakai 2 file not-found)
 │   ├── ThemeEnforcer.tsx    # (client) pasang tema SETELAH hidrasi (wajib di 404)
@@ -341,8 +341,9 @@ Dijelaskan per relasi:
 | `AdminUser` | `email @unique`, `passwordHash` | bcrypt |
 | `GalleryImage` | `year Int?` | tahun kegiatan foto → sub-grup TAHUN di galeri publik; `null` = foto lama belum diatur (grup "Tanpa Tahun") |
 | `Berita` | `slug @unique`, `isi` (**teks polos, bukan HTML**), `ringkasan`, `tanggal`, `kategori?`, `isActive` | kabar kegiatan; `slug` di URL `/berita/[slug]`; `isi` di-render aman oleh `renderInline()` (`components/site/BeritaBody.tsx`) |
-| | `videoLink?` = **`yt:<id>` \| `vm:<id>`** | **hanya ID video**, bukan URL penuh — komponen publik membangun sendiri URL embed, jadi admin tak bisa menyuntikkan domain lain |
+| | `videoLink?` = **`yt:<id>` \| `vm:<id>` \| `ig:<shortcode>`** | **hanya ID video**, bukan URL penuh - komponen publik membangun sendiri URL embed, jadi admin tak bisa menyuntikkan domain lain |
 | | `imageUrl?`, `imageAlt?`, `videoUrl?` | foto utama + video terunggah (Vercel Blob / `/uploads`); `videoUrl` & `videoLink` **tidak boleh** aktif bersamaan (Zod `.refine`) |
+| | `orientasi` = `horizontal` | `vertical` | Player YouTube selalu 16:9, jadi video 9:16 (Shorts/Reels) butuh kontainer 9:16 sendiri. Default `horizontal`; nilai di luar daftar dinormalkan jadi `horizontal` di `beritaRows()`. **Kartu di daftar tetap 16:9** - hanya halaman detail yang menghormati orientasi |
 
 ### Index
 
