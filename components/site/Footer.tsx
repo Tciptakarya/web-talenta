@@ -4,14 +4,16 @@ import { textOf, withYear, type ContentMap } from "@/lib/siteContent";
 
 // Anchor memakai path absolut (/#about) supaya berfungsi juga dari
 // halaman di luar beranda (mis. /kelas).
-// Urutan sama dengan Header & urutan section di beranda.
+// Urutan & href harus PERSIS sama dengan `NAV_LINKS` di `Header.tsx` —
+// urutannya mengikuti urutan section di beranda. Kalau ada section yang
+// dipindah, pindahkan juga di kedua file ini.
 const NAV_LINKS = [
+  { href: "/#berita", key: "nav.berita" },
   { href: "/#about", key: "nav.about" },
   { href: "/#visimisi", key: "nav.visimisi" },
   { href: "/#layanan", key: "nav.layanan" },
   { href: "/#jadwal-terdekat", key: "nav.jadwal" },
   { href: "/#galeri", key: "nav.galeri" },
-  { href: "/#berita", key: "nav.berita" },
   { href: "/#lokasi", key: "nav.lokasi" },
   { href: "/#testimoni", key: "nav.testimoni" },
 ];

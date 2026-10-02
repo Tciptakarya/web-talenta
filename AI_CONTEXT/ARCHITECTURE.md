@@ -82,10 +82,13 @@ app/
 - Kontrak desain ada di **AI_CONTEXT/PRD_DESIGN_MIGRASI.md** (token, jebakan
   CSS global, rencana migrasi bertahap). Baca itu sebelum mengubah
   tampilan. Wireframe disimpan di mockups/.
-- **Menu navbar/footer (8 item)**: Tentang Kami, Visi & Misi, Layanan,
-  **Jadwal** (`/#jadwal-terdekat`), Galeri, Berita, Lokasi, Testimoni —
-  urut mengikuti urutan section di beranda. Semua pakai anchor
-  `/#[id-section]`, label diambil dari registry (`nav.*`).
+- **Menu navbar/footer (8 item)**: Berita, Tentang Kami, Visi & Misi,
+  Layanan, **Jadwal** (`/#jadwal-terdekat`), Galeri, Lokasi, Testimoni.
+  **Urutan menu = urutan section di beranda, tanpa kecuali.** Semua pakai
+  anchor `/#[id-section]`, label dari registry (`nav.*`). Kalau ada section
+  yang dipindah di `app/(public)/page.tsx`, posisi menunya **wajib** ikut
+  dipindah di `components/site/Header.tsx` **dan** `Footer.tsx` (keduanya
+  punya array `NAV_LINKS` yang harus identik).
 - **Aturan: section yang punya menu anchor tidak boleh `return null`.** Kalau
   datanya kosong, section tetap dirender dengan pesan "Belum ada … untuk saat
   ini" — kalau hilang, mengklik menu tidak melakukan apa-apa dan pengguna

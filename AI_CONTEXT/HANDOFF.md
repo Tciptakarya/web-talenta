@@ -75,9 +75,15 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## LAST COMPLETED
 
-- **Menu "Jadwal" + empty state Berita** (2026-10-02) — belum di-commit.
-  `nav.jadwal` → `/#jadwal-terdekat` di Header & Footer; section Kabar dan
-  `/berita` menampilkan "Belum ada berita untuk saat ini" saat kosong
+- **Section Berita dipindah ke atas "Tentang Kami"** (2026-10-02) — belum
+  di-commit. Section "Kabar Terbaru" ada tepat di bawah Hero. Background-nya
+  diubah dari putih ke paper supaya tidak menyatu dengan "Tentang Kami" yang
+  juga putih. **Menu "Berita" juga naik ke posisi pertama** di navbar &
+  footer, jadi urutan menu = urutan section. Registry `lib/siteContent.ts`
+  diurutkan ulang juga.
+- **Menu "Jadwal" + empty state Berita** (2026-10-02) — sudah ter-push
+  (`b3213d0`). `nav.jadwal` → `/#jadwal-terdekat` di Header & Footer; section Kabar
+  dan `/berita` menampilkan "Belum ada berita untuk saat ini" saat kosong
   (sebelumnya `return null` sehingga klik menu tidak melakukan apa-apa).
   **Konsekuensi**: 8 menu butuh ≥895px, sedangkan lebar konten di 960px hanya
   896px → navbar sempat nabrak di 850px. Diperbaiki dengan mengencangkan navbar

@@ -54,6 +54,17 @@ export default async function HomePage() {
   return (
     <>
       <Hero c={c} />
+
+      {/* Kabar Terbaru — anchor #berita untuk menu "Berita" di Header/Footer.
+          Dipindah ke SESUDAH Hero (sebelum Tentang Kami) atas permintaan user
+          2026-10-02, supaya kabar kegiatan jadi konten pertama yang dilihat.
+          Catatan latar: section ini memakai class `section` (paper), bukan
+          `section-alt` (putih) seperti sebelumnya — dengan posisinya yang baru,
+          warna putih akan menyatu dengan section "Tentang Kami" yang juga
+          putih dan memunculkan sambungan 200px tanpa pembatas. Dengan paper,
+          ritme Hero → Berita → Tentang Kami tetap berselang-seling. */}
+      <Berita items={berita} c={c} />
+
       <About c={c} />
       <VisiMisi c={c} />
       <Layanan programs={programs} categories={categories} c={c} />
@@ -82,10 +93,6 @@ export default async function HomePage() {
           </section>
         )}
       </div>
-
-      {/* Kabar Terbaru - anchor #berita untuk menu "Berita" di Header/Footer.
-          Ditaruh setelah Galeri, sebelum Lokasi. */}
-      <Berita items={berita} c={c} />
 
       <Lokasi c={c} />
       <Testimoni items={testimonials} c={c} />

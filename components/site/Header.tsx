@@ -10,15 +10,21 @@ import { textOf, type ContentMap } from "@/lib/siteContent";
 // halaman lain di luar beranda (mis. dari /kelas).
 // `key` = key di registry Tampilan Website; label diambil dari sana.
 //
-// URUTAN MENGIKUTI urutan section di beranda, supaya menu dan halaman terasa
-// sama: Layanan → Jadwal → Galeri → Berita → Lokasi → Testimoni.
+// URUTAN MENU = URUTAN SECTION DI BERANDA, tanpa kecuali (permintaan user
+// 2026-10-02). Section Kabar Terbaru dipindahkan ke atas "Tentang Kami",
+// jadi "Berita" ikut naik ke posisi pertama. Kalau nanti ada section yang
+// dipindah, pindahkan juga posisinya di sini **dan** di `Footer.tsx`.
+//
+// Setiap menu WAJIB punya section dengan `id` yang cocok di beranda, dan
+// section itu tidak boleh `return null` saat kosong — kalau hilang, klik menu
+// tidak melakukan apa-apa (lihat components/site/Berita.tsx).
 const NAV_LINKS = [
+  { href: "/#berita", key: "nav.berita" },
   { href: "/#about", key: "nav.about" },
   { href: "/#visimisi", key: "nav.visimisi" },
   { href: "/#layanan", key: "nav.layanan" },
   { href: "/#jadwal-terdekat", key: "nav.jadwal" },
   { href: "/#galeri", key: "nav.galeri" },
-  { href: "/#berita", key: "nav.berita" },
   { href: "/#lokasi", key: "nav.lokasi" },
   { href: "/#testimoni", key: "nav.testimoni" },
 ];

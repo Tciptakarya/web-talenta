@@ -44,7 +44,30 @@ Sisa pekerjaan non-kode (butuh aksi user di dashboard):
 
 ## Last Completed Work
 
-**Task terbaru: menu "Jadwal" di navbar + empty state Berita** (2026-10-02) —
+**Task terbaru: section Berita dipindah ke atas "Tentang Kami"** (2026-10-02) —
+**selesai & terverifikasi, BELUM di-commit**:
+
+- Posisi section "Kabar Terbaru" di beranda: dari setelah Galeri → **tepat di
+  bawah Hero, sebelum "Tentang Kami"**.
+- Class background-nya diubah dari `section-alt` (putih) → `section` (paper),
+  karena "Tentang Kami" juga putih dan dua section putih bersebelahan akan
+  menyatu jadi blok ±200px tanpa pembatas. Ritme Hero → Berita → Tentang
+  Kami sekarang tetap berselang-seling.
+- **Urutan navbar & footer ikut diubah**: "Berita" naik ke posisi pertama,
+  supaya urutan menu sama dengan urutan section di beranda. Registry
+  `lib/siteContent.ts` juga diurutkan ulang agar urutannya sama di editor
+  Admin. Komentar di `Header.tsx`/`Footer.tsx` kini menyatakan aturan itu
+  secara eksplisit (kalau section dipindah, menu harus ikut dipindah di kedua
+  file).
+- Verifikasi: 8 menu di navbar & footer urutannya identik dengan urutan
+  section di halaman; semua 8 anchor diuji diklik nyata dari `/kelas`
+  (mendarat di 170px, terlihat); lebar navbar tidak berubah (jumlah item
+  sama 8) — 14 lebar diuji ulang, aman tanpa overflow; drawer mobile urut
+  benar. Verifikasi visual di **kedua kondisi** (kosong & terisi 3 berita) —
+  sambungan ke Hero dan ke Tentang Kami bersih. Data uji dihapus.
+- Detail: `CHANGELOG.md` → entri 2026-10-02.
+
+**Task sebelumnya: menu "Jadwal" di navbar + empty state Berita** (2026-10-02, sudah ter-push `b3213d0`) —
 **selesai & terverifikasi, BELUM di-commit**:
 
 - Menu "Jadwal" (`/#jadwal-terdekat`) ditambahkan di navbar **dan** footer,

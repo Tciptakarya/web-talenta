@@ -1900,3 +1900,96 @@ dimuat punya lebar 0.
 Jadi semua angka di atas diukur **setelah** `Promise.all([fonts.ready,
 logo.onload])` + jeda pendek. Assertion yang dipakai: `gapKiri > 0 || hamburger
 terlihat`, di 15 lebar dari 1440 sampai 390.
+
+
+---
+
+## Decision: Posisi section "Kabar Terbaru" di atas "Tentang Kami" + latar paper
+
+**Tanggal**: 2026-10-02 · **Status**: diterapkan
+
+### Permintaan
+
+User meminta section berita diletakkan **di atas section "Tentang Kami"**,
+supaya kabar kegiatan jadi konten pertama yang dilihat setelah hero.
+
+### Yang dipindahkan
+
+`app/(public)/page.tsx` — `<Berita>` dipindah dari setelah Galeri ke tepat
+setelah `<Hero>`, sebelum `<About>`. Kotak query tidak berubah
+(`getBerita(3)` tetap dipanggil di `Promise.all` yang sama, jadi tidak ada
+query tambahan).
+
+### Konsekuensi yang harus ditangani: warna background
+
+Section di beranda punya ritme background berselang-seling. Diperiksa dengan
+mengukur `getComputedStyle` tiap section:
+
+```
+SEBELUM: hero(paper) about(putih) visimisi(paper) layanan(putih)
+         jadwal(paper) galeri(paper) BERITA(putih) lokasi(navy) ...
+SESUDAH: hero(paper) BERITA(paper) about(putih) visimisi(paper)
+         layanan(putih) jadwal(paper) galeri(paper) lokasi(navy) ...
+```
+
+Di posisi lamanya (antara Galeri dan Lokasi) `section-alt` (putih) cocok
+karena Galeri bermotif paper. Di posisi barunya, "Tentang Kami" juga putih —
+dua section putih bersebelahan akan menyatu jadi blok ±200px tanpa pembatas,
+dan itu terlihat jelas di screenshot.
+
+Solusi: `Berita.tsx` memakai class `section` (paper), bukan `section-alt`
+(putih). Dengan begitu Hero (paper) → Berita (paper) → Tentang Kami (putih)
+tetap berselang-seling, dan sambungan ke Hero justru halus karena gradien
+radial di `.hero` sudah memudar ke paper di bagian bawahnya.
+
+Alternatif yang ditolak: mengubah "Tentang Kami" jadi paper — itu akan
+menyatkannya dengan "Visi & Misi" yang juga paper, jadi masalahnya cuma pindah
+tempat.
+
+### Urutan navbar ikut, karena diminta terpisah
+
+Pertama kali section dipindahkan, urutan navbar **sengaja tidak** ikut —
+user hanya meminta perpindahan *section*, dan mengubah navbar adalah
+perubahan tampilan terpisah. Komentar di `Header.tsx`/`Footer.tsx` yang
+menglaim "urutan menu mengikuti urutan section" dikoreksi jadi catatan
+eksplisit supaya tidak berbohong tentang kode.
+
+**Lalu user meminta lanjutan: "di nav saya ingin Berita jadi menu pertama,
+jadi urutan nav sama dengan section yang ada."** Maka "Berita" naik ke
+posisi pertama di navbar **dan** footer, dan registry
+`lib/siteContent.ts` ikut diurutkan ulang supaya urutan field di editor
+Admin sama dengan urutan menu.
+
+**Aturan yang sekarang berlaku (tertulis di kedua file `NAV_LINKS`):**
+
+> Urutan menu = urutan section di beranda, tanpa kecuali.
+> Kalau ada section yang dipindah di `app/(public)/page.tsx`, posisi
+> menunya wajib ikut dipindah di `Header.tsx` **dan** `Footer.tsx`.
+
+Kedua file itu punya array `NAV_LINKS` yang harus identik — tidak ada satu
+sumber urutan, jadi verifikasi dilakukan dengan membandingkan array hasil
+render (`nav` vs `footer`) lalu membandingkannya dengan urutan `id` section
+di DOM:
+
+```
+menu    : #berita #about #visimisi #layanan
+          #jadwal-terdekat #galeri #lokasi #testimoni
+section : berita@1053  about@1724   visimisi@2377 layanan@3669
+          jadwal@4540   galeri@5471  lokasi@8962    testimoni@10065
+```
+
+Mengubah urutan **tidak** memengaruhi lebar navbar, karena jumlah item
+tetap 8. Hasil pengukuran di 14 lebar tidak berubah sama sekali, jadi
+breakpoints yang sudah ditetapkan tetap berlaku tanpa penyesuaian.
+
+### ISR perlu dua request setelah perubahan data
+
+Halaman publik `revalidate = 60` memakai *stale-while-revalidate*: request
+pertama setelah kedaluwarsa masih menyajikan versi lama, sementara render
+baru berjalan di background, jadi **request kedua** baru menampilkan data
+baru. Saat verifikasi lokal ini sempat terlihat seperti "berita tidak muncul
+padahal sudah di-seed".
+
+Di produksi tidak ada penundaan: `refresh()` di `app/admin/actions.ts`
+memanggil `revalidatePath("/", "layout")` setiap admin menekan Simpan, jadi
+cache langsung dibuang.

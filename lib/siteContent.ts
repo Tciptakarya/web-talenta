@@ -233,6 +233,7 @@ export const CONTENT_SECTIONS: ContentSection[] = [
     title: "Navbar & Footer",
     description: "Label menu di navbar dan footer, serta teks hak cipta.",
     fields: [
+      { key: "nav.berita", label: "Menu - Berita", defaultValue: "Berita" },
       { key: "nav.about", label: "Menu - Tentang Kami", defaultValue: "Tentang Kami" },
       { key: "nav.visimisi", label: "Menu - Visi & Misi", defaultValue: "Visi & Misi" },
       { key: "nav.layanan", label: "Menu - Layanan", defaultValue: "Layanan" },
@@ -240,7 +241,6 @@ export const CONTENT_SECTIONS: ContentSection[] = [
       { key: "nav.galeri", label: "Menu - Galeri", defaultValue: "Galeri" },
       { key: "nav.lokasi", label: "Menu - Lokasi", defaultValue: "Lokasi" },
       { key: "nav.testimoni", label: "Menu - Testimoni", defaultValue: "Testimoni" },
-      { key: "nav.berita", label: "Menu - Berita", defaultValue: "Berita" },
       { key: "nav.kontak", label: "Menu - Kontak", defaultValue: "Kontak" },
       { key: "footer.copyright", label: "Teks hak cipta", hint: "Tulisan {year} diganti otomatis dengan tahun berjalan.", defaultValue: "© {year} Talenta Cipta Karya. Semua hak dilindungi." },
     ],

@@ -29,7 +29,11 @@ export default function Berita({
   const kosong = items.length === 0;
 
   return (
-    <section className="section section-alt" id="berita">
+    // Class `section` (paper), BUKAN `section-alt` (putih): posisinya sekarang
+    // tepat di bawah Hero dan di atas "Tentang Kami" yang juga putih —
+    // memakai putih akan menyatu jadi blok 200px tanpa pembatas. Lihat
+    // app/(public)/page.tsx.
+    <section className="section" id="berita">
       <div className="wrap">
         <Reveal className="section-head">
           <span className="kicker">

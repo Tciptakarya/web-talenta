@@ -50,6 +50,77 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-10-02] — Section Berita dipindahkan ke atas "Tentang Kami"
+
+- **Posisi section "Kabar Terbaru" di beranda dipindahkan**: dari *setelah
+  Galeri* → **tepat di bawah Hero, sebelum "Tentang Kami"** (permintaan user).
+  Kabar kegiatan kini jadi konten pertama yang dilihat pengunjung.
+- **Class background `Berita.tsx` diubah** dari `section-alt` (putih) menjadi
+  `section` (paper). Alasan: di posisi lamanya (antara Galeri dan Lokasi)
+  putih cocok karena Galeri bermotif paper. Di posisi barunya, section
+  "Tentang Kami" juga putih — dua section putih bersebelahan akan menyatu
+  jadi blok ±200px tanpa pembatas. Dengan paper, ritme
+  Hero → Berita → Tentang Kami tetap berselang-seling.
+
+  Ritme latar beranda sebelum & sesudah (terverifikasi `getComputedStyle`):
+
+  ```
+  SEBELUM: hero(paper) about(putih) visimisi(paper) layanan(putih)
+           jadwal(paper) galeri(paper) BERITA(putih) lokasi(navy) ...
+  SESUDAH: hero(paper) BERITA(paper) about(putih) visimisi(paper)
+           layanan(putih) jadwal(paper) galeri(paper) lokasi(navy) ...
+  ```
+
+- **Urutan navbar & footer ikut diubah**: "Berita" naik ke posisi **pertama**,
+  supaya urutan menu sama persis dengan urutan section di beranda
+  (permintaan user). Urutan sekarang:
+  Berita → Tentang Kami → Visi & Misi → Layanan → Jadwal → Galeri → Lokasi →
+  Testimoni. Registry `lib/siteContent.ts` diurutkan ulang juga, supaya urutan
+  field di editor Admin sama dengan urutan menu.
+- Komentar di `Header.tsx` / `Footer.tsx` yang sebelumnya mengklaim
+  "urutan menu mengikuti urutan section" **sekarang benar**, dan ditambahkan
+  aturan: kalau ada section yang dipindah, posisi menunya harus dipindah juga
+  di **kedua** file itu.
+
+### Verified
+
+- Urutan section: `berita` di y=1053 → `about` di y=1724 (berita memang di
+  atas); `visimisi` 2377, `layanan` 3669.
+- **Urutan navbar = urutan navbar**, di navbar **dan** footer:
+  `#berita, #about, #visimisi, #layanan, #jadwal-terdekat, #galeri, #lokasi,
+  #testimoni` — identik dengan urutan section di halaman
+  (1053 / 1724 / 2377 / 3669 / 4540 / 5471 / 8962 / 10065). Menu pertama di
+  navbar & footer = "Berita" di 5 halaman yang dicek.
+- **Semua 8 anchor diuji diklik nyata dari `/kelas`**: setiap section mendarat
+  di 170px dari atas (nilai `scroll-margin-top`) dan terlihat di layar.
+  (Tiga di antaranya membaca `location.hash` kosong — itu memang perilaku
+  `AnchorHashCleaner` yang membersihkan address bar; scroll tetap benar.)
+- **Lebar navbar tidak berubah** — jumlah item tetap 8, jadi hasil pengukuran
+  lebar sebelumnya tetap berlaku. Diuji ulang di 14 lebar: aman, tanpa
+  overflow horizontal.
+- Drawer mobile menampilkan 8 menu dengan urutan yang sama.
+- **Kedua kondisi diuji secara visual**:
+  - Kosong → empty state "Belum ada berita untuk saat ini" tampil rapi di
+    atas, tidak menyatu dengan Hero.
+  - Terisi (3 berita uji: video YouTube, 2 foto galeri) → 3 kartu + tombol
+    "Lihat Semua Berita" tampil utuh di posisi baru.
+- Sambungan Berita → Tentang Kami bersih (paper → putih, pemisahan jelas,
+  tanpa seam).
+- Latar terverifikasi per section via `getComputedStyle`.
+- Data uji dihapus (tabel `Berita` = 0 baris).
+- `npx tsc --noEmit` 0 error · `npm run build` hijau.
+
+### Catatan operasional
+
+- ISR 60 detik = **stale-while-revalidate**. Setelah menambah/mengubah
+  berita, request pertama masih menyajikan versi lama, regenerasi berjalan di
+  background, dan **request kedua** baru menampilkan data baru. Ini perilaku
+  normal, bukan bug. Di produksi, `refresh()` (`revalidatePath("/", "layout")`)
+  di Server Action membuat cache langsung dibuang saat admin menekan Simpan —
+  jadi di produksi tidak ada penundaan sama sekali.
+
+---
+
 ## [2026-10-02] — Menu "Jadwal" di navbar + empty state Berita
 
 ### Added
