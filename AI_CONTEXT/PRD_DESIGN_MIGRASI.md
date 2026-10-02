@@ -76,10 +76,23 @@ bukan `prefers-color-scheme`. Tombol ThemeToggle menulis kelas itu ke `<html>`.
   modern.
 - `public/apple-touch-icon.png` (180×180, latar putih) — untuk iOS.
 - Ukuran dalam `.ico`: 16/32/48/256.
-- **Known issue**: artwork feather terlalu tipis sehingga praktis tak terbaca
-  pada 16×16. Perbaikannya butuh **artwork favicon khusus ukuran kecil**
-  (mis. latar navy + feather putih, atau silhouette yang lebih tebal) — belum
-  dikerjakan karena menyangkut keputusan brand.
+- **Artwork favicon (keputusan user 2026-10-02):** navy rounded-square
+  (`#16214A`, radius 112/512) + feather **putih** di dalamnya — dipilih karena
+  feather biru di atas dasar transparan praktis tak terbaca pada 16×16.
+  - Sumber artwork: `assets/favicon-feather.png` (folder `assets/` tidak
+    ter-deploy; hanya untuk regenerasi).
+  - Aset yang dihasilkan: `public/favicon.png` & `app/icon.png` (512),
+    `public/apple-touch-icon.png` (180, **full-bleed** karena iOS sendiri yang
+    memotong sudutnya), `app/favicon.ico` (16/32/48/256).
+  - **Regenerasi:** `npx tsx prisma/generate-favicon-assets.ts` (butuh `sharp`,
+    sudah jadi dependensi project). Skrip idempoten.
+  - **Jebakan yang sudah dilewati:** `extractChannel(3)` milik sharp
+    menghasilkan gambar *grayscale* 1 kanal — nilainya ada di channel
+    abu-abu, **bukan** di alpha. Dipakai langsung dengan blend `dest-in`
+    hasilnya **kotak putih solid**. Alpha harus diambil sebagai data mentah
+    lalu disusun ulang jadi RGBA.
+  - Logo header/footer (`public/logo.png`, `public/logo-inverse.png`) **tidak**
+    disentuh — yang diganti hanya favicon.
 
 ### 3.3 Tipografi
 

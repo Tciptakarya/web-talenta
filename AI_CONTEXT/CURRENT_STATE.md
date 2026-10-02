@@ -1,41 +1,87 @@
 # Current State
 
 > Dokumen ini mencerminkan kondisi **source code & infrastruktur per
-> 2026-09-28** (HEAD `19a2d3c` **sudah ter-push & live** di
-> `talentaciptakarya.com`; working tree **bersih**).
+> 2026-10-02** (HEAD **sudah ter-push & live** di
+> `talentaciptakarya.com`).
 > Diperbarui setelah pekerjaan signifikan.
 
 ## Current Development Status
 
-Task **Admin Email Center** (`/admin/email`, spesifikasi 23 bagian user,
-2026-09-28) **sudah diimplementasikan & diverifikasi lokal penuh, BELUM
-di-commit**: Hostinger IMAP = inbound, Resend = outbound, cache di database,
-sanitasi HTML server, route lampiran terproteksi auth, webhook status.
-**Inbound sudah terbukti jalan nyata** (user mengisi `MAIL_IMAP_*`):
-22 email masuk dari mailbox Hostinger, 0 duplikat setelah 3× sync, flag
-`\Seen` bolak-balik dengan mailbox, lampiran terunduh (200, isi identik),
-balas memakai `In-Reply-To`/`References` asli. Outgoing terbukti 3× kirim
-nyata.
+Project **selesai & ter-deploy**. Admin Email Center, optimasi kecepatan
+(ISR 60 detik), editor teks publik (Admin > Tampilan Website), dan favicon
+sudah **semuanya ter-commit & ter-push** ke `main`.
 
-Task **active state menu sidebar admin** (2026-09-28) selesai &
-terverifikasi, **juga BELUM di-commit** (akan ikut commit yang sama):
-`components/admin/AdminNav.tsx` (baru, client, `usePathname`),
-`app/admin/(dashboard)/layout.tsx` (menu + `Link` dihapus),
+Task terakhir: **favicon** (2026-10-02) — `/favicon.ico` ditambahkan
+(sebelumnya 404 → ikon globe generik di hasil pencarian) lalu artwork-nya
+di-redesign sesuai pilihan user: navy rounded-square + feather putih.
+Detail di `Last Completed Work`.
+
+Task **Admin Email Center** (`/admin/email`, 2026-09-28) selesai, ter-commit,
+dan **terverifikasi dengan data nyata**: Hostinger IMAP = inbound,
+Resend = outbound, cache di database, sanitasi HTML server, route lampiran
+terproteksi auth, webhook status. Inbound terbukti: 22 email sync, 0 duplikat
+setelah 3× refresh, flag `\Seen` bolak-balik dengan mailbox, lampiran
+terunduh (200, isi identik), balas memakai `In-Reply-To`/`References` asli.
+Outgoing terbukti 3× kirim nyata.
+
+Task **active state menu sidebar admin** (2026-09-28) selesai, ter-commit,
+dan terverifikasi: `components/admin/AdminNav.tsx` (baru, client,
+`usePathname`), `app/admin/(dashboard)/layout.tsx` (menu + `Link` dihapus),
 `app/globals.css` (`.admin-nav-link` / `.is-active`). `tsc` 0, build hijau;
 logika active state 17/17 kasus; **9/9 route admin** tepat 1 menu aktif yang
 benar + `aria-current="page"`; child route `/admin/galeri/edit/[id]` terbukti;
 nav mobile 390px benar; sidebar tetap fixed; 0 console error.
 
-Sisa pekerjaan non-kode (email & DNS):
+Sisa pekerjaan non-kode (butuh aksi user di dashboard):
 
-1. Menyalin `PANEL_RESEND_API_KEY` **dan** `MAIL_IMAP_*` ke Vercel (produksi
-   butuh keduanya; lokal sudah diisi user).
+1. **Region fungsi Vercel `iad1` (US) → `sin1` (Singapura)** — DB Neon ada di
+   Singapura; ini sisa masalah kecepatan produksi (TTFB 1,26–2,18 s vs lokal
+   0,13–0,19 s). Setelah diubah, Redeploy.
 2. Mendaftarkan webhook Resend + isi `RESEND_WEBHOOK_SECRET` agar status
    `delivered`/`bounced` tercatat nyata.
+3. Mengganti `RESEND_API_KEY` yang lama (401) di `.env` lokal **dan** Vercel
+   agar notifikasi aplikasi ikut jalan.
 
 ## Last Completed Work
 
-**Task terbaru: Admin Email Center** (2026-09-28, source BELUM di-commit) —
+**Task terbaru: favicon** (2026-10-02) — dua commit, keduanya sudah
+ter-push:
+
+1. `fix(favicon): tambahkan /favicon.ico agar tidak tampil ikon globe di
+   pencarian` (`5faca56`) — user melaporkan logo tidak muncul di hasil
+   pencarian Google. Akar masalahnya **bukan gambar logo**: `/favicon.ico`
+   di domain mengembalikan **404** karena tidak pernah ada file `.ico`, dan
+   mesin pencari mengambil favicon lewat `/favicon.ico` (bukan lewat
+   `<link rel="icon">`). `public/favicon.png` sendiri sehat (200,
+   `image/png`, 22 KB).
+2. **Artwork favicon di-redesign** — user pilih **opsi A**: navy
+   rounded-square `#16214A` + feather **putih**. Feather biru di atas
+   dasar transparan terbukti praktis tak terbaca di 16×16 (dicek dengan
+   render 16/32/48 lalu diperbesar 8×).
+
+- **Aset ter-deploy**: `public/favicon.png` + `app/icon.png` (512),
+  `public/apple-touch-icon.png` (180, full-bleed karena iOS sendiri yang
+  memotong sudutnya), `app/favicon.ico` (16/32/48/256).
+- **Sumber & regenerasi**: artwork asli disimpan di
+  `assets/favicon-feather.png` (folder `assets/` **tidak ter-deploy**);
+  generator `prisma/generate-favicon-assets.ts` (idempoten, pakai
+  `sharp`) → `npx tsx prisma/generate-favicon-assets.ts`.
+- **Logo header/footer tidak disentuh** — `public/logo.png` (80.838 B) dan
+  `public/logo-inverse.png` (77.126 B) tetap sama.
+- **Verifikasi lokal**: `npx tsc --noEmit` 0 error; `npm run build` hijau;
+  `/favicon.ico` → 200 `image/x-icon` 15.049 B, `/favicon.png` &
+  `/icon.png` → 200 `image/png` 22.617 B, `/apple-touch-icon.png` → 200
+  `image/png` 4.357 B; Next menyuntik
+  `<link rel="icon" href="/favicon.ico" sizes="16x16">` di samping
+  `<link rel="icon" href="/favicon.png">`.
+- **Detail**: `CHANGELOG.md` → entri 2026-10-02,
+  `PRD_DESIGN_MIGRASI.md` → §3.2 Ikon & favicon.
+- **Yang belum bisa dicek dari sini**: hasil pencarian Google.butuh
+  re-crawl (beberapa hari–minggu), jadi belum terbukti muncul sebagai
+  logo. Kalau setelah 1–2 minggu masih ikon globe, cek lagi apakah
+  `/favicon.ico` sudah 200 di produksi.
+
+**Task sebelumnya: Admin Email Center** (2026-09-28, sudah ter-commit) —
 fitur `/admin/email` sesuai spesifikasi user: Inbox (Hostinger IMAP),
 balas/teruskan/tulis, tab Terkirim, cari, filter, read/unread, lampiran,
 dan status. Keputusan arsitektur di `DECISIONS.md` → *Email Center —

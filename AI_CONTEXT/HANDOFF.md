@@ -22,41 +22,37 @@ Resend. Live di `https://talentaciptakarya.com` (Vercel free), repo
 
 ## CURRENT STATE
 
-- HEAD `64cd322` **sudah ter-push & live** (active state sidebar +
-  penghapusan plat putih footer). Task **redesign galeri editorial + fix 2
-  bug** & **anchor hash** juga sudah live (`c318627`/`19a2d3c`).
-- **Working tree berisi 3 task baru (BELUM di-commit):**
-  3. **Admin Email Center** (`/admin/email`) — `lib/mail/{imap,sync,sanitize,outbound}.ts`,
-     `lib/adminCounts.ts`, `components/admin/EmailCenter.tsx`,
-     `app/admin/(dashboard)/email/page.tsx`,
-     `app/api/admin/email/attachment/[id]/route.ts`,
-     `app/api/resend/webhook/route.ts`, `lib/resend.ts` + `sendPanelEmail()`,
-     `lib/schemas.ts` + `emailSendSchema`, 3 Server Action baru, 2 model
-     Prisma (`EmailMessage`, `EmailAttachment`), dependensi baru
-     `imapflow`/`mailparser`/`sanitize-html` (+2 `@types`),
-     `components/admin/AdminNav.tsx` (menu "Email" + badge unread),
-     `app/admin/(dashboard)/layout.tsx`, `.env.example`,
-     `AI_CONTEXT/`. **Outgoing terverifikasi nyata** (2 email terkirim via
-     Resend, `sent` + Ref, lampiran terkirim, `.exe` ditolak, 401 tanpa
-     sesi, 0 secret di bundle browser, mobile 390px aman).
-     **Inbox belum terverifikasi** — `MAIL_IMAP_*` belum diisi.
-  1. **Active state menu sidebar admin** — `components/admin/AdminNav.tsx`
-     (baru, client, `usePathname`), `app/admin/(dashboard)/layout.tsx`
-     (menu + `Link` dihapus), `app/globals.css`. 9/9 route admin terverifikasi
-     tepat 1 menu aktif + child route + nav mobile; sidebar tetap fixed.
-  2. **Ganti logo ke artwork baru** — `public/logo.png` (teks gelap) +
-     `public/logo-inverse.png` (teks putih), `Header` (2 varian + tukar CSS),
-     `Footer` (varian inverse), `favicon.png` + `app/icon.png` (feather saja
-     512×512), `apple-touch-icon.png` (180×180 latar putih),
-     `app/layout.tsx` (icons.apple), `globals.css` (termasuk **plat putih
-     footer dihapus**), `ARCHITECTURE.md` & `DECISIONS.md`. Bug lama ikut
-     tertutup: logo berteks hitam dulu nyaris tak terlihat di footer navy &
-     header mode gelap.
+- **`main` = `origin/main`, working tree bersih** (per 2026-10-02, setelah
+  commit favicon `5faca56` + `e903f22`).
+- **Semua task besar sudah ter-commit & ter-push**: Admin Email Center,
+  active state sidebar admin, pergantian logo artwork, redesign galeri
+  editorial, optimasi ISR 60 detik, editor teks publik (Admin > Tampilan
+  Website), PRD migrasi desain, dan favicon.
+- **Task terakhir: favicon** (2026-10-02).
+  1. `fix(favicon): tambahkan /favicon.ico` (`5faca56`) — `/favicon.ico`
+     sebelumnya **404** sehingga hasil pencarian Google menampilkan ikon globe
+     generik. Penyebabnya **bukan gambar logo**: mesin pencari mengambil
+     favicon lewat `/favicon.ico` di root domain, bukan lewat
+     `<link rel="icon">`. Perbaikan: `app/favicon.ico` (konvensi Next.js).
+  2. **Artwork di-redesign** — user pilih **opsi A**: navy rounded-square
+     `#16214A` (radius 112/512) + feather **putih**. Feather biru di atas
+     dasar transparan terbukti praktis tak terbaca di 16×16.
+     Aset: `public/favicon.png` + `app/icon.png` (512),
+     `public/apple-touch-icon.png` (180, full-bleed karena iOS yang memotong
+     sudutnya), `app/favicon.ico` (16/32/48/256). **Logo header/footer tidak
+     disentuh.** Sumber artwork di `assets/favicon-feather.png` (folder
+     `assets/` tidak ter-deploy); regenerasi:
+     `npx tsx prisma/generate-favicon-assets.ts`.
+     Verifikasi lokal: `tsc` 0, build hijau, `/favicon.ico` → 200
+     `image/x-icon` 15.049 B.
+- **Yang belum terbukti:** hasil pencarian Google masih perlu re-crawl
+  (beberapa hari–minggu). Kalau setelah 1–2 minggu masih ikon globe, cek
+  `/favicon.ico` di produksi (harus 200 `image/x-icon`).
 - Task sebelumnya (sudah ter-push & live): **redesign galeri editorial +
   fix 2 bug review** (`c318627` source + `AGENTS.md` + `AI_CONTEXT/`,
   `b61d5c4` `graphify-out/`) — terverifikasi live 0 console error.
   Isi fixnya: (a) kop program galeri `<header>` → `<div>` (rule global
-  navbar `header{position:fixed}` membuat kop menumpuk di tepi kiri atas);
+  navbar `header{position:fixed}` membuat kop menumpuk di tepi kiri atas).
   (b) crash `/admin` "Application error" **bukan bug kode** — `npm run
   dev` berjalan bersamaan dengan `npm run start` dan menghapus chunk
   produksi di `.next/`.

@@ -31,11 +31,12 @@ yang ada — **bukan dari asumsi**. Terakhir dicek: 2026-09-28
 - [ ] **Index `pg_trgm` untuk pencarian** (bila mailbox tumbuh besar) —
       pencarian masih `LIKE %…%` tanpa index; perlu ekstensi Postgres yang
       tidak dikelola `prisma db push`.
-- [ ] **Artwork favicon khusus ukuran kecil** — feather sekarang praktis tak
-      terbaca di 16x16 (lihat PRD_DESIGN_MIGRASI.md §3.2). Butuh keputusan
-      brand: mis. latar navy + feather putih, atau silhouette lebih tebal.
-      /favicon.ico sendiri sudah ada (sejak 2026-09-28) sehingga ikon globe
-      di hasil pencarian Google sudah teratasi.
+- [x] ~~**Artwork favicon khusus ukuran kecil**~~ — **SELESAI** (2026-10-02,
+      user pilih opsi A): navy rounded-square + feather putih pada
+      `/favicon.ico`, `/favicon.png`, `/icon.png`, dan
+      `/apple-touch-icon.png` (full-bleed). Sumber artwork disimpan di
+      `assets/favicon-feather.png`; regenerasi lewat
+      `npx tsx prisma/generate-favicon-assets.ts`.
 - [ ] **Blokir gambar eksternal di body email** (opsional) — email Resend
       memuat piksel pelacak `tck.talentaciptakarya.com`; sekarang masih
       dimuat browser (IP + waktu buka bocor ke pengirim).

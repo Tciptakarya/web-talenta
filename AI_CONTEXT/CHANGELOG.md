@@ -8,6 +8,48 @@ Format: tanggal · isi · hash commit.
 
 ---
 
+## [2026-10-02] — Artwork favicon: navy rounded-square + feather putih
+
+### Changed
+
+- **Favicon di-redesign** (user pilih **opsi A** dari tiga pilihan yang
+  ditawarkan): navy rounded-square `#16214A` (radius 112/512) + feather
+  **putih** di dalamnya. Alasan: feather biru di atas dasar transparan praktis tak
+  terbaca di 16×16 — ukuran yang dipakai mesin pencari di hasil pencarian.
+  Aset yang di-generate ulang: `public/favicon.png` + `app/icon.png` (512),
+  `public/apple-touch-icon.png` (180, **full-bleed** karena iOS sendiri yang
+  memotong sudutnya), `app/favicon.ico` (16/32/48/256).
+- **Logo header/footer tidak disentuh** — `public/logo.png` (80.838 B) dan
+  `public/logo-inverse.png` (77.126 B) diverifikasi tetap sama setelah
+  perubahan.
+
+### Added
+
+- `assets/favicon-feather.png` — artwork feather asli (biru + goresan)
+  disimpan sebagai sumber. Folder `assets/` **tidak ter-deploy** (bukan
+  `public/`), hanya untuk regenerasi.
+- `prisma/generate-favicon-assets.ts` — skrip generator (idempoten, memakai
+  `sharp` yang sudah jadi dependensi project). Jalankan manual:
+  `npx tsx prisma/generate-favicon-assets.ts`. Preseden:
+  `prisma/backfill-gallery-year.ts`.
+
+### Technical Notes
+
+- **Jebakan sharp yang sudah dilewati:** `extractChannel(3)` mengembalikan
+  gambar *grayscale* 1 kanal — nilainya ada di channel abu-abu, **bukan** di
+  alpha. Kalau langsung dipakai sebagai mask dengan blend `dest-in`, hasilnya
+  **kotak putih solid** (alpha mask selalu opaque). Yang benar: ambil alpha
+  sebagai data mentah (`raw().toBuffer({ resolveWithObject: true })`), lalu
+  susun ulang jadi RGBA putih dengan alpha = data tersebut.
+- Skrip tidak bisa memakai tipe `sharp.OverlayOptions` karena `sharp`
+  memakai `export =` (bukan namespace import) — pakai `const parts = []` saja.
+- Verifikasi lokal: `/favicon.ico` → 200 `image/x-icon` 15.049 B,
+  `/favicon.png` & `/icon.png` → 200 `image/png` 22.617 B,
+  `/apple-touch-icon.png` → 200 `image/png` 4.357 B. `npx tsc --noEmit` 0
+  error, `npm run build` hijau.
+
+---
+
 ## [2026-09-28] — Admin Email Center (`/admin/email`)
 
 ### Fixed
@@ -22,10 +64,11 @@ Format: tanggal · isi · hash commit.
   dibuat dari `public/favicon.png` dengan 4 ukuran (16/32/48/256, PNG di dalam
   ICO). Verifikasi lokal: `/favicon.ico` → **200 `image/x-icon` 12,5 KB**, dan
   Next menyuntik `<link rel="icon" href="/favicon.ico" sizes="16x16">`.
-  **Catatan jujur**: feather nyaris tak terbaca pada 16×16 (tipis) — sudah
-  dipakai sebagai alasan untuk membuat artwork favigan khusus ukuran kecil.
-  Perubahan ini baru terlihat di hasil pencarian setelah Google meng-crawl
-  ulang (biasanya beberapa hari–minggu), bukan seketika.
+  **Catatan jujur**: feather biru di atas dasar transparan nyaris tak
+  terbaca pada 16×16 (terbukti lewat render 16/32/48 yang diperbesar 8×) —
+  itu sebabnya artwork favicon dibuat ulang pada 2026-10-02 (lihat entri
+  berikutnya). Perubahan di hasil pencarian baru terlihat setelah Google
+  meng-crawl ulang (biasanya beberapa hari–minggu), bukan seketika.
 
 ### Added
 
