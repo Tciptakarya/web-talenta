@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "app/icon.png": {
-    "mtime": 1790915980.7162352,
-    "seen": 1790916264.9570048,
-    "ast_hash": "ab77c5c9820ef2bccbca9743be8bab5c",
+    "mtime": 1790569786.6385753,
+    "seen": 1790569915.4683013,
+    "ast_hash": "fd62b04ce10152ee6726ba6074d825ff",
     "semantic_hash": ""
   },
   "assets/images/gallery/kelas-komputer-scratch-01.jpeg": {
@@ -336,9 +336,9 @@
     "semantic_hash": ""
   },
   "public/favicon.png": {
-    "mtime": 1790915980.7162352,
-    "seen": 1790916264.9570124,
-    "ast_hash": "ab77c5c9820ef2bccbca9743be8bab5c",
+    "mtime": 1790569786.6385753,
+    "seen": 1790569915.4683187,
+    "ast_hash": "fd62b04ce10152ee6726ba6074d825ff",
     "semantic_hash": ""
   },
   "public/images/gallery/barista-01.jpg": {
@@ -594,15 +594,15 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/CHANGELOG.md": {
-    "mtime": 1790916162.8558328,
-    "seen": 1790916264.9569955,
-    "ast_hash": "071b708076275487c41cd5a5ab66ccc1",
+    "mtime": 1790602809.7079256,
+    "seen": 1790602852.7550983,
+    "ast_hash": "5f0fb9f351c3c8f2aded1b9a9ec86ee1",
     "semantic_hash": ""
   },
   "AI_CONTEXT/CURRENT_STATE.md": {
-    "mtime": 1790916201.4797485,
-    "seen": 1790916264.9569964,
-    "ast_hash": "f2b547f0d2f2c66787488f7fa697aa5f",
+    "mtime": 1790587030.5621128,
+    "seen": 1790587090.685096,
+    "ast_hash": "27f4759071aca3eac46fa468a3d7fdfe",
     "semantic_hash": ""
   },
   "AI_CONTEXT/DECISIONS.md": {
@@ -612,9 +612,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/HANDOFF.md": {
-    "mtime": 1790916217.3232594,
-    "seen": 1790916264.9569979,
-    "ast_hash": "6fd36d410a92a42c8c54cd95588c1a3f",
+    "mtime": 1790586995.129434,
+    "seen": 1790587090.6850975,
+    "ast_hash": "2ac16b5611123227d5331462dfce317e",
     "semantic_hash": ""
   },
   "AI_CONTEXT/PROJECT_CONTEXT.md": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/TODO.md": {
-    "mtime": 1790916138.3899937,
-    "seen": 1790916264.9570003,
-    "ast_hash": "d53c140dfd3c19197fa164402e44f91a",
+    "mtime": 1790602836.4574697,
+    "seen": 1790602852.7551048,
+    "ast_hash": "9dad9ed9748f2eee07017cddb27baf75",
     "semantic_hash": ""
   },
   "prisma/backfill-gallery-year.ts": {
@@ -654,9 +654,9 @@
     "semantic_hash": ""
   },
   "public/apple-touch-icon.png": {
-    "mtime": 1790915980.7261896,
-    "seen": 1790916264.9570117,
-    "ast_hash": "6ee26e87c5877a05a4318f79397f5ff8",
+    "mtime": 1790569786.696096,
+    "seen": 1790569915.468316,
+    "ast_hash": "da95b5bc0516f2aec8e9d4a2dd2cc11c",
     "semantic_hash": ""
   },
   "components/admin/AdminNav.tsx": {
@@ -756,21 +756,9 @@
     "semantic_hash": ""
   },
   "AI_CONTEXT/PRD_DESIGN_MIGRASI.md": {
-    "mtime": 1790916049.1669497,
-    "seen": 1790916264.9569986,
-    "ast_hash": "09ab9a0f9985b2c2e022d72fc51ec67c",
-    "semantic_hash": ""
-  },
-  "prisma/generate-favicon-assets.ts": {
-    "mtime": 1790915969.676177,
-    "seen": 1790916264.9569886,
-    "ast_hash": "4fdaa1fe81ff369ff0d625688747557a",
-    "semantic_hash": ""
-  },
-  "assets/favicon-feather.png": {
-    "mtime": 1790569786.6385753,
-    "seen": 1790916264.9570055,
-    "ast_hash": "fd62b04ce10152ee6726ba6074d825ff",
+    "mtime": 1790602827.1811523,
+    "seen": 1790602852.7551026,
+    "ast_hash": "8c1464727e276b91140352aafab9e4fd",
     "semantic_hash": ""
   }
 }
